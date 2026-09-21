@@ -2,8 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
+import FreeConsultationModal from "../components/FreeConsultationModal";
+import { useLanguage } from "../components/LanguageContext";
+import { getTranslations } from "../components/translations";
 import {
     ArrowRight,
     Award,
@@ -40,75 +44,6 @@ const insurancePlans = [
     "Oscar Health",
     "Oxford",
     "Out of Network",
-];
-
-const expertise = [
-    "Addiction",
-    "ADHD",
-    "Anger Management",
-    "Antisocial Personality",
-    "Anxiety",
-    "Autism",
-    "Behavioral Issues",
-    "Bipolar Disorder",
-    "Borderline Personality (BPD)",
-    "Cancer",
-    "Depression",
-    "Dissociative Disorders (DID)",
-    "Emotional Disturbance",
-    "Family Conflict",
-    "Impulse Control Disorders",
-    "Medication Management",
-    "Mood Disorders",
-    "Obsessive-Compulsive (OCD)",
-    "Oppositional Defiance (ODD)",
-    "Psychosis",
-    "Relationship Issues",
-    "Self Esteem",
-    "Teen Violence",
-    "Veterans",
-];
-
-const treatmentApproaches = [
-    {
-        title: "Cognitive Behavioral Therapy",
-        abbreviation: "CBT",
-        description:
-            "Explore how thoughts can influence emotions and experiences while developing healthier, more constructive patterns.",
-        icon: Brain,
-    },
-    {
-        title: "Family / Marital",
-        abbreviation: "Family",
-        description:
-            "A collaborative approach that considers relationships, communication, and family dynamics as part of care.",
-        icon: UsersRound,
-    },
-    {
-        title: "Solution Focused Brief Therapy",
-        abbreviation: "SFBT",
-        description:
-            "A goal-oriented approach focused on strengths, practical solutions, and meaningful progress.",
-        icon: Sparkles,
-    },
-];
-
-const clientGroups = [
-    "Toddlers",
-    "Children (6–10)",
-    "Preteens",
-    "Teens",
-    "Adults",
-    "Elders (65+)",
-];
-
-const participants = ["Individuals", "Couples", "Families"];
-
-const languages = [
-    "English",
-    "Creole",
-    "French",
-    "Spanish — understands, not fluent",
 ];
 
 const nearbyAreas = [
@@ -202,6 +137,21 @@ const stagger = {
 ========================================================= */
 
 export default function ProviderPage() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const p = t.provider;
+    const [consultationOpen, setConsultationOpen] = useState(false);
+
+    const expertise = p.expertise;
+    const treatmentApproaches = [
+        { title: p.treatmentApproaches.cbt.title, abbreviation: "CBT", description: p.treatmentApproaches.cbt.description, icon: Brain },
+        { title: p.treatmentApproaches.family.title, abbreviation: p.treatmentApproaches.family.abbreviation, description: p.treatmentApproaches.family.description, icon: UsersRound },
+        { title: p.treatmentApproaches.sfbt.title, abbreviation: "SFBT", description: p.treatmentApproaches.sfbt.description, icon: Sparkles },
+    ];
+    const clientGroups = p.clientGroups;
+    const participants = p.participants;
+    const languages = p.languages;
+
     return (
 
         <main className="overflow-hidden bg-white">
@@ -326,7 +276,7 @@ export default function ProviderPage() {
                                     text-[#9d6816]
                                 "
                             >
-                                Meet Your Provider
+                                {p.hero.eyebrow}
                             </span>
                         </motion.div>
 
@@ -398,7 +348,7 @@ export default function ProviderPage() {
                                 sm:text-[19px]
                             "
                         >
-                            Psychiatric Nurse Practitioner, PMHNP, BC
+                            {p.hero.role}
                         </motion.p>
 
                         <motion.p
@@ -413,12 +363,7 @@ export default function ProviderPage() {
                                 sm:text-[17px]
                             "
                         >
-                            With more than 25 years of experience in healthcare,
-                            Jean Rigaud Cetoute has dedicated his career to
-                            helping individuals improve their mental and
-                            emotional well-being. His approach combines
-                            compassionate psychiatric care with evidence-based
-                            treatment tailored to each person&apos;s needs.
+                            {p.hero.bio}
                         </motion.p>
 
                         {/* CREDENTIALS */}
@@ -433,11 +378,11 @@ export default function ProviderPage() {
                             "
                         >
                             <CredentialBadge>
-                                Licensed in New York
+                                {p.hero.licensed}
                             </CredentialBadge>
 
                             <CredentialBadge>
-                                25+ Years in Healthcare
+                                {p.hero.years}
                             </CredentialBadge>
 
                             <CredentialBadge>
@@ -486,8 +431,9 @@ export default function ProviderPage() {
                                 (929) 447-2430
                             </a>
 
-                            <Link
-                                href="/contact"
+                            <button
+                                type="button"
+                                onClick={() => setConsultationOpen(true)}
                                 className="
                                     group
                                     inline-flex
@@ -511,7 +457,7 @@ export default function ProviderPage() {
                                     hover:bg-white
                                 "
                             >
-                                Free 15-Minute Consultation
+                                {p.hero.consultation}
 
                                 <ArrowRight
                                     className="
@@ -521,7 +467,7 @@ export default function ProviderPage() {
                                         group-hover:translate-x-1
                                     "
                                 />
-                            </Link>
+                            </button>
                         </motion.div>
                     </motion.div>
 
@@ -653,9 +599,9 @@ export default function ProviderPage() {
                                         font-semibold
                                     "
                                 >
-                                    Compassionate care.
+                                    {p.hero.imageLine1}
                                     <br />
-                                    Stronger foundations.
+                                    {p.hero.imageLine2}
                                 </p>
                             </div>
                         </div>
@@ -717,7 +663,7 @@ export default function ProviderPage() {
                                     </p>
 
                                     <p className="text-[11px] text-[#65798c]">
-                                        Years in healthcare
+                                        {p.hero.yearsShort}
                                     </p>
                                 </div>
                             </div>
@@ -771,9 +717,9 @@ export default function ProviderPage() {
                     "
                 >
                     <motion.div variants={fadeLeft}>
-                        <SectionLabel eyebrow="About Jean">
-                            A Life Dedicated to{" "}
-                            <HighlightedWord>Healthcare.</HighlightedWord>
+                        <SectionLabel eyebrow={p.about.eyebrow}>
+                            {p.about.titleLine1}{" "}
+                            <HighlightedWord>{p.about.titleLine2}</HighlightedWord>
                         </SectionLabel>
                     </motion.div>
 
@@ -794,9 +740,7 @@ export default function ProviderPage() {
                                 lg:text-[35px]
                             "
                         >
-                            “I have over 25 years of experience in health care.
-                            Mental health is my delight. I have dedicated my life
-                            to mental health.”
+                            {p.about.quote}
                         </p>
 
                         <p
@@ -807,12 +751,7 @@ export default function ProviderPage() {
                                 text-[#60758a]
                             "
                         >
-                            Jean&apos;s approach centers on understanding why
-                            each person is seeking care and working
-                            collaboratively to identify an appropriate path
-                            forward. His goal is to provide a supportive
-                            environment where concerns can be explored openly
-                            and treatment can be tailored to the individual.
+                            {p.about.description}
                         </p>
                     </motion.div>
                 </motion.div>
@@ -878,9 +817,9 @@ export default function ProviderPage() {
                             }}
                             variants={fadeLeft}
                         >
-                            <SectionLabel eyebrow="Qualifications">
-                                Experience You Can{" "}
-                                <HighlightedWord>Trust.</HighlightedWord>
+                            <SectionLabel eyebrow={p.qualifications.eyebrow}>
+                                {p.qualifications.titleLine1}{" "}
+                                <HighlightedWord>{p.qualifications.titleLine2}</HighlightedWord>
                             </SectionLabel>
 
                             <p
@@ -892,9 +831,7 @@ export default function ProviderPage() {
                                     text-[#60758a]
                                 "
                             >
-                                Professional education, licensure, membership,
-                                and decades of healthcare experience form the
-                                foundation of Jean&apos;s approach to care.
+                                {p.qualifications.description}
                             </p>
                         </motion.div>
 
@@ -915,29 +852,29 @@ export default function ProviderPage() {
                         >
                             <QualificationCard
                                 icon={BadgeCheck}
-                                label="New York License"
+                                label={p.qualifications.licenseLabel}
                                 value="License #405385"
                             />
 
                             <QualificationCard
                                 icon={GraduationCap}
-                                label="Education"
+                                label={p.qualifications.educationLabel}
                                 value="Molloy University"
                                 detail="Master's in Nursing Science • 2023"
                             />
 
                             <QualificationCard
                                 icon={Award}
-                                label="Professional Membership"
+                                label={p.qualifications.membershipLabel}
                                 value="American Nurses Association"
                                 detail="Membership 06093800 • 2023"
                             />
 
                             <QualificationCard
                                 icon={BriefcaseMedical}
-                                label="Clinical Experience"
-                                value="In Practice for 2 Years"
-                                detail="25+ years of healthcare experience"
+                                label={p.qualifications.experienceLabel}
+                                value={p.qualifications.practiceValue}
+                                detail={p.qualifications.experienceDetail}
                             />
                         </motion.div>
                     </div>
@@ -1019,7 +956,7 @@ export default function ProviderPage() {
                                         text-[#e2b45d]
                                     "
                                 >
-                                    Specialties & Expertise
+                                    {p.specialties.eyebrow}
                                 </p>
                             </div>
 
@@ -1035,9 +972,9 @@ export default function ProviderPage() {
                                     sm:text-[50px]
                                 "
                             >
-                                Comprehensive Mental Health{" "}
+                                {p.specialties.titleLine1}{" "}
                                 <span className="relative inline-block text-[#e2b45d]">
-                                    Care.
+                                    {p.specialties.titleLine2}
 
                                     <svg
                                         viewBox="0 0 150 12"
@@ -1069,9 +1006,7 @@ export default function ProviderPage() {
                                     text-white/60
                                 "
                             >
-                                Jean works with individuals experiencing a
-                                broad range of mental health, behavioral, and
-                                emotional concerns.
+                                {p.specialties.description}
                             </p>
 
                             <motion.div
@@ -1114,7 +1049,7 @@ export default function ProviderPage() {
                                                 text-[#e2b45d]
                                             "
                                         >
-                                            Top Specialty
+                                            {p.specialties.topSpecialty}
                                         </p>
 
                                         <p
@@ -1125,7 +1060,7 @@ export default function ProviderPage() {
                                                 font-semibold
                                             "
                                         >
-                                            Personality Disorders
+                                            {p.specialties.topSpecialtyValue}
                                         </p>
                                     </div>
                                 </div>
@@ -1248,7 +1183,7 @@ export default function ProviderPage() {
                                 text-[#a96f13]
                             "
                         >
-                            Treatment Approach
+                            {p.treatment.eyebrow}
                         </p>
 
                         <h2
@@ -1264,8 +1199,8 @@ export default function ProviderPage() {
                                 sm:text-[52px]
                             "
                         >
-                            Thoughtful Care Built Around{" "}
-                            <HighlightedWord>You.</HighlightedWord>
+                            {p.treatment.titleLine1}{" "}
+                            <HighlightedWord>{p.treatment.titleLine2}</HighlightedWord>
                         </h2>
 
                         <p
@@ -1278,9 +1213,7 @@ export default function ProviderPage() {
                                 text-[#60758a]
                             "
                         >
-                            Treatment begins by understanding what brought you
-                            to care and identifying approaches that fit your
-                            needs and goals.
+                            {p.treatment.description}
                         </p>
                     </motion.div>
 
@@ -1456,11 +1389,7 @@ export default function ProviderPage() {
                                     sm:text-[26px]
                                 "
                             >
-                                “I often use Cognitive Behavioral Therapy in my
-                                practice. In your first session, we&apos;ll
-                                explore what brought you to therapy and then
-                                decide the most appropriate ways to help you make
-                                progress.”
+                                {p.treatment.quote}
                             </blockquote>
 
                             <p
@@ -1538,11 +1467,9 @@ export default function ProviderPage() {
                             }}
                             variants={fadeLeft}
                         >
-                            <SectionLabel eyebrow="Client Focus">
-                                Care Across Every{" "}
-                                <HighlightedWord>
-                                    Stage of Life.
-                                </HighlightedWord>
+                            <SectionLabel eyebrow={p.clientFocus.eyebrow}>
+                                {p.clientFocus.titleLine1}{" "}
+                                <HighlightedWord>{p.clientFocus.titleLine2}</HighlightedWord>
                             </SectionLabel>
 
                             <p
@@ -1554,8 +1481,7 @@ export default function ProviderPage() {
                                     text-[#60758a]
                                 "
                             >
-                                Jean works with clients across age groups and
-                                with individuals, couples, and families.
+                                {p.clientFocus.description}
                             </p>
                         </motion.div>
 
@@ -1576,19 +1502,19 @@ export default function ProviderPage() {
                         >
                             <FocusCard
                                 icon={UserRound}
-                                title="Ages"
+                                title={p.clientFocus.ages}
                                 items={clientGroups}
                             />
 
                             <FocusCard
                                 icon={UsersRound}
-                                title="Participants"
+                                title={p.clientFocus.participants}
                                 items={participants}
                             />
 
                             <FocusCard
                                 icon={Languages}
-                                title="Languages"
+                                title={p.clientFocus.languages}
                                 items={languages}
                                 className="sm:col-span-2"
                             />
@@ -1645,11 +1571,9 @@ export default function ProviderPage() {
                             }}
                             variants={fadeLeft}
                         >
-                            <SectionLabel eyebrow="Insurance & Payment">
-                                Making Care More{" "}
-                                <HighlightedWord>
-                                    Accessible.
-                                </HighlightedWord>
+                            <SectionLabel eyebrow={p.insurance.eyebrow}>
+                                {p.insurance.titleLine1}{" "}
+                                <HighlightedWord>{p.insurance.titleLine2}</HighlightedWord>
                             </SectionLabel>
 
                             <motion.div
@@ -1696,7 +1620,7 @@ export default function ProviderPage() {
                                                 text-[#082957]
                                             "
                                         >
-                                            In-Network & Out-of-Network Options
+                                            {p.insurance.optionsTitle}
                                         </p>
 
                                         <p
@@ -1707,10 +1631,7 @@ export default function ProviderPage() {
                                                 text-[#60758a]
                                             "
                                         >
-                                            Jean is in-network for Blue Cross
-                                            and Cigna. For out-of-network
-                                            clients, a superbill can be provided
-                                            to assist with reimbursement.
+                                            {p.insurance.optionsText}
                                         </p>
                                     </div>
                                 </div>
@@ -1737,7 +1658,7 @@ export default function ProviderPage() {
                                     text-[#a96f13]
                                 "
                             >
-                                Insurance Plans
+                                {p.insurance.plans}
                             </motion.p>
 
                             <motion.div
@@ -1839,10 +1760,7 @@ export default function ProviderPage() {
                                     text-[#718497]
                                 "
                             >
-                                Insurance participation and benefits can vary
-                                by plan. Contact Solid Rock Behavioral Health to
-                                verify current coverage and benefits before your
-                                appointment.
+                                {p.insurance.disclaimer}
                             </motion.p>
                         </div>
                     </div>
@@ -1896,7 +1814,7 @@ export default function ProviderPage() {
                             text-[#a96f13]
                         "
                     >
-                        Professional Endorsement
+                        {p.endorsement.eyebrow}
                     </motion.p>
 
                     <motion.div
@@ -1937,10 +1855,7 @@ export default function ProviderPage() {
                             lg:text-[35px]
                         "
                     >
-                        “Jean is a kind and caring provider who is always
-                        advocating for his patients. He goes above and beyond to
-                        exceed expectations in quality and professionalism. I
-                        recommend him for your mental health needs.”
+                        {p.endorsement.quote}
                     </motion.blockquote>
 
                     <motion.div
@@ -1977,7 +1892,7 @@ export default function ProviderPage() {
                             text-[#718497]
                         "
                     >
-                        Psychiatric Nurse Practitioner, PMHNP, BC
+                        {p.hero.role}
                     </motion.p>
                 </motion.div>
             </section>
@@ -2083,7 +1998,7 @@ export default function ProviderPage() {
                                         text-[#a96f13]
                                     "
                                 >
-                                    Primary Location
+                                    {p.location.primary}
                                 </p>
 
                                 <h2
@@ -2187,7 +2102,7 @@ export default function ProviderPage() {
                                         text-[#e2b45d]
                                     "
                                 >
-                                    Telehealth Available
+                                    {p.location.telehealthEyebrow}
                                 </p>
 
                                 <h2
@@ -2198,7 +2113,7 @@ export default function ProviderPage() {
                                         font-semibold
                                     "
                                 >
-                                    Care From Wherever You Are.
+                                    {p.location.telehealthTitle}
                                 </h2>
 
                                 <p
@@ -2210,10 +2125,7 @@ export default function ProviderPage() {
                                         text-white/65
                                     "
                                 >
-                                    Jean offers online video sessions, providing
-                                    a convenient option for accessing mental
-                                    health care. Availability is offered seven
-                                    days a week.
+                                    {p.location.telehealthText}
                                 </p>
 
                                 <div
@@ -2228,7 +2140,7 @@ export default function ProviderPage() {
                                 >
                                     <Clock3 className="h-4 w-4 text-[#e2b45d]" />
 
-                                    Available seven days a week
+                                    {p.location.sevenDays}
                                 </div>
                             </div>
                         </div>
@@ -2298,7 +2210,7 @@ export default function ProviderPage() {
                             text-[#e2b45d]
                         "
                     >
-                        Take the First Step
+                        {p.finalCta.eyebrow}
                     </motion.p>
 
                     <motion.h2
@@ -2314,11 +2226,9 @@ export default function ProviderPage() {
                             sm:text-[53px]
                         "
                     >
-                        Start With a Free
+                        {p.finalCta.titleLine1}
                         <br />
-                        <span className="text-[#e2b45d]">
-                            15-Minute Consultation.
-                        </span>
+                        <span className="text-[#e2b45d]">{p.finalCta.titleLine2}</span>
                     </motion.h2>
 
                     <motion.p
@@ -2413,6 +2323,12 @@ export default function ProviderPage() {
                     </motion.div>
                 </motion.div>
             </section>
+
+
+            <FreeConsultationModal
+                open={consultationOpen}
+                onClose={() => setConsultationOpen(false)}
+            />
         </main>
     );
 }

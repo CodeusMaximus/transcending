@@ -3,15 +3,13 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
-
-const points = [
-    "Individualized treatment plans",
-    "Compassionate, judgment-free care",
-    "Evidence-based psychiatric treatment",
-    "Convenient telehealth options",
-];
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 
 export default function AboutSection() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const points = t.about.points;
     return (
         <section className="overflow-hidden bg-[#edf3f5] py-20 sm:py-24 lg:py-32">
             <div className="mx-auto grid max-w-[1440px] gap-14 px-6 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-12 xl:px-16">
@@ -68,7 +66,7 @@ export default function AboutSection() {
                                 type="video/mp4"
                             />
 
-                            Your browser does not support video playback.
+                            {t.about.videoFallback}
                         </video>
 
                         {/* SUBTLE VIDEO OVERLAY */}
@@ -105,12 +103,11 @@ export default function AboutSection() {
                         "
                     >
                         <p className="font-serif text-[23px] leading-tight">
-                            Care with compassion.
+                            {t.about.floatingTitle}
                         </p>
 
                         <p className="mt-2 text-[13px] leading-5 text-white/70">
-                            A supportive environment where your concerns are
-                            heard.
+                            {t.about.floatingText}
                         </p>
                     </div>
                 </motion.div>
@@ -149,7 +146,7 @@ export default function AboutSection() {
                                 text-[#b77b18]
                             "
                         >
-                            About Solid Rock
+                            {t.about.eyebrow}
                         </p>
                     </div>
 
@@ -165,9 +162,9 @@ export default function AboutSection() {
                             lg:text-[62px]
                         "
                     >
-                        Providing Wellness Through{" "}
+                        {t.about.titleLine1}{" "}
                         <span className="text-[#075187]">
-                            Compassionate Care.
+                            {t.about.titleLine2}
                         </span>
                     </h2>
 
@@ -180,11 +177,7 @@ export default function AboutSection() {
                             sm:text-[17px]
                         "
                     >
-                        We&apos;re dedicated to fostering mental wellness
-                        through personalized, compassionate care. With a focus
-                        on empathy and understanding, we&apos;re here to
-                        support you every step of the way on your journey to a
-                        happier, healthier life.
+                        {t.about.paragraph1}
                     </p>
 
                     <p
@@ -196,11 +189,7 @@ export default function AboutSection() {
                             sm:text-[17px]
                         "
                     >
-                        With a commitment to evidence-based practices and
-                        ongoing education, we strive to provide high-quality
-                        care tailored to each individual&apos;s unique needs.
-                        Your well-being is our priority, and we&apos;re honored
-                        to be part of your healing journey.
+                        {t.about.paragraph2}
                     </p>
 
                     {/* CHECK POINTS */}
@@ -267,7 +256,7 @@ export default function AboutSection() {
                             hover:shadow-[0_16px_35px_rgba(7,81,135,0.28)]
                         "
                     >
-                        Meet Your Provider
+                        {t.about.meetProvider}
 
                         <ArrowRight
                             className="

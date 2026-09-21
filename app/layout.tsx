@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { LanguageProvider } from "./components/LanguageContext";
 
 import "./globals.css";
 
@@ -36,13 +37,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
         <body>
-          <BookingProvider>
-            <Navbar />
+          <LanguageProvider>
+            <BookingProvider>
+              <Navbar />
 
-            {children}
+              {children}
 
-            <Footer />
-          </BookingProvider>
+              <Footer />
+            </BookingProvider>
+          </LanguageProvider>
         </body>
       </html>
     </ClerkProvider>

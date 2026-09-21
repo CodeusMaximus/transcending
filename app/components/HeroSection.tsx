@@ -18,10 +18,11 @@ import {
     ChevronRight,
     HeartHandshake,
     Laptop,
-    Play,
     ShieldCheck,
 } from "lucide-react";
 import BookAppointmentButton from "./BookAppointmentButton";
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 /* =========================================================
    HERO SLIDES
 ========================================================= */
@@ -38,41 +39,22 @@ const slides = [
         position: "62% center",
     },
     {
-        type: "video" as const,
-        src: "/videos/hero-video.mp4",
-        position: "76% center",
-    },
-    {
         type: "provider" as const,
         src: "/images/provider-hero.jpg",
         position: "center",
     },
 ];
 
-/* =========================================================
-   HERO FEATURES
-========================================================= */
-
-const features = [
-    {
-        label: "Personalized\nCare",
-        icon: HeartHandshake,
-    },
-    {
-        label: "Evidence-Based\nTreatment",
-        icon: ShieldCheck,
-    },
-    {
-        label: "In-Person &\nTelehealth",
-        icon: Laptop,
-    },
-    {
-        label: "Medication\nManagement",
-        icon: Brain,
-    },
-];
-
 export default function HeroSection() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+
+    const features = [
+        { label: t.hero.features.personalized, icon: HeartHandshake },
+        { label: t.hero.features.evidenceBased, icon: ShieldCheck },
+        { label: t.hero.features.telehealth, icon: Laptop },
+        { label: t.hero.features.medication, icon: Brain },
+    ];
     const [bookingOpen, setBookingOpen] = useState(false);
     const [currentSlide, setCurrentSlide] =
         useState(0);
@@ -134,14 +116,9 @@ export default function HeroSection() {
 
        Images:   7 seconds
        Provider: 11 seconds
-       Video:    advances when video ends
     ===================================================== */
 
     useEffect(() => {
-        if (current.type === "video") {
-            return;
-        }
-
         const delay =
             current.type === "provider"
                 ? 11000
@@ -245,36 +222,7 @@ export default function HeroSection() {
                             overflow-hidden
                         "
                     >
-                        {current.type ===
-                            "video" ? (
-                            <video
-                                key={current.src}
-                                autoPlay
-                                muted
-                                playsInline
-                                preload="auto"
-                                onEnded={nextSlide}
-                                className="
-                                    absolute
-                                    inset-0
-                                    h-full
-                                    w-full
-                                    object-cover
-                                "
-                                style={{
-                                    objectPosition:
-                                        current.position,
-                                }}
-                            >
-                                <source
-                                    src={current.src}
-                                    type="video/mp4"
-                                />
-
-                                Your browser does not
-                                support video playback.
-                            </video>
-                        ) : isProviderSlide ? (
+                        {isProviderSlide ? (
                             /*
                              * PROVIDER BACKGROUND
                              *
@@ -330,7 +278,7 @@ export default function HeroSection() {
 
             {/* =================================================
                 NORMAL SLIDE GRADIENTS
-                Slides 1–3
+                Image slides
             ================================================= */}
 
             {!isProviderSlide && (
@@ -438,7 +386,7 @@ export default function HeroSection() {
 
             {/* =================================================
                 STANDARD HERO CONTENT
-                SLIDES 1–3 ONLY
+                IMAGE SLIDES ONLY
             ================================================= */}
 
             {!isProviderSlide && (
@@ -530,19 +478,7 @@ export default function HeroSection() {
                                         sm:text-[15px]
                                     "
                                 >
-                                    Heal
-
-                                    <span className="mx-3">
-                                        •
-                                    </span>
-
-                                    Grow
-
-                                    <span className="mx-3">
-                                        •
-                                    </span>
-
-                                    Thrive
+                                    {t.hero.mantra}
                                 </p>
 
                                 <span
@@ -587,9 +523,9 @@ export default function HeroSection() {
                                     xl:text-[92px]
                                 "
                             >
-                                Strong Minds.
+                                {t.hero.headlineLine1}
                                 <br />
-                                Better Tomorrows.
+                                {t.hero.headlineLine2}
                             </motion.h1>
 
                             {/* DESCRIPTION */}
@@ -620,10 +556,7 @@ export default function HeroSection() {
                                     lg:text-[23px]
                                 "
                             >
-                                Compassionate,
-                                evidence-based psychiatric
-                                care for your mental wellness
-                                journey.
+                                {t.hero.description}
                             </motion.p>
 
                             {/* BUTTONS */}
@@ -652,59 +585,6 @@ export default function HeroSection() {
                                 "
                             >
                                 <BookAppointmentButton />
-
-                                <Link
-                                    href="/about-us"
-                                    className="
-                                        group
-                                        flex
-                                        min-h-[56px]
-                                        items-center
-                                        justify-center
-                                        gap-3
-                                        rounded-full
-                                        border-[1.5px]
-                                        border-[#082957]
-                                        bg-white/40
-                                        px-7
-                                        py-4
-                                        text-[15px]
-                                        font-semibold
-                                        text-[#082957]
-                                        backdrop-blur-md
-                                        transition-all
-                                        duration-300
-
-                                        hover:bg-white/70
-
-                                        sm:px-8
-                                        sm:text-[16px]
-                                    "
-                                >
-                                    <span
-                                        className="
-                                            flex
-                                            h-7
-                                            w-7
-                                            items-center
-                                            justify-center
-                                            rounded-full
-                                            bg-[#082957]
-                                            text-white
-                                        "
-                                    >
-                                        <Play
-                                            className="
-                                                ml-0.5
-                                                h-3
-                                                w-3
-                                            "
-                                            fill="currentColor"
-                                        />
-                                    </span>
-
-                                    Our Approach
-                                </Link>
                             </motion.div>
 
                             {/* FEATURES */}
@@ -918,8 +798,7 @@ export default function HeroSection() {
                                         lg:text-[12px]
                                     "
                                 >
-                                    A Message From Your
-                                    Provider
+                                    {t.hero.provider.eyebrow}
                                 </p>
                             </motion.div>
 
@@ -977,20 +856,7 @@ export default function HeroSection() {
                                     “
                                 </span>
 
-                                As a dedicated psychiatric
-                                provider, I am committed to
-                                creating a supportive,
-                                compassionate, and
-                                judgment-free space where you
-                                can feel heard, understood,
-                                and empowered. I believe that
-                                every individual&apos;s story
-                                is unique, and I work
-                                collaboratively with you to
-                                develop a treatment plan
-                                tailored to your personal
-                                needs, goals, and lived
-                                experiences.
+                                {t.hero.provider.quote}
                             </motion.blockquote>
 
                             {/* PROVIDER DETAILS */}
@@ -1031,7 +897,7 @@ export default function HeroSection() {
                                         lg:text-[27px]
                                     "
                                 >
-                                    Jean Cetoute
+                                    {t.hero.provider.name}
                                 </p>
 
                                 <p
@@ -1045,8 +911,7 @@ export default function HeroSection() {
                                         sm:text-[14px]
                                     "
                                 >
-                                    Psychiatric Mental Health
-                                    Nurse Practitioner
+                                    {t.hero.provider.role}
                                 </p>
 
                                 <div
@@ -1065,13 +930,11 @@ export default function HeroSection() {
                                     "
                                 >
                                     <span>
-                                        MSN — Molloy
-                                        University
+                                        {t.hero.provider.education1}
                                     </span>
 
                                     <span>
-                                        BA in Nursing —
-                                        Felician University
+                                        {t.hero.provider.education2}
                                     </span>
                                 </div>
                             </motion.div>
@@ -1125,7 +988,7 @@ export default function HeroSection() {
                                         sm:text-[15px]
                                     "
                                 >
-                                    Meet Your Provider
+                                    {t.hero.provider.button}
 
                                     <ArrowRight
                                         className="
@@ -1150,7 +1013,7 @@ export default function HeroSection() {
             <button
                 type="button"
                 onClick={previousSlide}
-                aria-label="Previous hero slide"
+                aria-label={t.hero.previousSlide}
                 className={`
                     absolute
                     z-30
@@ -1185,7 +1048,7 @@ export default function HeroSection() {
             <button
                 type="button"
                 onClick={nextSlide}
-                aria-label="Next hero slide"
+                aria-label={t.hero.nextSlide}
                 className={`
                     absolute
                     z-30

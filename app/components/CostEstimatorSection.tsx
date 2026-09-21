@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -31,12 +33,12 @@ type EstimateResult = {
     estimate: string;
 };
 
-const services = [
+const serviceValues = [
     "Initial Psychiatric Evaluation",
     "Medication Management",
     "Psychopharmacology",
     "Telehealth Appointment",
-];
+] as const;
 
 const insurers = [
     "Aetna",
@@ -52,6 +54,19 @@ const insurers = [
 ];
 
 export default function CostEstimatorSection() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const c = t.costEstimator;
+
+    const services = serviceValues.map((value, index) => ({
+        value,
+        label: c.services[index],
+    }));
+
+    const insurerChoices = insurers.map((value) => ({
+        value,
+        label: value === "Other" ? c.other : value,
+    }));
     const [step, setStep] = useState<Step>(1);
     const [loading, setLoading] = useState(false);
     const [result, setResult] =
@@ -232,7 +247,7 @@ export default function CostEstimatorSection() {
                     >
                         <ShieldCheck className="h-4 w-4" />
 
-                        Insurance & Cost Estimator
+                        {c.eyebrow}
                     </div>
 
                     <h2
@@ -249,7 +264,7 @@ export default function CostEstimatorSection() {
                             lg:text-[60px]
                         "
                     >
-                        Understand Your Coverage
+                        {c.title1}
                         <span className="text-[#b57b1e]">
                             {" "}
                             Before Your Visit.
@@ -268,10 +283,7 @@ export default function CostEstimatorSection() {
                             sm:text-[18px]
                         "
                     >
-                        Check your insurance benefits and
-                        receive an estimate of what you may
-                        be responsible for before scheduling
-                        your appointment.
+                        {c.description}
                     </p>
                 </div>
 
@@ -362,7 +374,7 @@ export default function CostEstimatorSection() {
                                     lg:text-[36px]
                                 "
                             >
-                                Know What to Expect
+                                {c.knowTitle}
                             </h3>
 
                             <p
@@ -373,11 +385,7 @@ export default function CostEstimatorSection() {
                                     text-white/70
                                 "
                             >
-                                We believe understanding your
-                                benefits should be simple.
-                                Check your coverage before
-                                your appointment and avoid
-                                unnecessary surprises.
+                                {c.knowText}
                             </p>
 
                             {/* BENEFITS */}
@@ -390,20 +398,20 @@ export default function CostEstimatorSection() {
                             >
                                 <Feature
                                     icon={BadgeCheck}
-                                    title="Coverage Status"
-                                    text="See whether your coverage appears active."
+                                    title={c.coverageStatus}
+                                    text={c.coverageStatusText}
                                 />
 
                                 <Feature
                                     icon={CreditCard}
-                                    title="Benefit Details"
-                                    text="Review available copay, deductible and coinsurance information."
+                                    title={c.benefitDetails}
+                                    text={c.benefitDetailsText}
                                 />
 
                                 <Feature
                                     icon={HeartPulse}
-                                    title="Cost Guidance"
-                                    text="Understand your potential financial responsibility."
+                                    title={c.costGuidance}
+                                    text={c.costGuidanceText}
                                 />
                             </div>
 
@@ -440,8 +448,7 @@ export default function CostEstimatorSection() {
                                                 text-white
                                             "
                                         >
-                                            Your privacy
-                                            matters.
+                                            {c.privacyTitle}
                                         </p>
 
                                         <p
@@ -452,14 +459,7 @@ export default function CostEstimatorSection() {
                                                 text-white/60
                                             "
                                         >
-                                            Insurance
-                                            information should
-                                            only be transmitted
-                                            through the secure
-                                            eligibility system
-                                            when the live
-                                            integration is
-                                            enabled.
+                                            {c.privacyText}
                                         </p>
                                     </div>
                                 </div>
@@ -493,7 +493,7 @@ export default function CostEstimatorSection() {
                         >
                             <StepIndicator
                                 number={1}
-                                label="Coverage"
+                                label={c.coverage}
                                 active={step >= 1}
                                 complete={step > 1}
                             />
@@ -504,7 +504,7 @@ export default function CostEstimatorSection() {
 
                             <StepIndicator
                                 number={2}
-                                label="Your Details"
+                                label={c.yourDetails}
                                 active={step >= 2}
                                 complete={step > 2}
                             />
@@ -515,7 +515,7 @@ export default function CostEstimatorSection() {
 
                             <StepIndicator
                                 number={3}
-                                label="Estimate"
+                                label={c.estimate}
                                 active={step >= 3}
                                 complete={false}
                             />
@@ -537,7 +537,7 @@ export default function CostEstimatorSection() {
                                             text-[#b17a21]
                                         "
                                     >
-                                        Step 1 of 3
+                                        {c.step1}
                                     </p>
 
                                     <h3
@@ -551,8 +551,7 @@ export default function CostEstimatorSection() {
                                             sm:text-[35px]
                                         "
                                     >
-                                        Tell us about your
-                                        coverage.
+                                        {c.tellCoverage}
                                     </h3>
 
                                     <p
@@ -563,10 +562,7 @@ export default function CostEstimatorSection() {
                                             text-[#687c91]
                                         "
                                     >
-                                        Start by selecting your
-                                        insurance provider and
-                                        the service you&apos;re
-                                        interested in.
+                                        {c.tellCoverageText}
                                     </p>
                                 </div>
 
@@ -577,7 +573,7 @@ export default function CostEstimatorSection() {
                                     "
                                 >
                                     <FieldWrapper
-                                        label="Insurance Provider"
+                                        label={c.insuranceProvider}
                                         icon={Building2}
                                     >
                                         <select
@@ -594,31 +590,22 @@ export default function CostEstimatorSection() {
                                             className={inputClass}
                                         >
                                             <option value="">
-                                                Select your
-                                                insurance
+                                                {c.selectInsurance}
                                             </option>
 
-                                            {insurers.map(
-                                                (insurer) => (
-                                                    <option
-                                                        key={
-                                                            insurer
-                                                        }
-                                                        value={
-                                                            insurer
-                                                        }
-                                                    >
-                                                        {
-                                                            insurer
-                                                        }
-                                                    </option>
-                                                )
-                                            )}
+                                            {insurerChoices.map((insurer) => (
+                                                <option
+                                                    key={insurer.value}
+                                                    value={insurer.value}
+                                                >
+                                                    {insurer.label}
+                                                </option>
+                                            ))}
                                         </select>
                                     </FieldWrapper>
 
                                     <FieldWrapper
-                                        label="Service"
+                                        label={c.service}
                                         icon={HeartPulse}
                                     >
                                         <select
@@ -635,25 +622,17 @@ export default function CostEstimatorSection() {
                                             className={inputClass}
                                         >
                                             <option value="">
-                                                Select a service
+                                                {c.selectService}
                                             </option>
 
-                                            {services.map(
-                                                (service) => (
-                                                    <option
-                                                        key={
-                                                            service
-                                                        }
-                                                        value={
-                                                            service
-                                                        }
-                                                    >
-                                                        {
-                                                            service
-                                                        }
-                                                    </option>
-                                                )
-                                            )}
+                                            {services.map((service) => (
+                                                <option
+                                                    key={service.value}
+                                                    value={service.value}
+                                                >
+                                                    {service.label}
+                                                </option>
+                                            ))}
                                         </select>
                                     </FieldWrapper>
                                 </div>
@@ -690,7 +669,7 @@ export default function CostEstimatorSection() {
                                         disabled:opacity-40
                                     "
                                 >
-                                    Continue
+                                    {c.continue}
 
                                     <ChevronRight
                                         className="
@@ -720,7 +699,7 @@ export default function CostEstimatorSection() {
                                             text-[#b17a21]
                                         "
                                     >
-                                        Step 2 of 3
+                                        {c.step2}
                                     </p>
 
                                     <h3
@@ -734,7 +713,7 @@ export default function CostEstimatorSection() {
                                             sm:text-[35px]
                                         "
                                     >
-                                        Insurance Details
+                                        {c.insuranceDetails}
                                     </h3>
 
                                     <p
@@ -745,9 +724,7 @@ export default function CostEstimatorSection() {
                                             text-[#687c91]
                                         "
                                     >
-                                        Enter the information
-                                        exactly as it appears
-                                        on your insurance card.
+                                        {c.insuranceDetailsText}
                                     </p>
                                 </div>
 
@@ -760,7 +737,7 @@ export default function CostEstimatorSection() {
                                     "
                                 >
                                     <FieldWrapper
-                                        label="First Name"
+                                        label={c.firstName}
                                         icon={UserRound}
                                     >
                                         <input
@@ -775,14 +752,14 @@ export default function CostEstimatorSection() {
                                                         .value
                                                 )
                                             }
-                                            placeholder="First name"
+                                            placeholder={c.firstNamePlaceholder}
                                             autoComplete="given-name"
                                             className={inputClass}
                                         />
                                     </FieldWrapper>
 
                                     <FieldWrapper
-                                        label="Last Name"
+                                        label={c.lastName}
                                         icon={UserRound}
                                     >
                                         <input
@@ -797,14 +774,14 @@ export default function CostEstimatorSection() {
                                                         .value
                                                 )
                                             }
-                                            placeholder="Last name"
+                                            placeholder={c.lastNamePlaceholder}
                                             autoComplete="family-name"
                                             className={inputClass}
                                         />
                                     </FieldWrapper>
 
                                     <FieldWrapper
-                                        label="Date of Birth"
+                                        label={c.dateOfBirth}
                                         icon={UserRound}
                                     >
                                         <input
@@ -824,7 +801,7 @@ export default function CostEstimatorSection() {
                                     </FieldWrapper>
 
                                     <FieldWrapper
-                                        label="Member ID"
+                                        label={c.memberId}
                                         icon={CreditCard}
                                     >
                                         <input
@@ -873,13 +850,7 @@ export default function CostEstimatorSection() {
                                             text-[#60758b]
                                         "
                                     >
-                                        Enter your name exactly
-                                        as shown on your
-                                        insurance card. Benefit
-                                        information and cost
-                                        estimates are not a
-                                        guarantee of coverage
-                                        or payment.
+                                        {c.infoNotice}
                                     </p>
                                 </div>
 
@@ -912,7 +883,7 @@ export default function CostEstimatorSection() {
                                             hover:bg-[#f5f7f8]
                                         "
                                     >
-                                        Back
+                                        {c.back}
                                     </button>
 
                                     <button
@@ -961,15 +932,13 @@ export default function CostEstimatorSection() {
                                                     "
                                                 />
 
-                                                Checking
-                                                Benefits...
+                                                {c.checking}
                                             </>
                                         ) : (
                                             <>
                                                 <ShieldCheck className="h-5 w-5" />
 
-                                                Check My
-                                                Benefits
+                                                {c.checkBenefits}
                                             </>
                                         )}
                                     </button>
@@ -1017,7 +986,7 @@ export default function CostEstimatorSection() {
                                                 text-emerald-600
                                             "
                                         >
-                                            Coverage Found
+                                            {c.coverageFound}
                                         </p>
 
                                         <h3
@@ -1031,8 +1000,7 @@ export default function CostEstimatorSection() {
                                                 sm:text-[34px]
                                             "
                                         >
-                                            Your Benefits
-                                            Estimate
+                                            {c.benefitsEstimate}
                                         </h3>
 
                                         <p
@@ -1043,7 +1011,10 @@ export default function CostEstimatorSection() {
                                             "
                                         >
                                             {result.insurer} •{" "}
-                                            {result.service}
+                                            {services.find(
+                                                (service) =>
+                                                    service.value === result.service
+                                            )?.label ?? result.service}
                                         </p>
                                     </div>
                                 </div>
@@ -1059,25 +1030,25 @@ export default function CostEstimatorSection() {
                                     "
                                 >
                                     <ResultCard
-                                        label="Copay"
+                                        label={c.copay}
                                         value={result.copay}
-                                        detail="Per visit"
+                                        detail={c.perVisit}
                                     />
 
                                     <ResultCard
-                                        label="Deductible"
+                                        label={c.deductible}
                                         value={
                                             result.deductible
                                         }
-                                        detail={`${result.deductibleRemaining} remaining`}
+                                        detail={`${result.deductibleRemaining} ${c.remaining}`}
                                     />
 
                                     <ResultCard
-                                        label="Coinsurance"
+                                        label={c.coinsurance}
                                         value={
                                             result.coinsurance
                                         }
-                                        detail="After deductible"
+                                        detail={c.afterDeductible}
                                     />
                                 </div>
 
@@ -1128,9 +1099,7 @@ export default function CostEstimatorSection() {
                                                     tracking-[0.18em]
                                                 "
                                             >
-                                                Estimated
-                                                Patient
-                                                Responsibility
+                                                {c.patientResponsibility}
                                             </p>
                                         </div>
 
@@ -1169,16 +1138,7 @@ export default function CostEstimatorSection() {
                                                 text-white/60
                                             "
                                         >
-                                            This is an estimate
-                                            only. Actual patient
-                                            responsibility may
-                                            differ after claim
-                                            processing,
-                                            deductible
-                                            application,
-                                            network
-                                            determination, and
-                                            insurer review.
+                                            {c.estimateNotice}
                                         </p>
                                     </div>
                                 </div>
@@ -1214,7 +1174,7 @@ export default function CostEstimatorSection() {
                                             hover:bg-[#063f6b]
                                         "
                                     >
-                                        Book an Appointment
+                                        {c.book}
 
                                         <ArrowRight
                                             className="
@@ -1245,7 +1205,7 @@ export default function CostEstimatorSection() {
                                             hover:bg-[#f5f7f8]
                                         "
                                     >
-                                        Start Over
+                                        {c.startOver}
                                     </button>
                                 </div>
                             </div>
@@ -1272,14 +1232,7 @@ export default function CostEstimatorSection() {
                             text-[#75879a]
                         "
                     >
-                        Insurance eligibility and benefit
-                        information is provided for
-                        informational purposes and does not
-                        guarantee coverage or payment.
-                        Benefits are subject to the terms of
-                        your individual health plan and final
-                        determination by your insurance
-                        carrier.
+                        {c.disclaimer}
                     </p>
                 </div>
             </div>

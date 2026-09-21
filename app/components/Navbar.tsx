@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLanguage } from "./LanguageContext";
 import {
     Show,
     SignInButton,
@@ -19,31 +20,39 @@ import {
     Menu,
     Phone,
     X,
+    Globe2,
 } from "lucide-react";
 
 import ServicesDropdown from "./ServicesDropdown";
 import FreeConsultationModal from "./FreeConsultationModal";
 
-const mobileServices = [
-    {
-        name: "Psychiatric Evaluation",
-        href: "/services/psychiatric-evaluation",
-    },
-    {
-        name: "Medication Management",
-        href: "/services/medication-management",
-    },
-    {
-        name: "Psychopharmacology",
-        href: "/services/psychopharmacology",
-    },
-    {
-        name: "Telehealth",
-        href: "/services/telehealth",
-    },
-];
+
+import { getTranslations } from "../components/translations";
+
+
 
 export default function Navbar() {
+    const { language, setLanguage } = useLanguage();
+    const t = getTranslations(language);
+    const mobileServices = [
+        {
+            name: t.services.psychiatricEvaluation,
+            href: "/services/psychiatric-evaluation",
+        },
+        {
+            name: t.services.medicationManagement,
+            href: "/services/medication-management",
+        },
+        {
+            name: t.services.psychopharmacology,
+            href: "/services/psychopharmacology",
+        },
+        {
+            name: t.services.telehealth,
+            href: "/services/telehealth",
+        },
+    ];
+    const [languageOpen, setLanguageOpen] = useState(false);
     const [servicesOpen, setServicesOpen] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [consultationOpen, setConsultationOpen] = useState(false);
@@ -180,11 +189,12 @@ export default function Navbar() {
                             gap-9
                             xl:flex
                         "
-                    >
-                        <NavLink href="/">Home</NavLink>
+                    ><NavLink href="/">
+                            {t.navigation.home}
+                        </NavLink>
 
                         <NavLink href="/Provider">
-                            About Us
+                            {t.navigation.about}
                         </NavLink>
 
                         <div
@@ -215,7 +225,7 @@ export default function Navbar() {
                                 "
                             >
                                 <span className="relative">
-                                    Services
+                                    {t.navigation.services}
 
                                     <span
                                         className={`
@@ -256,11 +266,11 @@ export default function Navbar() {
                         </div>
 
                         <NavLink href="/blog">
-                            Blog
+                            {t.navigation.blog}
                         </NavLink>
 
                         <NavLink href="/#faq">
-                            FAQs
+                            {t.navigation.faq}
                         </NavLink>
                     </div>
                     {/* CONTACT ICONS */}
@@ -370,7 +380,7 @@ export default function Navbar() {
                             >
                                 <LogIn className="h-[17px] w-[17px]" />
 
-                                <span>Login</span>
+                                <span>{t.navigation.login}</span>
                             </button>
                         </SignInButton>
                     </Show>
@@ -402,12 +412,131 @@ export default function Navbar() {
                             >
                                 <LayoutDashboard className="h-[17px] w-[17px]" />
 
-                                Dashboard
+                                {t.navigation.dashboard}
                             </Link>
 
                             <UserButton />
                         </div>
                     </Show>
+                    {/* LANGUAGE SELECTOR */}
+                    <div className="relative hidden xl:block">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setLanguageOpen((previous) => !previous)
+                            }
+                            aria-label="Choose language"
+                            className="
+            flex
+            h-11
+            items-center
+            gap-2
+            rounded-full
+            border
+            border-[#082957]/10
+            bg-[#eef4f7]/90
+            px-3
+            text-[13px]
+            font-bold
+            text-[#082957]
+            transition-all
+            duration-300
+            hover:-translate-y-0.5
+            hover:border-[#075187]
+            hover:bg-[#075187]
+            hover:text-white
+        "
+                        >
+                            <Globe2 className="h-[17px] w-[17px]" />
+
+                            <span>
+                                {language === "en"
+                                    ? "EN"
+                                    : language === "es"
+                                        ? "ES"
+                                        : "KRE"}
+                            </span>
+
+                            <ChevronDown
+                                className={`
+                h-4
+                w-4
+                transition-transform
+                duration-200
+                ${languageOpen ? "rotate-180" : ""}
+            `}
+                            />
+                        </button>
+
+                        <AnimatePresence>
+                            {languageOpen && (
+                                <motion.div
+                                    initial={{
+                                        opacity: 0,
+                                        y: 8,
+                                        scale: 0.98,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        y: 0,
+                                        scale: 1,
+                                    }}
+                                    exit={{
+                                        opacity: 0,
+                                        y: 8,
+                                        scale: 0.98,
+                                    }}
+                                    transition={{
+                                        duration: 0.18,
+                                    }}
+                                    className="
+                    absolute
+                    right-0
+                    top-[54px]
+                    z-[100]
+                    w-[190px]
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-2
+                    shadow-xl
+                "
+                                >
+                                    <LanguageOption
+                                        label="English"
+                                        shortLabel="EN"
+                                        selected={language === "en"}
+                                        onClick={() => {
+                                            setLanguage("en");
+                                            setLanguageOpen(false);
+                                        }}
+                                    />
+
+                                    <LanguageOption
+                                        label="Español"
+                                        shortLabel="ES"
+                                        selected={language === "es"}
+                                        onClick={() => {
+                                            setLanguage("es");
+                                            setLanguageOpen(false);
+                                        }}
+                                    />
+
+                                    <LanguageOption
+                                        label="Kreyòl"
+                                        shortLabel="KRE"
+                                        selected={language === "ht"}
+                                        onClick={() => {
+                                            setLanguage("ht");
+                                            setLanguageOpen(false);
+                                        }}
+                                    />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                     {/* INSTANT QUOTE */}
                     <Link
                         href="/#cost-estimator"
@@ -438,7 +567,7 @@ export default function Navbar() {
         xl:flex
     "
                     >
-                        <span>Instant Quote</span>
+                        <span>{t.navigation.instantQuote}</span>
 
                         <ArrowRight
                             className="
@@ -476,8 +605,7 @@ export default function Navbar() {
                     >
                         <Phone className="h-[18px] w-[18px]" />
 
-                        <span>Free Consultation</span>
-
+                        <span>{t.navigation.freeConsultation}</span>
                         <ChevronRight
                             className="
             h-4
@@ -599,7 +727,7 @@ export default function Navbar() {
                                         setMobileOpen(false)
                                     }
                                 >
-                                    Home
+                                    {t.navigation.home}
                                 </MobileLink>
 
                                 <MobileLink
@@ -608,7 +736,7 @@ export default function Navbar() {
                                         setMobileOpen(false)
                                     }
                                 >
-                                    About Us
+                                    {t.navigation.about}
                                 </MobileLink>
 
                                 <button
@@ -632,7 +760,7 @@ export default function Navbar() {
                                         text-[#082957]
                                     "
                                 >
-                                    Services
+                                    {t.navigation.services}
 
                                     <ChevronDown
                                         className={`
@@ -709,8 +837,7 @@ export default function Navbar() {
                                         setMobileOpen(false)
                                     }
                                 >
-                                    Blog
-                                </MobileLink>
+                                    {t.navigation.blog}                                </MobileLink>
 
                                 <MobileLink
                                     href="/#faq"
@@ -718,8 +845,84 @@ export default function Navbar() {
                                         setMobileOpen(false)
                                     }
                                 >
-                                    FAQs
+                                    {t.navigation.faq}
                                 </MobileLink>
+                            </div>
+                            {/* MOBILE LANGUAGE SELECTOR */}
+                            <div className="mb-6">
+                                <div className="mb-3 flex items-center gap-2 text-sm font-bold text-[#082957]">
+                                    <Globe2 className="h-5 w-5 text-[#075187]" />
+
+                                    <span>
+                                        {language === "en"
+                                            ? "Language"
+                                            : language === "es"
+                                                ? "Idioma"
+                                                : "Lang"}
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setLanguage("en")}
+                                        className={`
+                rounded-xl
+                border
+                px-3
+                py-3
+                text-sm
+                font-bold
+                transition-all
+                ${language === "en"
+                                                ? "border-[#075187] bg-[#075187] text-white"
+                                                : "border-slate-200 bg-[#f5f8fb] text-[#082957]"
+                                            }
+            `}
+                                    >
+                                        EN
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setLanguage("es")}
+                                        className={`
+                rounded-xl
+                border
+                px-3
+                py-3
+                text-sm
+                font-bold
+                transition-all
+                ${language === "es"
+                                                ? "border-[#075187] bg-[#075187] text-white"
+                                                : "border-slate-200 bg-[#f5f8fb] text-[#082957]"
+                                            }
+            `}
+                                    >
+                                        ES
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setLanguage("ht")}
+                                        className={`
+                rounded-xl
+                border
+                px-3
+                py-3
+                text-sm
+                font-bold
+                transition-all
+                ${language === "ht"
+                                                ? "border-[#075187] bg-[#075187] text-white"
+                                                : "border-slate-200 bg-[#f5f8fb] text-[#082957]"
+                                            }
+            `}
+                                    >
+                                        KRE
+                                    </button>
+                                </div>
                             </div>
                             <Link
                                 href="/#cost-estimator"
@@ -748,7 +951,7 @@ export default function Navbar() {
         hover:bg-[#e2b45d]
     "
                             >
-                                Instant Quote
+                                {t.navigation.instantQuote}
 
                                 <ArrowRight
                                     className="
@@ -797,7 +1000,7 @@ export default function Navbar() {
                             >
                                 <Phone className="h-[18px] w-[18px]" />
 
-                                <span>Free Consultation</span>
+                                <span>{t.navigation.freeConsultation}</span>
 
                                 <ChevronRight
                                     className="
@@ -830,9 +1033,11 @@ export default function Navbar() {
                 text-[#082957]
             "
                                     >
+
+
                                         <span className="flex items-center gap-3">
                                             <LogIn className="h-5 w-5 text-[#075187]" />
-                                            Admin Login
+                                            {t.navigation.adminLogin}
                                         </span>
 
                                         <ChevronRight className="h-4 w-4" />
@@ -889,6 +1094,7 @@ function NavLink({
     );
 }
 
+
 function MobileLink({
     href,
     children,
@@ -914,5 +1120,45 @@ function MobileLink({
         >
             {children}
         </Link>
+    );
+}
+function LanguageOption({
+    label,
+    shortLabel,
+    selected,
+    onClick,
+}: {
+    label: string;
+    shortLabel: string;
+    selected: boolean;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`
+                flex
+                w-full
+                items-center
+                justify-between
+                rounded-xl
+                px-3
+                py-3
+                text-left
+                text-sm
+                transition-colors
+                ${selected
+                    ? "bg-[#eef4f7] font-bold text-[#075187]"
+                    : "font-medium text-[#082957] hover:bg-slate-50"
+                }
+            `}
+        >
+            <span>{label}</span>
+
+            <span className="text-xs font-bold opacity-60">
+                {shortLabel}
+            </span>
+        </button>
     );
 }

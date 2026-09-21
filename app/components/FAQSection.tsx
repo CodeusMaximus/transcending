@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 import { useState } from "react";
 import {
     AnimatePresence,
@@ -7,130 +9,11 @@ import {
 } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
 
-const faqs = [
-    {
-        question:
-            "What can I expect during my first appointment?",
-        answer:
-            "Your first appointment focuses on getting a clear understanding of your concerns, symptoms, medical and psychiatric history, current medications, previous treatment experiences, and treatment goals. This information helps guide an individualized plan of care and allows you to ask questions about recommended next steps.",
-    },
-    {
-        question:
-            "How long is my first psychiatric appointment?",
-        answer:
-            "Initial psychiatric evaluations generally require more time than follow-up visits because your provider needs to learn about your history, current concerns, medications, and treatment goals. The length of your specific appointment will be provided when your visit is scheduled.",
-    },
-    {
-        question:
-            "Do you offer telehealth appointments?",
-        answer:
-            "Yes. Telehealth provides a convenient way to receive psychiatric care remotely when clinically appropriate and available in your location. You can ask about telehealth availability when scheduling your appointment.",
-    },
-    {
-        question:
-            "Do you offer in-person appointments?",
-        answer:
-            "Availability for in-person care can be discussed when you request an appointment. Solid Rock Behavioral Health serves patients from Brooklyn, New York, with telehealth also available when appropriate.",
-    },
-    {
-        question:
-            "Do you provide medication management?",
-        answer:
-            "Yes. Medication management may include reviewing your current medications, discussing treatment options, monitoring effectiveness and possible side effects, and making adjustments when clinically appropriate. Medication decisions are made individually based on your evaluation and ongoing response to treatment.",
-    },
-    {
-        question:
-            "What is a psychiatric evaluation?",
-        answer:
-            "A psychiatric evaluation is a comprehensive assessment designed to better understand your emotional, behavioral, and mental health concerns. Your provider may discuss your symptoms, history, current medications, previous treatment, daily functioning, and treatment goals before recommending appropriate next steps.",
-    },
-    {
-        question:
-            "What is psychopharmacology?",
-        answer:
-            "Psychopharmacology focuses on the use of medications in the treatment of mental health conditions. When medication is appropriate, your provider considers your symptoms, health history, previous medication experiences, potential benefits, possible side effects, and other relevant factors when discussing treatment options.",
-    },
-    {
-        question:
-            "What conditions do you treat?",
-        answer:
-            "Solid Rock Behavioral Health works with individuals experiencing a variety of mental and behavioral health concerns, including anxiety, depression, ADHD, bipolar disorder, PTSD, OCD, insomnia, psychosis, anger-related concerns, mood difficulties, and other psychiatric symptoms. Treatment recommendations depend on an individualized psychiatric assessment.",
-    },
-    {
-        question:
-            "How do I know if psychiatric care is right for me?",
-        answer:
-            "People seek psychiatric care for many reasons, including persistent changes in mood, anxiety, concentration, sleep, behavior, emotional well-being, or difficulty functioning in everyday life. An initial consultation or evaluation can help determine whether the services offered by the practice are appropriate for your needs.",
-    },
-    {
-        question:
-            "How do I schedule an appointment?",
-        answer:
-            "You can use the Book an Appointment option on this website to begin the scheduling process. Select the type of appointment you are interested in and provide the requested contact information. The practice can then coordinate the appropriate next steps with you.",
-    },
-    {
-        question:
-            "Do you offer a free consultation?",
-        answer:
-            "Yes. Solid Rock Behavioral Health offers a free 15-minute consultation. This gives you an opportunity to ask initial questions and determine whether scheduling a full appointment may be appropriate for you.",
-    },
-    {
-        question:
-            "What should I have available for my appointment?",
-        answer:
-            "It may be helpful to have a list of your current medications, relevant medical information, previous mental health treatment information, and any questions you would like to discuss. If the practice needs specific documents before your visit, you will be given instructions.",
-    },
-    {
-        question:
-            "Will I automatically be prescribed medication?",
-        answer:
-            "No. Scheduling a psychiatric appointment does not mean medication will automatically be prescribed. Treatment recommendations are based on your individual evaluation, clinical needs, history, and discussion with your provider. When appropriate, options may include medication, therapy recommendations, lifestyle considerations, additional evaluation, or a combination of approaches.",
-    },
-    {
-        question:
-            "Can my medication be changed during treatment?",
-        answer:
-            "Medication treatment may be adjusted when clinically appropriate. Your provider may consider how well a medication is working, possible side effects, changes in symptoms, and other health factors. Do not stop or change a prescribed medication without discussing it with the appropriate healthcare professional.",
-    },
-    {
-        question:
-            "How often will I need follow-up appointments?",
-        answer:
-            "The frequency of follow-up visits varies from person to person. It can depend on your treatment plan, symptoms, medications, response to treatment, and clinical needs. Your provider will discuss an appropriate follow-up schedule with you.",
-    },
-    {
-        question:
-            "Do you accept insurance?",
-        answer:
-            "The practice works with a number of insurance plans. Coverage and benefits can vary significantly between plans, even within the same insurance company. Contact the practice and your insurance carrier to verify participation, eligibility, benefits, deductibles, copayments, and other potential out-of-pocket costs before receiving services.",
-    },
-    {
-        question:
-            "What if my insurance is out of network?",
-        answer:
-            "Depending on your plan and circumstances, out-of-network options may be available. The practice can discuss available payment options and whether documentation such as a superbill may be available for you to submit to your insurance company for possible reimbursement. Reimbursement is determined by your insurance plan and is not guaranteed.",
-    },
-    {
-        question:
-            "Is my information kept private?",
-        answer:
-            "Solid Rock Behavioral Health takes patient privacy seriously. Health information is handled according to applicable privacy requirements and practice policies. The general contact and appointment forms on this website should not be used to send highly sensitive medical, psychiatric, or emergency information.",
-    },
-    {
-        question:
-            "What if I need to cancel or reschedule?",
-        answer:
-            "If you need to change an appointment, contact the practice as soon as possible. Cancellation and rescheduling requirements, including any applicable policies or fees, should be confirmed with the practice when your appointment is scheduled.",
-    },
-    {
-        question:
-            "What should I do if I am experiencing a mental health emergency?",
-        answer:
-            "Solid Rock Behavioral Health's website and appointment request forms are not emergency services and should not be used for urgent or life-threatening situations. If you are in immediate danger or experiencing a medical or psychiatric emergency, call 911 or go to the nearest emergency department. In the United States, you can also call or text 988 to reach the Suicide & Crisis Lifeline.",
-    },
-];
 
 export default function FAQSection() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const faqs = t.faq.items;
     const [openIndex, setOpenIndex] =
         useState<number | null>(0);
 
@@ -169,7 +52,7 @@ export default function FAQSection() {
                             text-[#b77b18]
                         "
                     >
-                        FAQs
+                        {t.faq.eyebrow}
                     </p>
 
                     <h2
@@ -184,7 +67,7 @@ export default function FAQSection() {
                             sm:text-[52px]
                         "
                     >
-                        Questions?
+                        {t.faq.titleLine1}
                         <br />
                         We&apos;re here to help.
                     </h2>
@@ -228,7 +111,7 @@ export default function FAQSection() {
                                 text-[#b77b18]
                             "
                         >
-                            Still have questions?
+                            {t.faq.still}
                         </p>
 
                         <p

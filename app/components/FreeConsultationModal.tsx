@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowRight,
@@ -20,7 +22,7 @@ type FreeConsultationModalProps = {
     onClose: () => void;
 };
 
-const reasons = [
+const reasonValues = [
     "Psychiatric Evaluation",
     "Medication Management",
     "Anxiety or Depression",
@@ -33,7 +35,7 @@ const reasons = [
     "Insurance / Cost Questions",
     "Not Sure Yet",
     "Other",
-];
+] as const;
 
 const insuranceOptions = [
     "Blue Cross / Blue Shield",
@@ -49,17 +51,43 @@ const insuranceOptions = [
     "I'm Not Sure",
 ];
 
-const availabilityOptions = [
+const availabilityValues = [
     "Morning",
     "Afternoon",
     "Evening",
     "Flexible",
-];
+] as const;
 
 export default function FreeConsultationModal({
     open,
     onClose,
 }: FreeConsultationModalProps) {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const c = t.consultation;
+
+    const reasons = reasonValues.map((value, index) => ({
+        value,
+        label: c.reasons[index],
+    }));
+
+    const insuranceChoices = insuranceOptions.map((value) => ({
+        value,
+        label:
+            value === "Other Insurance"
+                ? c.otherInsurance
+                : value === "Out of Network / Self Pay"
+                    ? c.outNetwork
+                    : value === "I'm Not Sure"
+                        ? c.notSure
+                        : value,
+    }));
+
+    const availabilityOptions = availabilityValues.map((value, index) => ({
+        value: value.toLowerCase(),
+        label: c.availability[index],
+    }));
+
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -129,7 +157,7 @@ export default function FreeConsultationModal({
 
                     <motion.button
                         type="button"
-                        aria-label="Close consultation form"
+                        aria-label={c.closeForm}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -201,7 +229,7 @@ export default function FreeConsultationModal({
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    aria-label="Close"
+                                    aria-label={c.close}
                                     className="
                                     absolute
                                     right-4
@@ -283,7 +311,7 @@ export default function FreeConsultationModal({
                                                         text-[#e2b45d]
                                                     "
                                                     >
-                                                        Get Started
+                                                        {c.getStarted}
                                                     </span>
                                                 </div>
 
@@ -300,9 +328,9 @@ export default function FreeConsultationModal({
                                                     sm:text-[40px]
                                                 "
                                                 >
-                                                    Free 15-Minute
+                                                    {c.free15}
                                                     <span className="block text-[#e2b45d]">
-                                                        Consultation
+                                                        {c.consultation}
                                                     </span>
                                                 </h2>
 
@@ -314,13 +342,7 @@ export default function FreeConsultationModal({
                                                     text-white/65
                                                 "
                                                 >
-                                                    Tell us how we can
-                                                    reach you and what
-                                                    you&apos;re looking
-                                                    for. We&apos;ll help
-                                                    determine an
-                                                    appropriate next
-                                                    step.
+                                                    {c.intro}
                                                 </p>
 
                                                 {/* FEATURES */}
@@ -330,24 +352,24 @@ export default function FreeConsultationModal({
                                                         icon={
                                                             Clock3
                                                         }
-                                                        title="15 Minutes"
-                                                        text="A brief introductory consultation."
+                                                        title={c.minutes}
+                                                        text={c.minutesText}
                                                     />
 
                                                     <Feature
                                                         icon={
                                                             HeartHandshake
                                                         }
-                                                        title="No Obligation"
-                                                        text="Ask questions before deciding on care."
+                                                        title={c.noObligation}
+                                                        text={c.noObligationText}
                                                     />
 
                                                     <Feature
                                                         icon={
                                                             ShieldCheck
                                                         }
-                                                        title="Private & Respectful"
-                                                        text="Only provide basic information needed to contact you."
+                                                        title={c.private}
+                                                        text={c.privateText}
                                                     />
                                                 </div>
 
@@ -370,7 +392,7 @@ export default function FreeConsultationModal({
                                                         text-white/40
                                                     "
                                                     >
-                                                        Prefer to call?
+                                                        {c.preferCall}
                                                     </p>
 
                                                     <a
@@ -433,7 +455,7 @@ export default function FreeConsultationModal({
                                                     text-[#a96f13]
                                                 "
                                                 >
-                                                    Consultation Request
+                                                    {c.request}
                                                 </p>
 
                                                 <h3
@@ -445,7 +467,7 @@ export default function FreeConsultationModal({
                                                     text-[#082957]
                                                 "
                                                 >
-                                                    How can we help?
+                                                    {c.howHelp}
                                                 </h3>
 
                                                 <p
@@ -456,10 +478,7 @@ export default function FreeConsultationModal({
                                                     text-[#718497]
                                                 "
                                                 >
-                                                    Please do not include
-                                                    sensitive medical or
-                                                    psychiatric information
-                                                    in this form.
+                                                    {c.noSensitive}
                                                 </p>
                                             </div>
 
@@ -478,7 +497,7 @@ export default function FreeConsultationModal({
                                                 "
                                                 >
                                                     <Field
-                                                        label="First Name"
+                                                        label={c.firstName}
                                                         required
                                                     >
                                                         <input
@@ -487,12 +506,12 @@ export default function FreeConsultationModal({
                                                             autoComplete="given-name"
                                                             required
                                                             className={inputClass}
-                                                            placeholder="First name"
+                                                            placeholder={c.firstNamePlaceholder}
                                                         />
                                                     </Field>
 
                                                     <Field
-                                                        label="Last Name"
+                                                        label={c.lastName}
                                                         required
                                                     >
                                                         <input
@@ -501,7 +520,7 @@ export default function FreeConsultationModal({
                                                             autoComplete="family-name"
                                                             required
                                                             className={inputClass}
-                                                            placeholder="Last name"
+                                                            placeholder={c.lastNamePlaceholder}
                                                         />
                                                     </Field>
                                                 </div>
@@ -518,7 +537,7 @@ export default function FreeConsultationModal({
                                                 "
                                                 >
                                                     <Field
-                                                        label="Email"
+                                                        label={c.email}
                                                         required
                                                     >
                                                         <input
@@ -532,7 +551,7 @@ export default function FreeConsultationModal({
                                                     </Field>
 
                                                     <Field
-                                                        label="Phone"
+                                                        label={c.phone}
                                                         required
                                                     >
                                                         <input
@@ -549,7 +568,7 @@ export default function FreeConsultationModal({
                                                 {/* CONTACT METHOD */}
 
                                                 <Field
-                                                    label="Preferred Contact Method"
+                                                    label={c.contactMethod}
                                                     required
                                                     className="mt-4"
                                                 >
@@ -563,14 +582,14 @@ export default function FreeConsultationModal({
                                                         <RadioCard
                                                             name="contactMethod"
                                                             value="phone"
-                                                            label="Phone"
+                                                            label={c.phone}
                                                             defaultChecked
                                                         />
 
                                                         <RadioCard
                                                             name="contactMethod"
                                                             value="email"
-                                                            label="Email"
+                                                            label={c.email}
                                                         />
                                                     </div>
                                                 </Field>
@@ -578,7 +597,7 @@ export default function FreeConsultationModal({
                                                 {/* REASON */}
 
                                                 <Field
-                                                    label="What would you like to discuss?"
+                                                    label={c.discuss}
                                                     required
                                                     className="mt-4"
                                                 >
@@ -591,34 +610,24 @@ export default function FreeConsultationModal({
                                                             value=""
                                                             disabled
                                                         >
-                                                            Select a reason
+                                                            {c.selectReason}
                                                         </option>
 
-                                                        {reasons.map(
-                                                            (
-                                                                reason
-                                                            ) => (
-                                                                <option
-                                                                    key={
-                                                                        reason
-                                                                    }
-                                                                    value={
-                                                                        reason
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        reason
-                                                                    }
-                                                                </option>
-                                                            )
-                                                        )}
+                                                        {reasons.map((reason) => (
+                                                            <option
+                                                                key={reason.value}
+                                                                value={reason.value}
+                                                            >
+                                                                {reason.label}
+                                                            </option>
+                                                        ))}
                                                     </Select>
                                                 </Field>
 
                                                 {/* INSURANCE */}
 
                                                 <Field
-                                                    label="Insurance"
+                                                    label={c.insurance}
                                                     className="mt-4"
                                                 >
                                                     <Select
@@ -626,35 +635,24 @@ export default function FreeConsultationModal({
                                                         defaultValue=""
                                                     >
                                                         <option value="">
-                                                            Select insurance
-                                                            (optional)
+                                                            {c.selectInsurance}
                                                         </option>
 
-                                                        {insuranceOptions.map(
-                                                            (
-                                                                insurance
-                                                            ) => (
-                                                                <option
-                                                                    key={
-                                                                        insurance
-                                                                    }
-                                                                    value={
-                                                                        insurance
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        insurance
-                                                                    }
-                                                                </option>
-                                                            )
-                                                        )}
+                                                        {insuranceChoices.map((insurance) => (
+                                                            <option
+                                                                key={insurance.value}
+                                                                value={insurance.value}
+                                                            >
+                                                                {insurance.label}
+                                                            </option>
+                                                        ))}
                                                     </Select>
                                                 </Field>
 
                                                 {/* AVAILABILITY */}
 
                                                 <Field
-                                                    label="Best Time to Reach You"
+                                                    label={c.bestTime}
                                                     className="mt-4"
                                                 >
                                                     <div
@@ -666,22 +664,14 @@ export default function FreeConsultationModal({
                                                         sm:grid-cols-4
                                                     "
                                                     >
-                                                        {availabilityOptions.map(
-                                                            (
-                                                                availability
-                                                            ) => (
-                                                                <RadioCard
-                                                                    key={
-                                                                        availability
-                                                                    }
-                                                                    name="availability"
-                                                                    value={availability.toLowerCase()}
-                                                                    label={
-                                                                        availability
-                                                                    }
-                                                                />
-                                                            )
-                                                        )}
+                                                        {availabilityOptions.map((availability) => (
+                                                            <RadioCard
+                                                                key={availability.value}
+                                                                name="availability"
+                                                                value={availability.value}
+                                                                label={availability.label}
+                                                            />
+                                                        ))}
                                                     </div>
                                                 </Field>
 
@@ -718,18 +708,7 @@ export default function FreeConsultationModal({
                                                         text-[#60758a]
                                                     "
                                                     >
-                                                        I consent to being
-                                                        contacted by Solid
-                                                        Rock Behavioral
-                                                        Health regarding
-                                                        this consultation
-                                                        request. I
-                                                        understand that
-                                                        submitting this
-                                                        form does not
-                                                        establish a
-                                                        provider-patient
-                                                        relationship.
+                                                        {c.consent}
                                                     </span>
                                                 </label>
 
@@ -754,18 +733,9 @@ export default function FreeConsultationModal({
                                                     "
                                                     >
                                                         <strong className="text-[#082957]">
-                                                            This form is not
-                                                            for emergencies.
+                                                            {c.emergencyStrong}
                                                         </strong>{" "}
-                                                        If you are
-                                                        experiencing an
-                                                        immediate emergency,
-                                                        call 911 or go to
-                                                        the nearest emergency
-                                                        department. In the
-                                                        U.S., you can also
-                                                        call or text 988 for
-                                                        crisis support.
+                                                        {c.emergency}
                                                     </p>
                                                 </div>
 
@@ -801,8 +771,8 @@ export default function FreeConsultationModal({
                                                 "
                                                 >
                                                     {loading
-                                                        ? "Sending Request..."
-                                                        : "Request Free Consultation"}
+                                                        ? c.sending
+                                                        : c.submit}
 
                                                     {!loading && (
                                                         <ArrowRight
@@ -837,6 +807,10 @@ function SuccessState({
 }: {
     onClose: () => void;
 }) {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const c = t.consultation;
+
     return (
         <div
             className="
@@ -906,7 +880,7 @@ function SuccessState({
                     sm:text-[42px]
                 "
             >
-                Request Received.
+                {c.received}
             </h2>
 
             <p
@@ -920,9 +894,7 @@ function SuccessState({
                     text-[#60758a]
                 "
             >
-                Thank you for reaching out to Solid Rock
-                Behavioral Health. Your consultation request has
-                been received.
+                {c.receivedText}
             </p>
 
             <div
@@ -945,7 +917,7 @@ function SuccessState({
                         text-[#a96f13]
                     "
                 >
-                    Prefer to speak with us?
+                    {c.preferSpeak}
                 </p>
 
                 <a
@@ -984,7 +956,7 @@ function SuccessState({
                     hover:bg-[#075187]
                 "
             >
-                Close
+                {c.close}
             </button>
         </div>
     );

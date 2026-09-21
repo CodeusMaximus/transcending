@@ -26,6 +26,8 @@ import {
     useMemo,
     useState,
 } from "react";
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 
 type BookAppointmentModalProps = {
     open: boolean;
@@ -40,32 +42,6 @@ type AppointmentType = {
     icon: ElementType;
 };
 
-const appointmentTypes: AppointmentType[] = [
-    {
-        id: "psychiatric-evaluation",
-        name: "Psychiatric Evaluation",
-        description:
-            "A comprehensive initial psychiatric assessment.",
-        duration: "60 min",
-        icon: Stethoscope,
-    },
-    {
-        id: "medication-management",
-        name: "Medication Management",
-        description:
-            "Follow-up medication review and treatment management.",
-        duration: "30 min",
-        icon: ShieldCheck,
-    },
-    {
-        id: "telehealth",
-        name: "Telehealth Appointment",
-        description:
-            "Meet with your provider through a secure virtual visit.",
-        duration: "30 min",
-        icon: Laptop,
-    },
-];
 
 /*
  * DEMO AVAILABILITY ONLY
@@ -92,6 +68,16 @@ export default function BookAppointmentModal({
     open,
     onClose,
 }: BookAppointmentModalProps) {
+    const { language, locale } = useLanguage();
+    const t = getTranslations(language);
+    const b = t.booking;
+
+    const appointmentTypes: AppointmentType[] = [
+        { id: "psychiatric-evaluation", name: b.appointmentTypes.evaluation.name, description: b.appointmentTypes.evaluation.description, duration: b.appointmentTypes.evaluation.duration, icon: Stethoscope },
+        { id: "medication-management", name: b.appointmentTypes.medication.name, description: b.appointmentTypes.medication.description, duration: b.appointmentTypes.medication.duration, icon: ShieldCheck },
+        { id: "telehealth", name: b.appointmentTypes.telehealth.name, description: b.appointmentTypes.telehealth.description, duration: b.appointmentTypes.telehealth.duration, icon: Laptop },
+    ];
+
     const [step, setStep] = useState(1);
 
     const [appointmentType, setAppointmentType] =
@@ -340,6 +326,7 @@ export default function BookAppointmentModal({
 
                                 {submitted ? (
                                     <BookingSuccess
+                                        appointmentTypes={appointmentTypes}
                                         appointmentType={
                                             appointmentType
                                         }
@@ -395,9 +382,7 @@ export default function BookAppointmentModal({
                                                         text-[#e2b45d]
                                                     "
                                                 >
-                                                    Solid Rock
-                                                    Behavioral
-                                                    Health
+                                                    {b.brand}
                                                 </span>
 
                                                 <h2
@@ -412,10 +397,8 @@ export default function BookAppointmentModal({
                                                         tracking-[-0.03em]
                                                     "
                                                 >
-                                                    Book an
-                                                    <span className="block text-[#e2b45d]">
-                                                        Appointment
-                                                    </span>
+                                                    {b.title1}
+                                                    <span className="block text-[#e2b45d]">{b.title2}</span>
                                                 </h2>
 
                                                 <p
@@ -439,7 +422,7 @@ export default function BookAppointmentModal({
                                                 <div className="mt-9 space-y-6">
                                                     <StepIndicator
                                                         number={1}
-                                                        title="Visit Type"
+                                                        title={b.steps.visitType}
                                                         active={
                                                             step ===
                                                             1
@@ -452,7 +435,7 @@ export default function BookAppointmentModal({
 
                                                     <StepIndicator
                                                         number={2}
-                                                        title="Date & Time"
+                                                        title={b.steps.dateTime}
                                                         active={
                                                             step ===
                                                             2
@@ -465,7 +448,7 @@ export default function BookAppointmentModal({
 
                                                     <StepIndicator
                                                         number={3}
-                                                        title="Your Information"
+                                                        title={b.steps.information}
                                                         active={
                                                             step ===
                                                             3
@@ -552,9 +535,9 @@ export default function BookAppointmentModal({
                                                     }}
                                                 >
                                                     <SectionHeading
-                                                        eyebrow="Step 1 of 3"
-                                                        title="What type of appointment do you need?"
-                                                        description="Select the option that best matches the care you're looking for."
+                                                        eyebrow={b.step1.eyebrow}
+                                                        title={b.step1.title}
+                                                        description={b.step1.description}
                                                     />
 
                                                     <div className="mt-7 space-y-3">
@@ -699,9 +682,9 @@ export default function BookAppointmentModal({
                                                     }}
                                                 >
                                                     <SectionHeading
-                                                        eyebrow="Step 2 of 3"
-                                                        title="Choose a date & time"
-                                                        description="Select an available appointment time."
+                                                        eyebrow={b.step2.eyebrow}
+                                                        title={b.step2.title}
+                                                        description={b.step2.description}
                                                     />
 
                                                     <div
@@ -1062,9 +1045,9 @@ export default function BookAppointmentModal({
                                                     }}
                                                 >
                                                     <SectionHeading
-                                                        eyebrow="Step 3 of 3"
-                                                        title="Almost there."
-                                                        description="Enter your contact information to complete your appointment request."
+                                                        eyebrow={b.step3.eyebrow}
+                                                        title={b.step3.title}
+                                                        description={b.step3.description}
                                                     />
 
                                                     {/* APPOINTMENT SUMMARY */}
@@ -1632,11 +1615,13 @@ function SummaryItem({
 ========================================================= */
 
 function BookingSuccess({
+    appointmentTypes,
     appointmentType,
     date,
     time,
     onClose,
 }: {
+    appointmentTypes: AppointmentType[];
     appointmentType: string;
     date: Date | null;
     time: string;

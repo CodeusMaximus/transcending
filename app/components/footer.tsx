@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,39 +20,7 @@ import {
     FaYoutube,
 } from "react-icons/fa6";
 
-/* =========================================================
-   SERVICES
-========================================================= */
 
-const services = [
-    [
-        "Psychiatric Evaluation",
-        "/services/psychiatric-evaluation",
-    ],
-    [
-        "Medication Management",
-        "/services/medication-management",
-    ],
-    [
-        "Psychopharmacology",
-        "/services/psychopharmacology",
-    ],
-    [
-        "Telehealth",
-        "/services/telehealth",
-    ],
-];
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-const navigation = [
-    ["Home", "/"],
-    ["Our Provider", "/Provider"],
-    ["Blog", "/blog"],
-    ["Contact Us", "/contact"],
-];
 
 /* =========================================================
    SOCIAL MEDIA
@@ -80,6 +52,21 @@ const socials = [
 ];
 
 export default function Footer() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const services = [
+        [t.services.psychiatricEvaluation, "/services/psychiatric-evaluation"],
+        [t.services.medicationManagement, "/services/medication-management"],
+        [t.services.psychopharmacology, "/services/psychopharmacology"],
+        [t.services.telehealth, "/services/telehealth"],
+    ];
+    const navigation = [
+        [t.footer.home, "/"],
+        [t.footer.provider, "/Provider"],
+        [t.footer.blog, "/blog"],
+        [t.footer.contactUs, "/contact"],
+    ];
+
     return (
         <footer
             className="
@@ -191,11 +178,7 @@ export default function Footer() {
                                 text-white/60
                             "
                         >
-                            Compassionate,
-                            evidence-based psychiatric care
-                            focused on helping you build a
-                            stronger foundation for mental
-                            wellness.
+                            {t.footer.description}
                         </p>
 
                         {/* =============================
@@ -213,7 +196,7 @@ export default function Footer() {
                                     text-[#e2b45d]
                                 "
                             >
-                                Connect With Us
+                                {t.footer.connect}
                             </p>
 
                             <div
@@ -286,7 +269,7 @@ export default function Footer() {
                                 text-[#e2b45d]
                             "
                         >
-                            Explore
+                            {t.footer.explore}
                         </h3>
 
                         <div
@@ -348,7 +331,7 @@ export default function Footer() {
                                 text-[#e2b45d]
                             "
                         >
-                            Services
+                            {t.footer.services}
                         </h3>
 
                         <div
@@ -393,7 +376,7 @@ export default function Footer() {
                                 text-[#e2b45d]
                             "
                         >
-                            Contact
+                            {t.footer.contact}
                         </h3>
 
                         <p
@@ -404,9 +387,7 @@ export default function Footer() {
                                 text-white/55
                             "
                         >
-                            Have questions or ready to begin
-                            your journey? We&apos;re here to
-                            help.
+                            {t.footer.contactIntro}
                         </p>
 
                         <div className="mt-6 space-y-5">
@@ -499,7 +480,7 @@ export default function Footer() {
                                         pt-1
                                     "
                                 >
-                                    HealthContact@srnpp.com
+                                    Health{t.footer.contact}@srnpp.com
                                 </span>
                             </a>
 
@@ -537,7 +518,7 @@ export default function Footer() {
                                 </span>
 
                                 <span className="pt-1">
-                                    Practice Location
+                                    {t.footer.location}
                                 </span>
                             </div>
                         </div>
@@ -572,7 +553,7 @@ export default function Footer() {
                                 hover:shadow-[0_14px_30px_rgba(226,180,93,0.22)]
                             "
                         >
-                            Contact Us
+                            {t.footer.contact} Us
 
                             <ArrowRight
                                 className="
@@ -602,7 +583,7 @@ export default function Footer() {
                                 hover:text-[#e2b45d]
                             "
                         >
-                            Free Consultation
+                            {t.footer.freeConsultation}
 
                             <ArrowUpRight className="h-4 w-4" />
                         </Link>
@@ -645,21 +626,21 @@ export default function Footer() {
                             href="/privacy"
                             className="transition hover:text-white"
                         >
-                            Privacy Policy
+                            {t.footer.privacyPolicy}
                         </Link>
 
                         <Link
                             href="/terms"
                             className="transition hover:text-white"
                         >
-                            Terms of Use
+                            {t.footer.terms}
                         </Link>
 
                         <Link
                             href="/notice-of-privacy-practices"
                             className="transition hover:text-white"
                         >
-                            Privacy Practices
+                            {t.footer.privacyPractices}
                         </Link>
                     </div>
                 </div>

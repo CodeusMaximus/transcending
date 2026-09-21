@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "./LanguageContext";
+import { getTranslations } from "./translations";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -20,52 +22,18 @@ import {
    Replace with approved, authentic testimonials before launch.
 ========================================================= */
 
-const testimonials = [
-    {
-        quote:
-            "I finally felt like I was speaking with someone who truly listened. I never felt rushed, and everything was explained in a way that made me feel comfortable and involved in my care.",
-        name: "Monica R.",
-        detail: "Patient",
-    },
-    {
-        quote:
-            "From my first appointment, I felt respected and understood. The approach was thoughtful, professional, and personal. It made a huge difference to feel like my concerns were actually being heard.",
-        name: "Daniel C.",
-        detail: "Patient",
-    },
-    {
-        quote:
-            "What stood out to me most was the compassion. I was nervous about reaching out for help, but I was treated with patience and without judgment. I left feeling hopeful about moving forward.",
-        name: "Ashley M.",
-        detail: "Patient",
-    },
-    {
-        quote:
-            "I appreciated how clearly everything was explained to me. I was able to ask questions, talk openly about my concerns, and understand the options available to me instead of feeling overwhelmed.",
-        name: "Kevin T.",
-        detail: "Patient",
-    },
-    {
-        quote:
-            "The care felt genuinely personalized. I never felt like just another appointment on the schedule. There was real attention to what I was experiencing and what I wanted to accomplish.",
-        name: "Samantha L.",
-        detail: "Patient",
-    },
-    {
-        quote:
-            "Finding the right support had been difficult for me. Here, I felt comfortable talking honestly about what I was going through and felt supported in taking things one step at a time.",
-        name: "Marcus J.",
-        detail: "Patient",
-    },
-    {
-        quote:
-            "The entire experience was warm, professional, and reassuring. I felt heard, respected, and included in the conversation about my care. That level of communication meant a lot to me.",
-        name: "Nicole B.",
-        detail: "Patient",
-    },
-];
+
 
 export default function TestimonialsSection() {
+    const { language } = useLanguage();
+    const t = getTranslations(language);
+    const testimonialNames = ["Monica R.", "Daniel C.", "Ashley M.", "Kevin T.", "Samantha L.", "Marcus J.", "Nicole B."];
+    const testimonials = t.testimonials.quotes.map((quote, index) => ({
+        quote,
+        name: testimonialNames[index],
+        detail: t.testimonials.patient,
+    }));
+
     const [currentIndex, setCurrentIndex] =
         useState(0);
 
@@ -246,7 +214,7 @@ export default function TestimonialsSection() {
                                 text-[#9a681c]
                             "
                         >
-                            Patient Experiences
+                            {t.testimonials.eyebrow}
                         </span>
                     </div>
 
@@ -264,9 +232,9 @@ export default function TestimonialsSection() {
                             lg:text-[60px]
                         "
                     >
-                        Care That Makes a{" "}
+                        {t.testimonials.titleLine1}{" "}
                         <span className="text-[#b67a1b]">
-                            Difference.
+                            {t.testimonials.titleLine2}
                         </span>
                     </h2>
 
@@ -282,10 +250,7 @@ export default function TestimonialsSection() {
                             sm:text-[18px]
                         "
                     >
-                        Every journey is different.
-                        Our goal is to provide thoughtful,
-                        compassionate care that helps every
-                        individual feel heard and supported.
+                        {t.testimonials.description}
                     </p>
                 </div>
 
@@ -448,7 +413,7 @@ export default function TestimonialsSection() {
                                             justify-center
                                             gap-1
                                         "
-                                        aria-label="5 star testimonial"
+                                        aria-label={t.testimonials.rating}
                                     >
                                         {Array.from({
                                             length: 5,
@@ -555,7 +520,7 @@ export default function TestimonialsSection() {
                         onClick={
                             previousTestimonial
                         }
-                        aria-label="Previous testimonial"
+                        aria-label={t.testimonials.previous}
                         className="
                             absolute
                             left-[-22px]
@@ -590,7 +555,7 @@ export default function TestimonialsSection() {
                         onClick={
                             nextTestimonial
                         }
-                        aria-label="Next testimonial"
+                        aria-label={t.testimonials.next}
                         className="
                             absolute
                             right-[-22px]
