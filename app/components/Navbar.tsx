@@ -514,15 +514,17 @@ export default function Navbar() {
                                         }}
                                     />
 
-                                    <LanguageOption
-                                        label="Español"
-                                        shortLabel="ES"
-                                        selected={language === "es"}
-                                        onClick={() => {
-                                            setLanguage("es");
-                                            setLanguageOpen(false);
-                                        }}
-                                    />
+                                    {/* TEMPORARILY DISABLED - SPANISH
+<LanguageOption
+    label="Español"
+    shortLabel="ES"
+    selected={language === "es"}
+    onClick={() => {
+        setLanguage("es");
+        setLanguageOpen(false);
+    }}
+/>
+*/}
 
                                     <LanguageOption
                                         label="Kreyòl"
@@ -883,25 +885,7 @@ export default function Navbar() {
                                         EN
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => setLanguage("es")}
-                                        className={`
-                rounded-xl
-                border
-                px-3
-                py-3
-                text-sm
-                font-bold
-                transition-all
-                ${language === "es"
-                                                ? "border-[#075187] bg-[#075187] text-white"
-                                                : "border-slate-200 bg-[#f5f8fb] text-[#082957]"
-                                            }
-            `}
-                                    >
-                                        ES
-                                    </button>
+
 
                                     <button
                                         type="button"
