@@ -20,9 +20,69 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Solid Rock Behavioral Health",
+  metadataBase: new URL("https://transcendingpsychiatry.com"),
+
+  title: {
+    default: "Transcending Psychiatry | Psychiatric Care in NJ & NYC",
+    template: "%s | Transcending Psychiatry",
+  },
+
   description:
-    "Compassionate, personalized psychiatric care.",
+    "Compassionate, personalized psychiatric care for adolescents and adults. Transcending Psychiatry provides psychiatric evaluations, medication management, therapy, and telehealth services in New Jersey and New York.",
+
+  keywords: [
+    "Transcending Psychiatry",
+    "psychiatrist New Jersey",
+    "psychiatric nurse practitioner New Jersey",
+    "psychiatric care New Jersey",
+    "psychiatric care New York",
+    "mental health services New Jersey",
+    "mental health services NYC",
+    "medication management",
+    "psychiatric evaluation",
+    "anxiety treatment",
+    "depression treatment",
+    "ADHD treatment",
+    "cognitive behavioral therapy",
+    "CBT therapy",
+    "child adolescent therapy",
+    "telehealth psychiatry",
+    "Joseph Spitalieri",
+  ],
+
+  authors: [{ name: "Transcending Psychiatry LLC" }],
+  creator: "Transcending Psychiatry LLC",
+  publisher: "Transcending Psychiatry LLC",
+
+  alternates: {
+    canonical: "/",
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://transcendingpsychiatry.com",
+    siteName: "Transcending Psychiatry",
+    title: "Transcending Psychiatry | Psychiatric Care in NJ & NYC",
+    description:
+      "Compassionate, personalized psychiatric care including evaluations, medication management, therapy, and telehealth services in New Jersey and New York.",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Transcending Psychiatry | Psychiatric Care in NJ & NYC",
+    description:
+      "Compassionate, personalized psychiatric care in New Jersey and New York.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -41,7 +101,7 @@ export default function RootLayout({
             <BookingProvider>
               <Navbar />
 
-              {children}
+              <main>{children}</main>
 
               <Footer />
             </BookingProvider>

@@ -1,921 +1,360 @@
 "use client";
 
-import { useLanguage } from "./LanguageContext";
-import { getTranslations } from "./translations";
-import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
     ArrowRight,
     Brain,
     Check,
-    ChevronRight,
-    CloudRain,
-    Flame,
-    Focus,
-    Moon,
-    Phone,
-    RefreshCcw,
+    ClipboardCheck,
+    HeartPulse,
+    MapPin,
+    Pill,
     ShieldCheck,
     Sparkles,
-    X,
+    Video,
 } from "lucide-react";
 
-import FreeConsultationModal from "./FreeConsultationModal";
-import BookAppointmentButton from "./BookAppointmentButton";
+const conditions = [
+    "Anxiety Disorders",
+    "Depression",
+    "Bipolar Disorder",
+    "Schizophrenia",
+    "Schizoaffective Disorder",
+    "Obsessive-Compulsive Disorder (OCD)",
+    "Post-Traumatic Stress Disorder (PTSD)",
+    "Personality Disorders",
+];
 
-import type { LucideIcon } from "lucide-react";
+const services = [
+    {
+        number: "01",
+        title: "Psychiatric Medication Management",
+        description:
+            "Thoughtful medication care built around you. We assess your needs, discuss options clearly, and monitor treatment over time to support your mental health goals.",
+        href: "/services/medication-management",
+        icon: Pill,
+        label: "Ongoing psychiatric care",
+    },
+    {
+        number: "02",
+        title: "Comprehensive Psychiatric Evaluations",
+        description:
+            "A thorough evaluation of your mental, emotional, and physical health—looking beyond symptoms to understand the whole person and guide an individualized treatment plan.",
+        href: "/services/psychiatric-evaluation",
+        icon: ClipboardCheck,
+        label: "Personalized assessment",
+    },
+];
 
-type ServiceItem = {
-    title: string;
-    description: string;
-    overview: string;
-    treatment: string;
-    areas: readonly string[];
-    supports: readonly string[];
-    number: string;
-    href: string;
-    icon: LucideIcon;
+const fadeUp = {
+    hidden: { opacity: 0, y: 26 },
+    visible: { opacity: 1, y: 0 },
 };
-
-
-
 
 export default function ServicesSection() {
-    const { language } = useLanguage();
-    const t = getTranslations(language);
-    const serviceIcons = [Focus, CloudRain, RefreshCcw, Flame, ShieldCheck, Moon, Sparkles, Brain];
-    const serviceHrefs = ["/services/adhd", "/services/anxiety-depression", "/services/bipolar-disorder", "/services/anger-management", "/services/ptsd", "/services/insomnia", "/services/psychosis", "/services/ocd"];
-    const services: ServiceItem[] = t.servicesSection.items.map((item, index) => ({
-        ...item,
-        number: String(index + 1).padStart(2, "0"),
-        href: serviceHrefs[index],
-        icon: serviceIcons[index],
-        overview: item.overview,
-        treatment: item.treatment,
-        supports: item.areas,
-    }));
-
-    const [consultationOpen, setConsultationOpen] =
-        useState(false);
-    const [selectedService, setSelectedService] =
-        useState<ServiceItem | null>(null);
-
     return (
-        <>
-            <section
-                className="
-                    relative
-                    overflow-hidden
-                    bg-[#f8fafb]
-                    py-20
-                    sm:py-24
-                    lg:py-32
-                "
+        <section
+            id="services"
+            className="relative overflow-hidden bg-[#fffaf6] py-20 sm:py-24 lg:py-32"
+        >
+            {/* TRANSCENDING-STYLE BACKGROUND RINGS */}
+            <div
+                className="pointer-events-none absolute inset-0 overflow-hidden"
+                aria-hidden="true"
             >
-                {/* DECORATIVE BACKGROUND */}
-                <div
-                    className="
-                        pointer-events-none
-                        absolute
-                        -right-[180px]
-                        -top-[180px]
-                        h-[520px]
-                        w-[520px]
-                        rounded-full
-                        border
-                        border-[#075187]/5
-                    "
-                />
+                <div className="absolute -right-[220px] top-[40px] h-[560px] w-[560px] rounded-full border-[2px] border-[#ff5a1f]/[0.08]" />
+                <div className="absolute -right-[95px] top-[40px] h-[560px] w-[560px] rounded-full border-[2px] border-[#ff7a2f]/[0.07]" />
+                <div className="absolute right-[30px] top-[40px] h-[560px] w-[560px] rounded-full border-[2px] border-[#ff9b58]/[0.07]" />
 
-                <div
-                    className="
-                        pointer-events-none
-                        absolute
-                        -right-[80px]
-                        -top-[80px]
-                        h-[320px]
-                        w-[320px]
-                        rounded-full
-                        border
-                        border-[#d79a27]/10
-                    "
-                />
+                <div className="absolute -left-40 bottom-[-180px] h-[430px] w-[430px] rounded-full bg-[#ff7426]/[0.045] blur-3xl" />
+            </div>
 
-                <div
-                    className="
-                        pointer-events-none
-                        absolute
-                        bottom-[-250px]
-                        left-[-250px]
-                        h-[600px]
-                        w-[600px]
-                        rounded-full
-                        bg-[#075187]/[0.025]
-                        blur-3xl
-                    "
-                />
-
-                <div
-                    className="
-                        relative
-                        z-10
-                        mx-auto
-                        max-w-[1440px]
-                        px-5
-                        sm:px-8
-                        lg:px-12
-                        xl:px-16
-                    "
-                >
-                    {/* =========================================
-                        SECTION INTRO
-                    ========================================= */}
-
-                    <div
-                        className="
-                            grid
-                            gap-8
-                            lg:grid-cols-[1fr_0.8fr]
-                            lg:items-end
-                            lg:gap-16
-                        "
+            <div className="relative z-10 mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12 xl:px-16">
+                {/* INTRO */}
+                <div className="grid gap-8 lg:grid-cols-[1.05fr_0.75fr] lg:items-end lg:gap-20">
+                    <motion.div
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.25 }}
+                        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
                     >
-                        <motion.div
-                            initial={{
-                                opacity: 0,
-                                y: 20,
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            viewport={{
-                                once: true,
-                                amount: 0.3,
-                            }}
-                            transition={{
-                                duration: 0.6,
-                            }}
-                        >
-                            {/* EYEBROW */}
-                            <div className="mb-5 flex items-center gap-3">
-                                <span
-                                    className="
-                                        h-px
-                                        w-10
-                                        bg-[#d79a27]
-                                    "
-                                />
-
-                                <p
-                                    className="
-                                        text-[11px]
-                                        font-bold
-                                        uppercase
-                                        tracking-[0.28em]
-                                        text-[#a96f13]
-                                        sm:text-[12px]
-                                    "
-                                >
-                                    {t.servicesSection.eyebrow}
-                                </p>
-                            </div>
-
-                            <h2
-                                className="
-                                    max-w-[720px]
-                                    font-serif
-                                    text-[42px]
-                                    font-semibold
-                                    leading-[1.02]
-                                    tracking-[-0.035em]
-                                    text-[#082957]
-                                    sm:text-[52px]
-                                    lg:text-[64px]
-                                "
-                            >
-                                {t.servicesSection.titleLine1}{" "}
-                                <span className="text-[#075187]">
-                                    {t.servicesSection.titleLine2}
-                                </span>
-                            </h2>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{
-                                opacity: 0,
-                                y: 20,
-                            }}
-                            whileInView={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            viewport={{
-                                once: true,
-                                amount: 0.3,
-                            }}
-                            transition={{
-                                duration: 0.6,
-                                delay: 0.1,
-                            }}
-                            className="
-                                lg:justify-self-end
-                            "
-                        >
-                            <p
-                                className="
-                                    max-w-[560px]
-                                    text-[16px]
-                                    leading-[1.8]
-                                    text-[#536a82]
-                                    sm:text-[17px]
-                                "
-                            >
-                                Compassionate, individualized
-                                psychiatric care designed to
-                                support a variety of mental
-                                health needs and help you move
-                                toward greater stability and
-                                well-being.
+                        <div className="mb-5 flex items-center gap-3">
+                            <span className="h-px w-10 bg-[#ff7426]" />
+                            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#e6601c] sm:text-[12px]">
+                                Our Services
                             </p>
-                        </motion.div>
-                    </div>
+                        </div>
 
-                    {/* =========================================
-                        SERVICE CARDS
-                    ========================================= */}
-
-                    <div
-                        className="
-                            mt-12
-                            grid
-                            gap-4
-                            sm:mt-16
-                            sm:grid-cols-2
-                            lg:mt-20
-                            lg:grid-cols-4
-                            lg:gap-5
-                        "
-                    >
-                        {services.map(
-                            (service, index) => {
-                                const Icon =
-                                    service.icon;
-
-                                return (
-                                    <motion.div
-                                        key={
-                                            service.title
-                                        }
-                                        initial={{
-                                            opacity: 0,
-                                            y: 30,
-                                        }}
-                                        whileInView={{
-                                            opacity: 1,
-                                            y: 0,
-                                        }}
-                                        viewport={{
-                                            once: true,
-                                            amount: 0.15,
-                                        }}
-                                        transition={{
-                                            duration: 0.55,
-                                            delay:
-                                                index *
-                                                0.055,
-                                        }}
-                                        className="h-full"
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setSelectedService(service)
-                                            }
-                                            className="
-                                                group
-                                                relative
-                                                flex
-                                                h-full
-                                                min-h-[290px]
-                                                flex-col
-                                                overflow-hidden
-                                                rounded-[28px]
-                                                border
-                                                border-[#082957]/[0.08]
-                                                bg-white
-                                                p-6
-                                                shadow-[0_10px_35px_rgba(8,41,87,0.055)]
-                                                transition-all
-                                                duration-500
-
-                                                hover:-translate-y-2
-                                                hover:border-[#d79a27]/40
-                                                hover:shadow-[0_25px_60px_rgba(8,41,87,0.13)]
-
-                                                sm:min-h-[310px]
-                                                sm:p-7
-                                                lg:p-8
-                                                text-left
-                                            "
-                                        >
-                                            <CardLines
-                                                variant={
-                                                    index
-                                                }
-                                            />
-
-                                            {/* GOLD TOP ACCENT */}
-                                            <div
-                                                className="
-                                                    absolute
-                                                    left-0
-                                                    top-0
-                                                    h-[3px]
-                                                    w-0
-                                                    bg-[#d79a27]
-                                                    transition-all
-                                                    duration-500
-                                                    group-hover:w-full
-                                                "
-                                            />
-
-                                            {/* SUBTLE CARD GLOW */}
-                                            <div
-                                                className="
-                                                    pointer-events-none
-                                                    absolute
-                                                    -right-24
-                                                    -top-24
-                                                    h-[220px]
-                                                    w-[220px]
-                                                    rounded-full
-                                                    bg-[#075187]/0
-                                                    blur-3xl
-                                                    transition-all
-                                                    duration-500
-                                                    group-hover:bg-[#075187]/[0.06]
-                                                "
-                                            />
-
-                                            {/* LARGE BACKGROUND NUMBER */}
-                                            <span
-                                                className="
-                                                    pointer-events-none
-                                                    absolute
-                                                    right-5
-                                                    top-2
-                                                    font-serif
-                                                    text-[72px]
-                                                    font-semibold
-                                                    leading-none
-                                                    text-[#082957]/[0.035]
-                                                    transition-all
-                                                    duration-500
-                                                    group-hover:text-[#d79a27]/[0.08]
-                                                    sm:text-[82px]
-                                                "
-                                            >
-                                                {
-                                                    service.number
-                                                }
-                                            </span>
-
-                                            {/* TOP */}
-                                            <div
-                                                className="
-                                                    relative
-                                                    z-10
-                                                    flex
-                                                    items-start
-                                                    justify-between
-                                                "
-                                            >
-                                                <div
-                                                    className="
-                                                        flex
-                                                        h-[58px]
-                                                        w-[58px]
-                                                        items-center
-                                                        justify-center
-                                                        rounded-[18px]
-                                                        border
-                                                        border-[#075187]/10
-                                                        bg-gradient-to-br
-                                                        from-[#eef5f8]
-                                                        to-[#e4eef3]
-                                                        text-[#075187]
-                                                        shadow-[0_8px_20px_rgba(7,81,135,0.08)]
-                                                        transition-all
-                                                        duration-500
-
-                                                        group-hover:-rotate-3
-                                                        group-hover:scale-105
-                                                        group-hover:border-[#d79a27]/25
-                                                        group-hover:bg-[#075187]
-                                                        group-hover:text-white
-                                                    "
-                                                >
-                                                    <Icon
-                                                        className="
-                                                            h-7
-                                                            w-7
-                                                        "
-                                                        strokeWidth={
-                                                            1.7
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <span
-                                                    className="
-                                                        relative
-                                                        z-10
-                                                        mt-1
-                                                        text-[11px]
-                                                        font-bold
-                                                        tracking-[0.18em]
-                                                        text-[#c28a27]
-                                                    "
-                                                >
-                                                    {
-                                                        service.number
-                                                    }
-                                                </span>
-                                            </div>
-
-                                            {/* CONTENT */}
-                                            <div
-                                                className="
-                                                    relative
-                                                    z-10
-                                                    mt-8
-                                                "
-                                            >
-                                                <h3
-                                                    className="
-                                                        font-serif
-                                                        text-[25px]
-                                                        font-semibold
-                                                        leading-[1.08]
-                                                        tracking-[-0.02em]
-                                                        text-[#082957]
-                                                        sm:text-[27px]
-                                                    "
-                                                >
-                                                    {
-                                                        service.title
-                                                    }
-                                                </h3>
-
-                                                <p
-                                                    className="
-                                                        mt-4
-                                                        text-[14px]
-                                                        leading-[1.75]
-                                                        text-[#60758a]
-                                                        sm:text-[15px]
-                                                    "
-                                                >
-                                                    {
-                                                        service.description
-                                                    }
-                                                </p>
-                                            </div>
-
-                                            {/* BOTTOM LINK */}
-                                            <div
-                                                className="
-                                                    relative
-                                                    z-10
-                                                    mt-auto
-                                                    flex
-                                                    items-end
-                                                    justify-between
-                                                    pt-8
-                                                "
-                                            >
-                                                <span
-                                                    className="
-                                                        text-[13px]
-                                                        font-bold
-                                                        text-[#075187]
-                                                        transition-colors
-                                                        group-hover:text-[#082957]
-                                                    "
-                                                >
-                                                    {t.footer.learnMore}
-                                                </span>
-
-                                                <span
-                                                    className="
-                                                        flex
-                                                        h-10
-                                                        w-10
-                                                        items-center
-                                                        justify-center
-                                                        rounded-full
-                                                        border
-                                                        border-[#082957]/10
-                                                        bg-[#f4f7f9]
-                                                        text-[#075187]
-                                                        transition-all
-                                                        duration-300
-
-                                                        group-hover:border-[#075187]
-                                                        group-hover:bg-[#075187]
-                                                        group-hover:text-white
-                                                    "
-                                                >
-                                                    <ArrowRight
-                                                        className="
-                                                            h-4
-                                                            w-4
-                                                            transition-transform
-                                                            duration-300
-                                                            group-hover:translate-x-0.5
-                                                        "
-                                                    />
-                                                </span>
-                                            </div>
-                                        </button>
-                                    </motion.div>
-                                );
-                            }
-                        )}
-                    </div>
-
-                    {/* =========================================
-                        BOTTOM CTA
-                    ========================================= */}
+                        <h2 className="max-w-[760px] text-[42px] font-semibold leading-[1.03] tracking-[-0.04em] text-[#252525] sm:text-[54px] lg:text-[66px]">
+                            Care designed around{" "}
+                            <span className="text-[#ff7426]">the whole you.</span>
+                        </h2>
+                    </motion.div>
 
                     <motion.div
-                        initial={{
-                            opacity: 0,
-                            y: 20,
-                        }}
-                        whileInView={{
-                            opacity: 1,
-                            y: 0,
-                        }}
-                        viewport={{
-                            once: true,
-                        }}
+                        variants={fadeUp}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.25 }}
                         transition={{
-                            duration: 0.6,
-                            delay: 0.15,
+                            duration: 0.65,
+                            delay: 0.08,
+                            ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="
-                            mt-12
-                            flex
-                            flex-col
-                            items-start
-                            justify-between
-                            gap-6
-                            rounded-[26px]
-                            border
-                            border-[#082957]/10
-                            bg-[#eef4f6]
-                            px-6
-                            py-6
-
-                            sm:flex-row
-                            sm:items-center
-                            sm:px-8
-
-                            lg:mt-16
-                            lg:px-10
-                            lg:py-8
-                        "
                     >
-                        <div>
-                            <p
-                                className="
-                                    font-serif
-                                    text-[22px]
-                                    font-semibold
-                                    text-[#082957]
-                                    sm:text-[25px]
-                                "
-                            >
-                                Not sure where to
-                                begin?
-                            </p>
-
-                            <p
-                                className="
-                                    mt-1
-                                    max-w-[650px]
-                                    text-[14px]
-                                    leading-6
-                                    text-[#60758a]
-                                    sm:text-[15px]
-                                "
-                            >
-                                Start with a
-                                consultation and take
-                                the first step toward
-                                finding the care that
-                                fits your needs.
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={() =>
-                                setConsultationOpen(
-                                    true
-                                )
-                            }
-                            className="
-                                group
-                                inline-flex
-                                min-h-[54px]
-                                w-full
-                                shrink-0
-                                items-center
-                                justify-center
-                                gap-3
-                                rounded-full
-                                bg-[#075187]
-                                px-6
-                                py-4
-                                text-[15px]
-                                font-semibold
-                                text-white
-                                shadow-[0_12px_30px_rgba(7,81,135,0.28)]
-                                transition-all
-                                duration-300
-                                hover:-translate-y-0.5
-                                hover:bg-[#063f6b]
-                                active:scale-[0.98]
-
-                                sm:w-auto
-                            "
-                        >
-                            <Phone className="h-[18px] w-[18px]" />
-
-                            <span>
-                                {t.servicesSection.freeConsultation}
-                            </span>
-
-                            <ChevronRight
-                                className="
-                                    h-4
-                                    w-4
-                                    transition-transform
-                                    group-hover:translate-x-1
-                                "
-                            />
-                        </button>
+                        <p className="max-w-[560px] text-[16px] leading-[1.85] text-[#66615e] sm:text-[17px]">
+                            Personalized, client-centered psychiatric care that considers
+                            your symptoms, experiences, lifestyle, and overall well-being—not
+                            just a diagnosis.
+                        </p>
                     </motion.div>
                 </div>
-            </section>
 
-            <ServiceDetailModal
-                service={selectedService}
-                onClose={() => setSelectedService(null)}
-            />
+                {/* PRIMARY SERVICES */}
+                <div className="mt-14 grid gap-5 lg:mt-20 lg:grid-cols-2 lg:gap-6">
+                    {services.map((service, index) => {
+                        const Icon = service.icon;
 
-            {/* =========================================
-                FREE CONSULTATION MODAL
-            ========================================= */}
+                        return (
+                            <motion.div
+                                key={service.title}
+                                variants={fadeUp}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true, amount: 0.18 }}
+                                transition={{
+                                    duration: 0.6,
+                                    delay: index * 0.08,
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                                className="h-full"
+                            >
+                                <Link
+                                    href={service.href}
+                                    className="group relative flex h-full min-h-[390px] flex-col overflow-hidden rounded-[34px] border border-[#3a2d25]/[0.08] bg-white/75 p-7 shadow-[0_18px_55px_rgba(87,56,34,0.07)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-[#ff7426]/25 hover:shadow-[0_30px_75px_rgba(87,56,34,0.12)] sm:p-9 lg:p-10"
+                                >
+                                    {/* card glow */}
+                                    <div className="pointer-events-none absolute -right-24 -top-24 h-[260px] w-[260px] rounded-full bg-[#ff7426]/0 blur-3xl transition-all duration-500 group-hover:bg-[#ff7426]/[0.07]" />
 
-            <FreeConsultationModal
-                open={consultationOpen}
-                onClose={() =>
-                    setConsultationOpen(false)
-                }
-            />
-        </>
-    );
-}
+                                    {/* subtle ring artwork */}
+                                    <svg
+                                        viewBox="0 0 260 180"
+                                        className="pointer-events-none absolute -right-8 -top-2 h-[190px] w-[275px] opacity-[0.11] transition-all duration-700 group-hover:-translate-x-2 group-hover:translate-y-1 group-hover:opacity-[0.2]"
+                                        aria-hidden="true"
+                                    >
+                                        <circle cx="118" cy="70" r="60" fill="none" stroke="#FF5A1F" strokeWidth="2" />
+                                        <circle cx="154" cy="70" r="60" fill="none" stroke="#FF7A2F" strokeWidth="2" />
+                                        <circle cx="190" cy="70" r="60" fill="none" stroke="#FF9B58" strokeWidth="2" />
+                                    </svg>
 
+                                    <div className="relative z-10 flex items-start justify-between">
+                                        <div className="flex h-[64px] w-[64px] items-center justify-center rounded-[20px] border border-[#ff7426]/15 bg-[#fff2e9] text-[#f36f2a] shadow-[0_10px_25px_rgba(255,116,38,0.10)] transition-all duration-500 group-hover:-rotate-3 group-hover:scale-105 group-hover:bg-[#ff7426] group-hover:text-white">
+                                            <Icon className="h-7 w-7" strokeWidth={1.7} />
+                                        </div>
 
-type ServiceDetailModalProps = {
-    service: ServiceItem | null;
-    onClose: () => void;
-};
+                                        <span className="text-[12px] font-bold tracking-[0.18em] text-[#ff7426]/70">
+                                            {service.number}
+                                        </span>
+                                    </div>
 
-function ServiceDetailModal({
-    service,
-    onClose,
-}: ServiceDetailModalProps) {
-    const { language } = useLanguage();
-    const t = getTranslations(language);
+                                    <div className="relative z-10 mt-12 max-w-[560px]">
+                                        <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.22em] text-[#e6601c]">
+                                            {service.label}
+                                        </p>
 
-    if (!service) return null;
+                                        <h3 className="max-w-[500px] text-[29px] font-semibold leading-[1.08] tracking-[-0.03em] text-[#292725] sm:text-[34px]">
+                                            {service.title}
+                                        </h3>
 
-    const Icon = service.icon;
+                                        <p className="mt-5 max-w-[540px] text-[15px] leading-[1.8] text-[#6b6662] sm:text-[16px]">
+                                            {service.description}
+                                        </p>
+                                    </div>
 
-    return (
-        <div
-            className="fixed inset-0 z-[260] overflow-y-auto overscroll-y-contain bg-[#061f43]/70 px-3 py-4 backdrop-blur-sm sm:px-5 sm:py-7"
-            style={{ WebkitOverflowScrolling: "touch" }}
-            onClick={onClose}
-            role="presentation"
-        >
-            <div className="flex min-h-full items-start justify-center sm:items-center">
+                                    <div className="relative z-10 mt-auto flex items-center justify-between pt-9">
+                                        <span className="text-[14px] font-semibold text-[#34302d] transition-colors group-hover:text-[#e6601c]">
+                                            Explore service
+                                        </span>
+
+                                        <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#ff7426]/15 bg-[#fff7f1] text-[#ff7426] transition-all duration-300 group-hover:bg-[#ff7426] group-hover:text-white">
+                                            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                                        </span>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+
+                {/* CONDITIONS TREATED */}
                 <motion.div
-                    initial={{ opacity: 0, y: 24, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.28, ease: "easeOut" }}
-                    onClick={(event) => event.stopPropagation()}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="service-modal-title"
-                    className="relative w-full max-w-[940px] overflow-hidden rounded-[30px] border border-white/60 bg-[#fffdf9] shadow-[0_35px_100px_rgba(6,31,67,0.30)]"
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative mt-6 overflow-hidden rounded-[36px] border border-[#3a2d25]/[0.08] bg-[#2c2927] shadow-[0_24px_70px_rgba(45,35,29,0.13)]"
                 >
-                    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-                        <div className="absolute -right-24 -top-24 h-[300px] w-[300px] rounded-full border-[2px] border-[#E9A6B2]/35 bg-[#E9A6B2]/[0.07]" />
-                        <div className="absolute -right-4 -top-4 h-[170px] w-[170px] rounded-full border-[2px] border-[#E7BC61]/45 bg-[#E7BC61]/[0.06]" />
-                        <div className="absolute -bottom-28 -left-24 h-[300px] w-[300px] rounded-full bg-[#075187]/[0.05] blur-3xl" />
-                    </div>
+                    {/* warm decorative glow */}
+                    <div
+                        className="pointer-events-none absolute -right-32 -top-40 h-[480px] w-[480px] rounded-full border border-[#ff7426]/20"
+                        aria-hidden="true"
+                    />
+                    <div
+                        className="pointer-events-none absolute -right-10 -top-40 h-[480px] w-[480px] rounded-full border border-[#ff8b48]/15"
+                        aria-hidden="true"
+                    />
+                    <div
+                        className="pointer-events-none absolute right-24 -top-40 h-[480px] w-[480px] rounded-full border border-[#ffad78]/10"
+                        aria-hidden="true"
+                    />
 
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        aria-label={t.servicesSection.close}
-                        className="absolute right-4 top-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-[#082957]/10 bg-white/90 text-[#082957] shadow-sm transition hover:bg-[#082957] hover:text-white sm:right-6 sm:top-6"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-
-                    <div className="relative z-10 grid lg:grid-cols-[0.78fr_1.22fr]">
-                        <div className="bg-gradient-to-br from-[#082957] via-[#075187] to-[#0a638e] p-7 text-white sm:p-9 lg:p-10">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-[20px] border border-white/15 bg-white/10 shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
-                                <Icon className="h-8 w-8 text-[#f2c66d]" strokeWidth={1.7} />
+                    <div className="relative z-10 grid lg:grid-cols-[0.82fr_1.18fr]">
+                        <div className="border-b border-white/10 p-7 sm:p-9 lg:border-b-0 lg:border-r lg:p-11 xl:p-12">
+                            <div className="flex h-[62px] w-[62px] items-center justify-center rounded-[20px] border border-white/10 bg-white/[0.07] text-[#ff8a42] backdrop-blur-xl">
+                                <Brain className="h-7 w-7" strokeWidth={1.7} />
                             </div>
 
-                            <p className="mt-8 text-[11px] font-bold uppercase tracking-[0.26em] text-[#f2c66d]">
-                                {t.servicesSection.treatmentFocus}
+                            <p className="mt-8 text-[11px] font-bold uppercase tracking-[0.25em] text-[#ff8a42]">
+                                Conditions Treated
                             </p>
 
-                            <h3
-                                id="service-modal-title"
-                                className="mt-3 font-serif text-[34px] font-semibold leading-[1.04] tracking-[-0.03em] sm:text-[42px]"
-                            >
-                                {service.title}
+                            <h3 className="mt-4 max-w-[470px] text-[34px] font-semibold leading-[1.08] tracking-[-0.035em] text-white sm:text-[42px]">
+                                Support for a wide range of mental health needs.
                             </h3>
 
-                            <p className="mt-5 text-[15px] leading-7 text-white/75">
-                                {t.servicesSection.focusText}
+                            <p className="mt-5 max-w-[500px] text-[15px] leading-[1.8] text-white/60">
+                                Treatment begins with understanding the individual behind the
+                                symptoms and developing care around their unique needs.
                             </p>
-
-                            <div className="mt-8 h-px w-full bg-white/15" />
-
-                            <p className="mt-7 text-[12px] font-bold uppercase tracking-[0.2em] text-white/55">
-                                {t.servicesSection.areas}
-                            </p>
-
-                            <div className="mt-4 space-y-3">
-                                {service.supports.map((item) => (
-                                    <div key={item} className="flex items-start gap-3">
-                                        <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#f2c66d]/15 text-[#f2c66d]">
-                                            <Check className="h-3 w-3" strokeWidth={2.5} />
-                                        </span>
-                                        <span className="text-[14px] leading-6 text-white/80">
-                                            {item}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
 
-                        <div className="relative p-7 sm:p-9 lg:p-11">
-                            <div className="max-w-[610px]">
-                                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#b67a1b]">
-                                    {service.title}
-                                </p>
-
-                                <h4 className="mt-3 font-serif text-[28px] font-semibold tracking-[-0.025em] text-[#082957] sm:text-[32px]">
-                                    {t.servicesSection.whatIsIt}
-                                </h4>
-
-                                <p className="mt-4 text-[15px] leading-[1.85] text-[#536a82]">
-                                    {service.overview}
-                                </p>
-
-                                <div className="my-7 h-px bg-gradient-to-r from-[#E9A6B2]/60 via-[#E7BC61]/55 to-transparent" />
-
-                                <h4 className="font-serif text-[28px] font-semibold tracking-[-0.025em] text-[#082957] sm:text-[32px]">
-                                    {t.servicesSection.approach}
-                                </h4>
-
-                                <p className="mt-4 text-[15px] leading-[1.85] text-[#536a82]">
-                                    {service.treatment}
-                                </p>
-
-                                <div className="mt-8 rounded-[22px] border border-[#082957]/10 bg-gradient-to-br from-[#f4f8fa] via-white to-[#fff7e7] p-5 sm:p-6">
-                                    <p className="font-serif text-[20px] font-semibold text-[#082957]">
-                                        {t.servicesSection.ready}
-                                    </p>
-                                    <p className="mt-2 text-[13px] leading-6 text-[#60758a]">
-                                        {t.servicesSection.readyText}
-                                    </p>
-
-                                    <div
-                                        className="mt-5"
-                                        onClick={onClose}
+                        <div className="p-7 sm:p-9 lg:p-11 xl:p-12">
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                {conditions.map((condition, index) => (
+                                    <motion.div
+                                        key={condition}
+                                        initial={{ opacity: 0, x: 14 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.4, delay: index * 0.035 }}
+                                        className="group flex min-h-[62px] items-center gap-3 rounded-[18px] border border-white/[0.08] bg-white/[0.045] px-4 py-3.5 transition-all duration-300 hover:border-[#ff7426]/30 hover:bg-white/[0.08]"
                                     >
-                                        <BookAppointmentButton
-                                            label={t.servicesSection.book}
-                                            className="w-full sm:w-auto"
-                                        />
-                                    </div>
-                                </div>
+                                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#ff7426]/15 text-[#ff8a42]">
+                                            <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                                        </span>
+                                        <span className="text-[14px] font-medium leading-5 text-white/80 sm:text-[15px]">
+                                            {condition}
+                                        </span>
+                                    </motion.div>
+                                ))}
+                            </div>
 
-                                <p className="mt-5 text-[11px] leading-5 text-[#7b8d9e]">
-                                    Information on this page is educational and is not a diagnosis or a substitute for an individualized clinical evaluation. If you are experiencing an emergency or are in immediate danger, call 911 or go to the nearest emergency department.
+                            <div className="mt-6 flex items-center gap-3 rounded-[18px] border border-[#ff7426]/20 bg-[#ff7426]/10 px-5 py-4">
+                                <Sparkles className="h-5 w-5 shrink-0 text-[#ff8a42]" />
+                                <p className="text-[13px] leading-6 text-white/70 sm:text-[14px]">
+                                    Care is available for adolescents and adults ages 12 and up.
                                 </p>
                             </div>
                         </div>
                     </div>
                 </motion.div>
+
+                {/* ACCESS / LOCATION STRIP */}
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.6 }}
+                    className="mt-6 grid overflow-hidden rounded-[30px] border border-[#3a2d25]/[0.08] bg-white/75 shadow-[0_15px_45px_rgba(87,56,34,0.06)] backdrop-blur-xl md:grid-cols-3"
+                >
+                    <AccessItem
+                        icon={MapPin}
+                        eyebrow="New Jersey"
+                        title="In-Person Care"
+                        text="Meet face-to-face in a welcoming clinical setting."
+                    />
+                    <AccessItem
+                        icon={Video}
+                        eyebrow="New York + New Jersey"
+                        title="Telehealth"
+                        text="Convenient virtual psychiatric care from wherever you feel comfortable."
+                        border
+                    />
+                    <AccessItem
+                        icon={ShieldCheck}
+                        eyebrow="Ages 12+"
+                        title="Adolescents & Adults"
+                        text="Individualized support across different stages of life."
+                        border
+                    />
+                </motion.div>
+
+                {/* CTA */}
+                <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="mt-12 flex flex-col items-start justify-between gap-6 rounded-[30px] bg-[#fff0e5] px-7 py-7 sm:px-9 sm:py-8 lg:mt-16 lg:flex-row lg:items-center lg:px-11"
+                >
+                    <div>
+                        <p className="text-[23px] font-semibold tracking-[-0.025em] text-[#2c2927] sm:text-[27px]">
+                            Ready to take the next step?
+                        </p>
+                        <p className="mt-2 max-w-[680px] text-[14px] leading-6 text-[#6b625c] sm:text-[15px]">
+                            Start with a conversation and find the care that fits your needs.
+                        </p>
+                    </div>
+
+                    <Link
+                        href="/book"
+                        className="group inline-flex min-h-[54px] w-full shrink-0 items-center justify-center gap-3 rounded-full bg-[#ff7426] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_rgba(255,116,38,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#eb641b] hover:shadow-[0_16px_38px_rgba(255,116,38,0.32)] sm:w-auto"
+                    >
+                        Book Appointment
+                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                </motion.div>
             </div>
-        </div>
+        </section>
     );
 }
 
-function CardLines({
-    variant,
+function AccessItem({
+    icon: Icon,
+    eyebrow,
+    title,
+    text,
+    border = false,
 }: {
-    variant: number;
+    icon: typeof HeartPulse;
+    eyebrow: string;
+    title: string;
+    text: string;
+    border?: boolean;
 }) {
-    const isGold = variant % 2 === 1;
-
-    const stroke = isGold
-        ? "#D79A27"
-        : "#075187";
-
     return (
-        <svg
-            viewBox="0 0 400 300"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            className="
-                pointer-events-none
-                absolute
-                -bottom-10
-                -right-12
-                h-[210px]
-                w-[280px]
-                opacity-[0.12]
-                transition-all
-                duration-700
-
-                group-hover:-translate-x-2
-                group-hover:-translate-y-2
-                group-hover:opacity-[0.22]
-
-                sm:h-[230px]
-                sm:w-[310px]
-            "
+        <div
+            className={`flex gap-4 p-6 sm:p-7 lg:p-8 ${border ? "border-t border-[#3a2d25]/[0.07] md:border-l md:border-t-0" : ""
+                }`}
         >
-            <path
-                d="M435 63C356 26 306 38 272 81C235 128 261 170 218 205C174 241 111 207 66 245C37 270 28 302 30 330"
-                stroke={stroke}
-                strokeWidth="2"
-            />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-[#fff0e5] text-[#ff7426]">
+                <Icon className="h-[22px] w-[22px]" strokeWidth={1.8} />
+            </div>
 
-            <path
-                d="M443 91C368 56 322 66 291 105C258 147 280 186 240 220C199 254 140 224 98 257C70 279 59 307 61 337"
-                stroke={stroke}
-                strokeWidth="1.5"
-                opacity="0.75"
-            />
-
-            <path
-                d="M450 120C382 89 340 96 312 131C282 168 300 205 264 235C228 265 174 239 137 268C112 287 101 312 103 341"
-                stroke={stroke}
-                strokeWidth="1.25"
-                opacity="0.55"
-            />
-
-            <path
-                d="M458 151C396 123 358 128 333 159C306 192 322 224 290 251C258 278 210 255 176 281C154 298 144 319 146 345"
-                stroke={stroke}
-                strokeWidth="1"
-                opacity="0.4"
-            />
-
-            <circle
-                cx="318"
-                cy="94"
-                r="5"
-                fill={stroke}
-                opacity="0.75"
-            />
-
-            <circle
-                cx="318"
-                cy="94"
-                r="12"
-                stroke={stroke}
-                strokeWidth="1"
-                opacity="0.3"
-            />
-        </svg>
+            <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#e6601c]">
+                    {eyebrow}
+                </p>
+                <h4 className="mt-1.5 text-[18px] font-semibold tracking-[-0.015em] text-[#2c2927]">
+                    {title}
+                </h4>
+                <p className="mt-2 text-[13px] leading-6 text-[#726b66]">{text}</p>
+            </div>
+        </div>
     );
 }

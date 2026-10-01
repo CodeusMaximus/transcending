@@ -26,8 +26,6 @@ import {
     useMemo,
     useState,
 } from "react";
-import { useLanguage } from "./LanguageContext";
-import { getTranslations } from "./translations";
 
 type BookAppointmentModalProps = {
     open: boolean;
@@ -68,14 +66,28 @@ export default function BookAppointmentModal({
     open,
     onClose,
 }: BookAppointmentModalProps) {
-    const { language, locale } = useLanguage();
-    const t = getTranslations(language);
-    const b = t.booking;
-
     const appointmentTypes: AppointmentType[] = [
-        { id: "psychiatric-evaluation", name: b.appointmentTypes.evaluation.name, description: b.appointmentTypes.evaluation.description, duration: b.appointmentTypes.evaluation.duration, icon: Stethoscope },
-        { id: "medication-management", name: b.appointmentTypes.medication.name, description: b.appointmentTypes.medication.description, duration: b.appointmentTypes.medication.duration, icon: ShieldCheck },
-        { id: "telehealth", name: b.appointmentTypes.telehealth.name, description: b.appointmentTypes.telehealth.description, duration: b.appointmentTypes.telehealth.duration, icon: Laptop },
+        {
+            id: "psychiatric-evaluation",
+            name: "Comprehensive Psychiatric Evaluation",
+            description: "A comprehensive assessment to better understand your symptoms, history, concerns, and treatment goals.",
+            duration: "Initial Visit",
+            icon: Stethoscope,
+        },
+        {
+            id: "medication-management",
+            name: "Psychiatric Medication Management",
+            description: "Personalized medication care with ongoing monitoring, education, and thoughtful treatment adjustments.",
+            duration: "Follow-Up",
+            icon: ShieldCheck,
+        },
+        {
+            id: "telehealth",
+            name: "Telehealth Appointment",
+            description: "Convenient virtual psychiatric care for eligible patients located in New York or New Jersey.",
+            duration: "NY & NJ",
+            icon: Laptop,
+        },
     ];
 
     const [step, setStep] = useState(1);
@@ -209,7 +221,7 @@ export default function BookAppointmentModal({
                             inset-0
                             z-[300]
                             cursor-default
-                            bg-[#03162f]/75
+                            bg-[#1f1f1f]/75
                             backdrop-blur-[6px]
                         "
                     />
@@ -312,12 +324,12 @@ export default function BookAppointmentModal({
                                         justify-center
                                         rounded-full
                                         border
-                                        border-[#082957]/10
+                                        border-[#252525]/10
                                         bg-white/95
-                                        text-[#082957]
+                                        text-[#252525]
                                         shadow-sm
                                         transition
-                                        hover:bg-[#082957]
+                                        hover:bg-[#252525]
                                         hover:text-white
                                     "
                                 >
@@ -354,7 +366,7 @@ export default function BookAppointmentModal({
                                             className="
                                                 relative
                                                 overflow-hidden
-                                                bg-[#082957]
+                                                bg-[#252525]
                                                 px-6
                                                 py-7
                                                 text-white
@@ -379,10 +391,10 @@ export default function BookAppointmentModal({
                                                         font-bold
                                                         uppercase
                                                         tracking-[0.18em]
-                                                        text-[#e2b45d]
+                                                        text-[#ff9b58]
                                                     "
                                                 >
-                                                    {b.brand}
+                                                    Transcending Psychiatry
                                                 </span>
 
                                                 <h2
@@ -397,8 +409,8 @@ export default function BookAppointmentModal({
                                                         tracking-[-0.03em]
                                                     "
                                                 >
-                                                    {b.title1}
-                                                    <span className="block text-[#e2b45d]">{b.title2}</span>
+                                                    Begin Your
+                                                    <span className="block text-[#ff8b49]">Care Journey.</span>
                                                 </h2>
 
                                                 <p
@@ -422,7 +434,7 @@ export default function BookAppointmentModal({
                                                 <div className="mt-9 space-y-6">
                                                     <StepIndicator
                                                         number={1}
-                                                        title={b.steps.visitType}
+                                                        title="Visit Type"
                                                         active={
                                                             step ===
                                                             1
@@ -435,7 +447,7 @@ export default function BookAppointmentModal({
 
                                                     <StepIndicator
                                                         number={2}
-                                                        title={b.steps.dateTime}
+                                                        title="Date & Time"
                                                         active={
                                                             step ===
                                                             2
@@ -448,7 +460,7 @@ export default function BookAppointmentModal({
 
                                                     <StepIndicator
                                                         number={3}
-                                                        title={b.steps.information}
+                                                        title="Your Information"
                                                         active={
                                                             step ===
                                                             3
@@ -480,7 +492,7 @@ export default function BookAppointmentModal({
                                                     </p>
 
                                                     <a
-                                                        href="tel:+19294472430"
+                                                        href="tel:+16465801030"
                                                         className="
                                                             mt-3
                                                             flex
@@ -490,12 +502,12 @@ export default function BookAppointmentModal({
                                                             font-semibold
                                                             text-white
                                                             transition
-                                                            hover:text-[#e2b45d]
+                                                            hover:text-[#ff9b58]
                                                         "
                                                     >
-                                                        <Phone className="h-4 w-4 text-[#e2b45d]" />
-                                                        (929)
-                                                        447-2430
+                                                        <Phone className="h-4 w-4 text-[#ff9b58]" />
+                                                        (646)
+                                                        580-1030
                                                     </a>
                                                 </div>
                                             </div>
@@ -535,9 +547,9 @@ export default function BookAppointmentModal({
                                                     }}
                                                 >
                                                     <SectionHeading
-                                                        eyebrow={b.step1.eyebrow}
-                                                        title={b.step1.title}
-                                                        description={b.step1.description}
+                                                        eyebrow="Step One"
+                                                        title="Choose your appointment"
+                                                        description="Select the type of psychiatric care you would like to schedule."
                                                     />
 
                                                     <div className="mt-7 space-y-3">
@@ -576,8 +588,8 @@ export default function BookAppointmentModal({
                                                                             transition-all
                                                                             duration-300
                                                                             ${selected
-                                                                                ? "border-[#075187] bg-[#f0f7fb] shadow-[0_8px_25px_rgba(7,81,135,0.08)]"
-                                                                                : "border-[#082957]/10 bg-white hover:border-[#075187]/30 hover:bg-[#f8fafb]"
+                                                                                ? "border-[#ff7426] bg-[#fff1e8] shadow-[0_8px_25px_rgba(255,116,38,0.10)]"
+                                                                                : "border-[#252525]/10 bg-white hover:border-[#ff7426]/30 hover:bg-[#fffaf6]"
                                                                             }
                                                                         `}
                                                                     >
@@ -591,8 +603,8 @@ export default function BookAppointmentModal({
                                                                                 justify-center
                                                                                 rounded-2xl
                                                                                 ${selected
-                                                                                    ? "bg-[#075187] text-white"
-                                                                                    : "bg-[#f1f5f7] text-[#075187]"
+                                                                                    ? "bg-[#ff7426] text-white"
+                                                                                    : "bg-[#f1f5f7] text-[#ff7426]"
                                                                                 }
                                                                             `}
                                                                         >
@@ -600,13 +612,13 @@ export default function BookAppointmentModal({
                                                                         </span>
 
                                                                         <span className="min-w-0 flex-1">
-                                                                            <span className="block text-[14px] font-bold text-[#082957]">
+                                                                            <span className="block text-[14px] font-bold text-[#252525]">
                                                                                 {
                                                                                     item.name
                                                                                 }
                                                                             </span>
 
-                                                                            <span className="mt-1 block text-[11px] leading-5 text-[#718497]">
+                                                                            <span className="mt-1 block text-[11px] leading-5 text-[#77706b]">
                                                                                 {
                                                                                     item.description
                                                                                 }
@@ -617,12 +629,12 @@ export default function BookAppointmentModal({
                                                                             className="
                                                                                 hidden
                                                                                 rounded-full
-                                                                                bg-[#f5f7f8]
+                                                                                bg-[#fff8f3]
                                                                                 px-3
                                                                                 py-1.5
                                                                                 text-[10px]
                                                                                 font-bold
-                                                                                text-[#60758a]
+                                                                                text-[#69635f]
                                                                                 sm:block
                                                                             "
                                                                         >
@@ -641,8 +653,8 @@ export default function BookAppointmentModal({
                                                                                     items-center
                                                                                     justify-center
                                                                                     rounded-full
-                                                                                    bg-[#e2b45d]
-                                                                                    text-[#082957]
+                                                                                    bg-[#ff9b58]
+                                                                                    text-[#252525]
                                                                                 "
                                                                             >
                                                                                 <Check className="h-4 w-4" />
@@ -682,9 +694,9 @@ export default function BookAppointmentModal({
                                                     }}
                                                 >
                                                     <SectionHeading
-                                                        eyebrow={b.step2.eyebrow}
-                                                        title={b.step2.title}
-                                                        description={b.step2.description}
+                                                        eyebrow="Step Two"
+                                                        title="Choose a date and time"
+                                                        description="Select your preferred appointment date and an available time."
                                                     />
 
                                                     <div
@@ -700,7 +712,7 @@ export default function BookAppointmentModal({
                                                             className="
                                                                 rounded-[22px]
                                                                 border
-                                                                border-[#082957]/10
+                                                                border-[#252525]/10
                                                                 p-4
                                                                 sm:p-5
                                                             "
@@ -723,8 +735,8 @@ export default function BookAppointmentModal({
                                                                         items-center
                                                                         justify-center
                                                                         rounded-full
-                                                                        bg-[#f4f7f9]
-                                                                        text-[#082957]
+                                                                        bg-[#fff8f3]
+                                                                        text-[#252525]
                                                                     "
                                                                 >
                                                                     <ChevronLeft className="h-4 w-4" />
@@ -735,7 +747,7 @@ export default function BookAppointmentModal({
                                                                         font-serif
                                                                         text-[18px]
                                                                         font-semibold
-                                                                        text-[#082957]
+                                                                        text-[#252525]
                                                                     "
                                                                 >
                                                                     {currentMonth.toLocaleDateString(
@@ -764,8 +776,8 @@ export default function BookAppointmentModal({
                                                                         items-center
                                                                         justify-center
                                                                         rounded-full
-                                                                        bg-[#f4f7f9]
-                                                                        text-[#082957]
+                                                                        bg-[#fff8f3]
+                                                                        text-[#252525]
                                                                     "
                                                                 >
                                                                     <ChevronRight className="h-4 w-4" />
@@ -802,7 +814,7 @@ export default function BookAppointmentModal({
                                                                                 text-[9px]
                                                                                 font-bold
                                                                                 uppercase
-                                                                                text-[#9aa8b5]
+                                                                                text-[#aaa19b]
                                                                             "
                                                                         >
                                                                             {
@@ -869,10 +881,10 @@ export default function BookAppointmentModal({
                                                                                     font-semibold
                                                                                     transition
                                                                                     ${selected
-                                                                                        ? "bg-[#075187] text-white shadow-md"
+                                                                                        ? "bg-[#ff7426] text-white shadow-md"
                                                                                         : past
                                                                                             ? "cursor-not-allowed text-slate-300"
-                                                                                            : "text-[#294865] hover:bg-[#edf5f9] hover:text-[#075187]"
+                                                                                            : "text-[#4d4844] hover:bg-[#fff1e8] hover:text-[#ff7426]"
                                                                                     }
                                                                                 `}
                                                                             >
@@ -887,9 +899,9 @@ export default function BookAppointmentModal({
                                                         {/* TIMES */}
                                                         <div>
                                                             <div className="flex items-center gap-2">
-                                                                <Clock3 className="h-4 w-4 text-[#d79a27]" />
+                                                                <Clock3 className="h-4 w-4 text-[#ff7426]" />
 
-                                                                <p className="text-[12px] font-bold text-[#082957]">
+                                                                <p className="text-[12px] font-bold text-[#252525]">
                                                                     Available
                                                                     Times
                                                                 </p>
@@ -906,7 +918,7 @@ export default function BookAppointmentModal({
                                                                         rounded-[22px]
                                                                         border
                                                                         border-dashed
-                                                                        border-[#082957]/15
+                                                                        border-[#252525]/15
                                                                         bg-[#fafbfc]
                                                                         p-6
                                                                         text-center
@@ -915,7 +927,7 @@ export default function BookAppointmentModal({
                                                                     <div>
                                                                         <CalendarDays className="mx-auto h-7 w-7 text-[#9aabba]" />
 
-                                                                        <p className="mt-3 text-[11px] leading-5 text-[#718497]">
+                                                                        <p className="mt-3 text-[11px] leading-5 text-[#77706b]">
                                                                             Select
                                                                             a
                                                                             date
@@ -928,7 +940,7 @@ export default function BookAppointmentModal({
                                                                 </div>
                                                             ) : (
                                                                 <>
-                                                                    <p className="mt-2 text-[11px] text-[#718497]">
+                                                                    <p className="mt-2 text-[11px] text-[#77706b]">
                                                                         {selectedDate.toLocaleDateString(
                                                                             "en-US",
                                                                             {
@@ -972,8 +984,8 @@ export default function BookAppointmentModal({
                                                                                         transition
                                                                                         ${selectedTime ===
                                                                                             time
-                                                                                            ? "border-[#075187] bg-[#075187] text-white"
-                                                                                            : "border-[#082957]/10 bg-white text-[#294865] hover:border-[#075187]/30 hover:bg-[#f0f7fb]"
+                                                                                            ? "border-[#ff7426] bg-[#ff7426] text-white"
+                                                                                            : "border-[#252525]/10 bg-white text-[#4d4844] hover:border-[#ff7426]/30 hover:bg-[#fff1e8]"
                                                                                         }
                                                                                     `}
                                                                                 >
@@ -989,12 +1001,12 @@ export default function BookAppointmentModal({
                                                                         className="
                                                                             mt-4
                                                                             rounded-xl
-                                                                            bg-[#fff8e9]
+                                                                            bg-[#fff3ea]
                                                                             px-3
                                                                             py-2
                                                                             text-[9px]
                                                                             leading-4
-                                                                            text-[#80683f]
+                                                                            text-[#7a6558]
                                                                         "
                                                                     >
                                                                         Demo
@@ -1045,9 +1057,9 @@ export default function BookAppointmentModal({
                                                     }}
                                                 >
                                                     <SectionHeading
-                                                        eyebrow={b.step3.eyebrow}
-                                                        title={b.step3.title}
-                                                        description={b.step3.description}
+                                                        eyebrow="Step Three"
+                                                        title="Tell us about yourself"
+                                                        description="Enter your contact information so the practice can follow up regarding your appointment request."
                                                     />
 
                                                     {/* APPOINTMENT SUMMARY */}
@@ -1057,7 +1069,7 @@ export default function BookAppointmentModal({
                                                             grid
                                                             gap-3
                                                             rounded-[20px]
-                                                            bg-[#f3f7f9]
+                                                            bg-[#fff8f3]
                                                             p-4
                                                             sm:grid-cols-3
                                                         "
@@ -1181,7 +1193,7 @@ export default function BookAppointmentModal({
                                                                 items-start
                                                                 gap-3
                                                                 rounded-2xl
-                                                                bg-[#f7f9fa]
+                                                                bg-[#fffaf6]
                                                                 p-4
                                                             "
                                                         >
@@ -1192,7 +1204,7 @@ export default function BookAppointmentModal({
                                                                     mt-1
                                                                     h-4
                                                                     w-4
-                                                                    accent-[#075187]
+                                                                    accent-[#ff7426]
                                                                 "
                                                             />
 
@@ -1200,7 +1212,7 @@ export default function BookAppointmentModal({
                                                                 className="
                                                                     text-[10px]
                                                                     leading-5
-                                                                    text-[#60758a]
+                                                                    text-[#69635f]
                                                                 "
                                                             >
                                                                 I
@@ -1209,10 +1221,8 @@ export default function BookAppointmentModal({
                                                                 being
                                                                 contacted
                                                                 by
-                                                                Solid
-                                                                Rock
-                                                                Behavioral
-                                                                Health
+                                                                Transcending
+                                                                Psychiatry
                                                                 regarding
                                                                 this
                                                                 appointment.
@@ -1236,12 +1246,12 @@ export default function BookAppointmentModal({
                                                                 mt-4
                                                                 rounded-xl
                                                                 border
-                                                                border-[#d79a27]/20
-                                                                bg-[#fffaf0]
+                                                                border-[#ff7426]/20
+                                                                bg-[#fff8f3]
                                                                 p-3
                                                                 text-[9px]
                                                                 leading-4
-                                                                text-[#71634d]
+                                                                text-[#75665d]
                                                             "
                                                         >
                                                             Please
@@ -1291,9 +1301,9 @@ export default function BookAppointmentModal({
                                                                     px-5
                                                                     text-[12px]
                                                                     font-bold
-                                                                    text-[#60758a]
+                                                                    text-[#69635f]
                                                                     transition
-                                                                    hover:bg-[#f5f7f8]
+                                                                    hover:bg-[#fff8f3]
                                                                 "
                                                             >
                                                                 <ArrowLeft className="h-4 w-4" />
@@ -1313,14 +1323,14 @@ export default function BookAppointmentModal({
                                                                     justify-center
                                                                     gap-2
                                                                     rounded-full
-                                                                    bg-[#075187]
+                                                                    bg-[#ff7426]
                                                                     px-7
                                                                     text-[13px]
                                                                     font-bold
                                                                     text-white
-                                                                    shadow-[0_12px_28px_rgba(7,81,135,0.20)]
+                                                                    shadow-[0_12px_28px_rgba(255,116,38,0.24)]
                                                                     transition
-                                                                    hover:bg-[#063f6b]
+                                                                    hover:bg-[#eb641b]
                                                                     disabled:opacity-60
                                                                 "
                                                             >
@@ -1373,7 +1383,7 @@ function SectionHeading({
                     font-bold
                     uppercase
                     tracking-[0.18em]
-                    text-[#a96f13]
+                    text-[#e6601c]
                 "
             >
                 {eyebrow}
@@ -1386,14 +1396,14 @@ function SectionHeading({
                     text-[27px]
                     font-semibold
                     leading-tight
-                    text-[#082957]
+                    text-[#252525]
                     sm:text-[32px]
                 "
             >
                 {title}
             </h3>
 
-            <p className="mt-2 max-w-[570px] text-[12px] leading-6 text-[#718497]">
+            <p className="mt-2 max-w-[570px] text-[12px] leading-6 text-[#77706b]">
                 {description}
             </p>
         </div>
@@ -1426,9 +1436,9 @@ function StepIndicator({
                     text-[11px]
                     font-bold
                     ${complete
-                        ? "border-[#e2b45d] bg-[#e2b45d] text-[#082957]"
+                        ? "border-[#ff9b58] bg-[#ff9b58] text-[#252525]"
                         : active
-                            ? "border-white bg-white text-[#082957]"
+                            ? "border-white bg-white text-[#252525]"
                             : "border-white/15 bg-white/[0.04] text-white/40"
                     }
                 `}
@@ -1479,13 +1489,13 @@ function NextButton({
                     justify-center
                     gap-2
                     rounded-full
-                    bg-[#075187]
+                    bg-[#ff7426]
                     px-7
                     text-[13px]
                     font-bold
                     text-white
                     transition
-                    hover:bg-[#063f6b]
+                    hover:bg-[#eb641b]
                     disabled:cursor-not-allowed
                     disabled:opacity-35
                 "
@@ -1529,7 +1539,7 @@ function NavigationButtons({
                     px-4
                     text-[12px]
                     font-bold
-                    text-[#60758a]
+                    text-[#69635f]
                 "
             >
                 <ArrowLeft className="h-4 w-4" />
@@ -1547,7 +1557,7 @@ function NavigationButtons({
                     items-center
                     gap-2
                     rounded-full
-                    bg-[#075187]
+                    bg-[#ff7426]
                     px-6
                     text-[12px]
                     font-bold
@@ -1572,9 +1582,9 @@ function BookingField({
 }) {
     return (
         <label>
-            <span className="mb-2 block text-[10px] font-bold text-[#294865]">
+            <span className="mb-2 block text-[10px] font-bold text-[#4d4844]">
                 {label}
-                <span className="ml-1 text-[#b5791b]">
+                <span className="ml-1 text-[#e6601c]">
                     *
                 </span>
             </span>
@@ -1595,14 +1605,14 @@ function SummaryItem({
 }) {
     return (
         <div className="flex items-start gap-2">
-            <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#d79a27]" />
+            <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#ff7426]" />
 
             <div className="min-w-0">
-                <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-[#9aa8b5]">
+                <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-[#aaa19b]">
                     {label}
                 </p>
 
-                <p className="mt-1 text-[10px] font-semibold leading-4 text-[#294865]">
+                <p className="mt-1 text-[10px] font-semibold leading-4 text-[#4d4844]">
                     {value}
                 </p>
             </div>
@@ -1652,22 +1662,22 @@ function BookingSuccess({
                     items-center
                     justify-center
                     rounded-full
-                    bg-[#082957]
-                    text-[#e2b45d]
+                    bg-[#252525]
+                    text-[#ff9b58]
                 "
             >
                 <Check className="h-7 w-7" />
             </motion.div>
 
-            <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.2em] text-[#a96f13]">
-                Solid Rock Behavioral Health
+            <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.2em] text-[#e6601c]">
+                Transcending Psychiatry
             </p>
 
-            <h2 className="mt-2 font-serif text-[36px] font-semibold text-[#082957]">
+            <h2 className="mt-2 font-serif text-[36px] font-semibold text-[#252525]">
                 Appointment Requested
             </h2>
 
-            <p className="mx-auto mt-4 max-w-[500px] text-[13px] leading-6 text-[#60758a]">
+            <p className="mx-auto mt-4 max-w-[500px] text-[13px] leading-6 text-[#69635f]">
                 We received your appointment
                 request. The practice will confirm
                 the appointment details with you.
@@ -1681,7 +1691,7 @@ function BookingSuccess({
                     max-w-[600px]
                     gap-3
                     rounded-[22px]
-                    bg-[#f4f7f9]
+                    bg-[#fff8f3]
                     p-5
                     sm:grid-cols-3
                 "
@@ -1722,14 +1732,14 @@ function BookingSuccess({
                 className="
                     mt-8
                     rounded-full
-                    bg-[#082957]
+                    bg-[#252525]
                     px-8
                     py-3.5
                     text-[13px]
                     font-bold
                     text-white
                     transition
-                    hover:bg-[#075187]
+                    hover:bg-[#ff7426]
                 "
             >
                 Done
@@ -1855,18 +1865,18 @@ const inputClass = `
     w-full
     rounded-xl
     border
-    border-[#082957]/10
-    bg-[#f8fafb]
+    border-[#252525]/10
+    bg-[#fffaf6]
     px-4
     text-[14px]
-    text-[#082957]
+    text-[#252525]
     outline-none
     transition
-    placeholder:text-[#9aa8b5]
-    focus:border-[#075187]/40
+    placeholder:text-[#aaa19b]
+    focus:border-[#ff7426]/40
     focus:bg-white
     focus:ring-4
-    focus:ring-[#075187]/[0.06]
+    focus:ring-[#ff7426]/[0.06]
 `;
 
 /* =========================================================
@@ -1875,55 +1885,28 @@ const inputClass = `
 
 function BookingArtwork() {
     return (
-        <svg
-            viewBox="0 0 400 700"
-            fill="none"
+        <div
             aria-hidden="true"
-            className="
-                pointer-events-none
-                absolute
-                -bottom-20
-                -right-32
-                h-[580px]
-                w-[430px]
-                opacity-[0.10]
-            "
+            className="pointer-events-none absolute -bottom-20 -right-44 h-[520px] w-[620px] opacity-[0.16]"
         >
-            <motion.path
-                d="M410 30C270 50 220 130 250 220C285 325 160 360 120 700"
-                stroke="#E2B45D"
-                strokeWidth="2"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{
-                    duration: 1.8,
-                }}
+            <motion.div
+                initial={{ x: -30, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                className="absolute left-0 top-16 h-[330px] w-[330px] rounded-full border-2 border-[#FF5A1F]"
             />
-
-            <motion.path
-                d="M440 80C330 100 290 160 310 245C330 330 235 400 210 700"
-                stroke="white"
-                strokeWidth="1.2"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{
-                    duration: 2.2,
-                }}
+            <motion.div
+                initial={{ y: -30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.9, delay: 0.1 }}
+                className="absolute left-24 top-16 h-[330px] w-[330px] rounded-full border-2 border-[#FF7A2F]"
             />
-
-            <circle
-                cx="250"
-                cy="220"
-                r="7"
-                fill="#E2B45D"
+            <motion.div
+                initial={{ x: 30, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="absolute left-48 top-16 h-[330px] w-[330px] rounded-full border-2 border-[#FF9B58]"
             />
-
-            <circle
-                cx="250"
-                cy="220"
-                r="18"
-                stroke="#E2B45D"
-            />
-        </svg>
+        </div>
     );
 }

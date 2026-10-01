@@ -1,1203 +1,433 @@
 "use client";
 
-import {
-    useCallback,
-    useEffect,
-    useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import {
-    AnimatePresence,
-    motion,
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowRight,
-    Brain,
-    CalendarDays,
     ChevronLeft,
     ChevronRight,
-    HeartHandshake,
     Laptop,
-    ShieldCheck,
+    MapPin,
+    UserRound,
 } from "lucide-react";
-import BookAppointmentButton from "./BookAppointmentButton";
-import { useLanguage } from "./LanguageContext";
-import { getTranslations } from "./translations";
-/* =========================================================
-   HERO SLIDES
-========================================================= */
 
-const slides = [
+type Slide = {
+    src: string;
+    position: string;
+    type: "standard" | "provider";
+    eyebrow: string;
+    title: string;
+    accent: string;
+    description: string;
+    primaryText: string;
+    primaryHref: string;
+    secondaryText: string;
+    secondaryHref: string;
+    quote?: string;
+    provider?: string;
+    credentials?: string;
+};
+
+const slides: Slide[] = [
     {
-        type: "image" as const,
-        src: "/images/hero-rocks.png",
+        src: "/images/Transcending-theraphy-hero.png",
         position: "center",
+        type: "standard",
+        eyebrow: "COMPASSIONATE PSYCHIATRIC CARE",
+        title: "Transcend What’s",
+        accent: "Holding You Back.",
+        description:
+            "Evidence-based psychiatric care designed to help you move forward with clarity, confidence, and a healthier, more fulfilling life.",
+        primaryText: "Book an Appointment",
+        primaryHref: "/book",
+        secondaryText: "Explore Services",
+        secondaryHref: "/#services",
     },
     {
-        type: "image" as const,
-        src: "/images/hero-rocks2.png",
-        position: "62% center",
+        src: "/images/transcending-serenity.png",
+        position: "center",
+        type: "standard",
+        eyebrow: "CARE DESIGNED AROUND YOU",
+        title: "Find Clarity.",
+        accent: "Create Lasting Change.",
+        description:
+            "Personalized mental health treatment that considers your experiences, your goals, and the life you want to build.",
+        primaryText: "Start Your Journey",
+        primaryHref: "/book",
+        secondaryText: "Our Approach",
+        secondaryHref: "/Provider",
     },
     {
-        type: "provider" as const,
-        src: "/images/provider-hero.jpg",
+        src: "/images/joe-spitalieri.jpg",
         position: "center",
+        type: "provider",
+        eyebrow: "MEET YOUR PROVIDER",
+        title: "Care That Begins",
+        accent: "With Understanding.",
+        description:
+            "Personalized psychiatric care built around collaboration, trust, and the individual behind the symptoms.",
+        quote:
+            "My goal is to create a space where you feel heard, understood, and supported as we work together toward meaningful, lasting change.",
+        provider: "Joseph Spitalieri",
+        credentials: "Psychiatric Nurse Practitioner",
+        primaryText: "Meet Joseph",
+        primaryHref: "/Provider",
+        secondaryText: "Book Appointment",
+        secondaryHref: "/book",
     },
 ];
 
+const features = [
+    { label: "Ages 12+", icon: UserRound },
+    { label: "In-Person NJ", icon: MapPin },
+    { label: "Telehealth NY & NJ", icon: Laptop },
+];
+
+function ProviderDecor() {
+    return (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <svg
+                aria-hidden="true"
+                className="absolute -right-[9%] top-[8%] h-[72%] w-[62%] opacity-70"
+                viewBox="0 0 900 760"
+                fill="none"
+            >
+                <circle cx="585" cy="365" r="245" fill="#FFB178" fillOpacity=".16" />
+                <circle cx="650" cy="400" r="150" fill="#FF8A3D" fillOpacity=".14" />
+                <circle cx="585" cy="365" r="292" stroke="#FFB178" strokeOpacity=".28" strokeWidth="2" />
+                <circle cx="585" cy="365" r="318" stroke="#FFB178" strokeOpacity=".18" strokeWidth="2" />
+                <path
+                    d="M220 610C360 490 398 268 552 146C658 61 780 60 875 99"
+                    stroke="#FF9A55"
+                    strokeOpacity=".20"
+                    strokeWidth="3"
+                />
+                <path
+                    d="M178 648C332 522 366 286 532 152C654 54 785 48 895 93"
+                    stroke="#FF9A55"
+                    strokeOpacity=".12"
+                    strokeWidth="2"
+                />
+            </svg>
+
+            <div className="absolute -left-24 bottom-[-170px] h-[420px] w-[620px] rounded-[50%] bg-white/40 blur-3xl" />
+            <div className="absolute right-[7%] top-[19%] h-72 w-72 rounded-full bg-[#ff9a55]/10 blur-3xl" />
+        </div>
+    );
+}
+
 export default function HeroSection() {
-    const { language } = useLanguage();
-    const t = getTranslations(language);
-
-    const features = [
-        { label: t.hero.features.personalized, icon: HeartHandshake },
-        { label: t.hero.features.evidenceBased, icon: ShieldCheck },
-        { label: t.hero.features.telehealth, icon: Laptop },
-        { label: t.hero.features.medication, icon: Brain },
-    ];
-    const [bookingOpen, setBookingOpen] = useState(false);
-    const [currentSlide, setCurrentSlide] =
-        useState(0);
-
-    const [direction, setDirection] =
-        useState(1);
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [direction, setDirection] = useState(1);
 
     const current = slides[currentSlide];
-
-    const isProviderSlide =
-        current.type === "provider";
-
-    /* =====================================================
-       NEXT
-    ===================================================== */
+    const isProviderSlide = current.type === "provider";
 
     const nextSlide = useCallback(() => {
         setDirection(1);
-
         setCurrentSlide((previous) =>
-            previous === slides.length - 1
-                ? 0
-                : previous + 1
+            previous === slides.length - 1 ? 0 : previous + 1
         );
     }, []);
-
-    /* =====================================================
-       PREVIOUS
-    ===================================================== */
 
     const previousSlide = useCallback(() => {
         setDirection(-1);
-
         setCurrentSlide((previous) =>
-            previous === 0
-                ? slides.length - 1
-                : previous - 1
+            previous === 0 ? slides.length - 1 : previous - 1
         );
     }, []);
 
-    /* =====================================================
-       GO TO SLIDE
-    ===================================================== */
-
     const goToSlide = (index: number) => {
-        if (index === currentSlide) {
-            return;
-        }
-
-        setDirection(
-            index > currentSlide ? 1 : -1
-        );
-
+        if (index === currentSlide) return;
+        setDirection(index > currentSlide ? 1 : -1);
         setCurrentSlide(index);
     };
 
-    /* =====================================================
-       AUTO ADVANCE
-
-       Images:   7 seconds
-       Provider: 11 seconds
-    ===================================================== */
-
     useEffect(() => {
-        const delay =
-            current.type === "provider"
-                ? 11000
-                : 7000;
-
-        const timer = window.setTimeout(() => {
-            nextSlide();
-        }, delay);
-
-        return () => {
-            window.clearTimeout(timer);
-        };
-    }, [
-        currentSlide,
-        current.type,
-        nextSlide,
-    ]);
-
-    /* =====================================================
-       MOBILE TAP TO ADVANCE
-
-       Buttons and links still work normally.
-    ===================================================== */
-
-    const handleHeroClick = (
-        event: React.MouseEvent<HTMLElement>
-    ) => {
-        if (window.innerWidth >= 1024) {
-            return;
-        }
-
-        const target =
-            event.target as HTMLElement;
-
-        if (target.closest("a, button")) {
-            return;
-        }
-
-        nextSlide();
-    };
+        const timer = window.setTimeout(nextSlide, 7500);
+        return () => window.clearTimeout(timer);
+    }, [currentSlide, nextSlide]);
 
     return (
-        <section
-            onClick={handleHeroClick}
-            className="
-                relative
-                flex
-                min-h-[860px]
-                overflow-hidden
-                bg-[#e8eef2]
-                pt-[150px]
-
-                sm:min-h-[900px]
-
-                lg:min-h-screen
-                lg:pt-[170px]
-            "
-        >
-            {/* =================================================
-                BACKGROUND
-            ================================================= */}
-
+        <section className="relative min-h-[860px] overflow-hidden bg-[#f8f3ee] lg:min-h-screen">
+            {/* Standard photographic slides */}
             <div className="absolute inset-0">
-                <AnimatePresence
-                    initial={false}
-                    custom={direction}
-                    mode="sync"
-                >
+                <AnimatePresence initial={false} custom={direction} mode="sync">
                     <motion.div
-                        key={currentSlide}
-                        custom={direction}
-                        initial={{
-                            opacity: 0,
-                            scale: 1.025,
-                        }}
-                        animate={{
-                            opacity: 1,
-                            scale: 1,
-                        }}
-                        exit={{
-                            opacity: 0,
-                            scale: 1.01,
-                        }}
+                        key={current.src}
+                        initial={{ opacity: 0, scale: 1.035 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.015 }}
                         transition={{
-                            opacity: {
-                                duration: 1,
-                                ease: "easeInOut",
-                            },
-                            scale: {
-                                duration:
-                                    current.type ===
-                                        "image"
-                                        ? 7
-                                        : 1,
-                                ease: "linear",
-                            },
+                            opacity: { duration: 1, ease: "easeInOut" },
+                            scale: { duration: 8, ease: "linear" },
                         }}
-                        className="
-                            absolute
-                            inset-0
-                            overflow-hidden
-                        "
+                        className="absolute inset-0"
                     >
-                        {isProviderSlide ? (
-                            /*
-                             * PROVIDER BACKGROUND
-                             *
-                             * We intentionally use contain on
-                             * desktop instead of cover so Jean
-                             * doesn't become enormous.
-                             */
-                            <div
-                                className="
-                                    absolute
-                                    inset-0
-                                    bg-[#f3f0eb]
-                                "
-                            >
+                        {!isProviderSlide ? (
+                            <>
                                 <div
-                                    className="
-                                        absolute
-                                        inset-0
-                                        bg-no-repeat
-
-                                        bg-[length:auto_58%]
-                                        bg-[position:72%_20%]
-
-                                        sm:bg-[length:auto_68%]
-                                        sm:bg-[position:78%_22%]
-
-                                        lg:bg-contain
-                                        lg:bg-right
-                                    "
+                                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                                     style={{
                                         backgroundImage: `url("${current.src}")`,
+                                        backgroundPosition: current.position,
                                     }}
                                 />
-                            </div>
+                                <div
+                                    className="absolute inset-0"
+                                    style={{
+                                        background:
+                                            "linear-gradient(90deg, rgba(255,250,246,.97) 0%, rgba(255,250,246,.92) 27%, rgba(255,250,246,.70) 47%, rgba(255,250,246,.20) 72%, rgba(255,250,246,.04) 100%)",
+                                    }}
+                                />
+                            </>
                         ) : (
-                            <div
-                                className="
-                                    absolute
-                                    inset-0
-                                    bg-cover
-                                    bg-no-repeat
-                                "
-                                style={{
-                                    backgroundImage: `url("${current.src}")`,
-                                    backgroundPosition:
-                                        current.position,
-                                }}
-                            />
+                            <>
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#fffaf6] via-[#fff4eb] to-[#fde6d5]" />
+                                <ProviderDecor />
+                            </>
                         )}
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            {/* =================================================
-                NORMAL SLIDE GRADIENTS
-                Image slides
-            ================================================= */}
+            <div className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-b from-white/10 via-transparent to-white/20" />
 
-            {!isProviderSlide && (
-                <>
-                    {/* MOBILE */}
-
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            inset-0
-                            z-[1]
-                            lg:hidden
-                        "
-                        style={{
-                            background: `
-                                linear-gradient(
-                                    180deg,
-                                    rgba(237,242,244,0.98) 0%,
-                                    rgba(237,242,244,0.94) 30%,
-                                    rgba(237,242,244,0.80) 58%,
-                                    rgba(237,242,244,0.35) 82%,
-                                    rgba(237,242,244,0.10) 100%
-                                )
-                            `,
-                        }}
-                    />
-
-                    {/* DESKTOP */}
-
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            inset-0
-                            z-[1]
-                            hidden
-                            lg:block
-                        "
-                        style={{
-                            background:
-                                "linear-gradient(90deg, rgba(237,242,244,1) 0%, rgba(237,242,244,0.95) 42%, rgba(237,242,244,0) 72%)",
-                        }}
-                    />
-                </>
-            )}
-
-            {/* =================================================
-                PROVIDER GRADIENT
-            ================================================= */}
-
-            {isProviderSlide && (
-                <>
-                    {/* MOBILE */}
-
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            inset-0
-                            z-[1]
-                            lg:hidden
-                        "
-                        style={{
-                            background: `
-                                linear-gradient(
-                                    180deg,
-                                    rgba(243,240,235,0.02) 0%,
-                                    rgba(243,240,235,0.05) 35%,
-                                    rgba(243,240,235,0.82) 55%,
-                                    rgba(243,240,235,0.98) 68%,
-                                    rgba(243,240,235,1) 100%
-                                )
-                            `,
-                        }}
-                    />
-
-                    {/* DESKTOP */}
-
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            inset-0
-                            z-[1]
-                            hidden
-                            lg:block
-                        "
-                        style={{
-                            background: `
-                                linear-gradient(
-                                    90deg,
-                                    rgba(243,240,235,1) 0%,
-                                    rgba(243,240,235,0.99) 31%,
-                                    rgba(243,240,235,0.94) 40%,
-                                    rgba(243,240,235,0.58) 50%,
-                                    rgba(243,240,235,0.08) 62%,
-                                    rgba(243,240,235,0) 72%
-                                )
-                            `,
-                        }}
-                    />
-                </>
-            )}
-
-            {/* =================================================
-                STANDARD HERO CONTENT
-                IMAGE SLIDES ONLY
-            ================================================= */}
-
-            {!isProviderSlide && (
-                <div
-                    className="
-                        relative
-                        z-10
-                        mx-auto
-                        flex
-                        w-full
-                        max-w-[1440px]
-                        items-center
-                        px-6
-                        pb-24
-
-                        sm:px-8
-
-                        lg:px-12
-
-                        xl:px-16
-                    "
-                >
-                    <AnimatePresence
-                        mode="wait"
-                        initial={false}
+            {/* Main layout */}
+            <div className="relative z-10 mx-auto flex min-h-[860px] w-full max-w-[1480px] items-center px-5 pb-28 pt-[150px] sm:px-8 lg:min-h-screen lg:px-16 lg:pb-24 lg:pt-[145px]">
+                <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                        key={`content-${currentSlide}`}
+                        initial={{ opacity: 0, x: direction > 0 ? 35 : -35 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: direction > 0 ? -20 : 20 }}
+                        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                        className={`
+              relative z-20 w-full
+              ${isProviderSlide ? "lg:max-w-[650px] xl:max-w-[690px]" : "max-w-[760px]"}
+            `}
                     >
-                        <motion.div
-                            key={`standard-${currentSlide}`}
-                            initial={{
-                                opacity: 0,
-                                y: 15,
-                            }}
-                            animate={{
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            exit={{
-                                opacity: 0,
-                                y: -10,
-                            }}
-                            transition={{
-                                duration: 0.55,
-                            }}
-                            className="
-                                w-full
-                                max-w-[780px]
-                            "
+                        {/* Glass panel: strongest on provider slide, subtle on photo slides */}
+                        <div
+                            className={`
+                relative overflow-hidden rounded-[34px] border px-5 py-7
+                backdrop-blur-[18px] sm:px-8 sm:py-9 lg:px-10 lg:py-10
+                ${isProviderSlide
+                                    ? "border-white/70 bg-white/40 shadow-[0_28px_80px_rgba(87,56,34,0.10)]"
+                                    : "border-white/55 bg-white/25 shadow-[0_24px_70px_rgba(46,35,27,0.08)]"
+                                }
+              `}
                         >
-                            {/* EYEBROW */}
+                            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
 
                             <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    y: 15,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.6,
-                                    delay: 0.1,
-                                }}
-                                className="
-                                    mb-7
-                                    flex
-                                    items-center
-                                    gap-5
-                                "
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.08 }}
+                                className="mb-5 flex items-center gap-4"
                             >
-                                <span
-                                    className="
-                                        hidden
-                                        h-px
-                                        w-20
-                                        bg-[#d79a27]
-                                        sm:block
-                                    "
-                                />
-
-                                <p
-                                    className="
-                                        text-[13px]
-                                        font-semibold
-                                        uppercase
-                                        tracking-[0.35em]
-                                        text-[#082957]
-
-                                        sm:text-[15px]
-                                    "
-                                >
-                                    {t.hero.mantra}
+                                <span className="h-px w-10 bg-[#ff7426] sm:w-14" />
+                                <p className="text-[11px] font-bold uppercase tracking-[0.30em] text-[#ef681f] sm:text-[13px]">
+                                    {current.eyebrow}
                                 </p>
-
-                                <span
-                                    className="
-                                        hidden
-                                        h-px
-                                        w-20
-                                        bg-[#d79a27]
-                                        sm:block
-                                    "
-                                />
                             </motion.div>
-
-                            {/* HEADLINE */}
 
                             <motion.h1
-                                initial={{
-                                    opacity: 0,
-                                    y: 25,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.75,
-                                    delay: 0.18,
-                                }}
+                                initial={{ opacity: 0, y: 25 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.7, delay: 0.14 }}
                                 className="
-                                    max-w-[780px]
-                                    font-serif
-                                    text-[50px]
-                                    font-semibold
-                                    leading-[0.96]
-                                    tracking-[-0.045em]
-                                    text-[#062653]
-
-                                    sm:text-[70px]
-
-                                    lg:text-[82px]
-
-                                    xl:text-[92px]
-                                "
+                  max-w-[760px] text-[43px] font-semibold leading-[0.98]
+                  tracking-[-0.05em] text-[#20282d]
+                  sm:text-[60px] lg:text-[68px] xl:text-[74px]
+                "
                             >
-                                {t.hero.headlineLine1}
+                                {current.title}
                                 <br />
-                                {t.hero.headlineLine2}
+                                <span className="text-[#ff7426]">{current.accent}</span>
                             </motion.h1>
 
-                            {/* DESCRIPTION */}
-
                             <motion.p
-                                initial={{
-                                    opacity: 0,
-                                    y: 20,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.65,
-                                    delay: 0.3,
-                                }}
-                                className="
-                                    mt-7
-                                    max-w-[620px]
-                                    text-[17px]
-                                    font-normal
-                                    leading-[1.55]
-                                    text-[#173b66]
-
-                                    sm:text-[21px]
-
-                                    lg:text-[23px]
-                                "
+                                initial={{ opacity: 0, y: 18 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.65, delay: 0.25 }}
+                                className="mt-6 max-w-[590px] text-[16px] leading-[1.65] text-[#5f6264] sm:text-[18px] lg:text-[19px]"
                             >
-                                {t.hero.description}
+                                {current.description}
                             </motion.p>
 
-                            {/* BUTTONS */}
-
                             <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    y: 20,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.65,
-                                    delay: 0.4,
-                                }}
-                                className="
-                                    mt-9
-                                    flex
-                                    flex-col
-                                    gap-3
-
-                                    sm:flex-row
-                                    sm:gap-4
-                                "
-                            >
-                                <BookAppointmentButton />
-                            </motion.div>
-
-                            {/* FEATURES */}
-
-                            <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    y: 20,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.7,
-                                    delay: 0.52,
-                                }}
-                                className="
-                                    mt-10
-                                    grid
-                                    max-w-[650px]
-                                    grid-cols-2
-                                    gap-x-5
-                                    gap-y-6
-
-                                    sm:mt-12
-                                    sm:grid-cols-4
-                                    sm:gap-0
-                                "
-                            >
-                                {features.map(
-                                    (
-                                        feature,
-                                        index
-                                    ) => {
-                                        const Icon =
-                                            feature.icon;
-
-                                        return (
-                                            <div
-                                                key={
-                                                    feature.label
-                                                }
-                                                className={`
-                                                    flex
-                                                    flex-col
-                                                    items-center
-                                                    text-center
-
-                                                    ${index >
-                                                        0
-                                                        ? "sm:border-l sm:border-[#d4a044]/55"
-                                                        : ""
-                                                    }
-                                                `}
-                                            >
-                                                <Icon
-                                                    strokeWidth={
-                                                        1.8
-                                                    }
-                                                    className="
-                                                        mb-2
-                                                        h-8
-                                                        w-8
-                                                        text-[#082957]
-
-                                                        sm:mb-3
-                                                        sm:h-9
-                                                        sm:w-9
-                                                    "
-                                                />
-
-                                                <p
-                                                    className="
-                                                        whitespace-pre-line
-                                                        text-[13px]
-                                                        font-medium
-                                                        leading-[1.3]
-                                                        text-[#173b66]
-
-                                                        sm:text-[14px]
-                                                    "
-                                                >
-                                                    {
-                                                        feature.label
-                                                    }
-                                                </p>
-                                            </div>
-                                        );
-                                    }
-                                )}
-                            </motion.div>
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-            )}
-
-            {/* =================================================
-                JEAN CETOUTE PROVIDER SLIDE
-            ================================================= */}
-
-            {isProviderSlide && (
-                <div
-                    className="
-                        relative
-                        z-10
-                        mx-auto
-                        flex
-                        w-full
-                        max-w-[1440px]
-
-                        items-end
-                        px-6
-                        pb-[130px]
-                        pt-[330px]
-
-                        sm:px-8
-                        sm:pt-[390px]
-
-                        lg:items-center
-                        lg:px-12
-                        lg:pb-24
-                        lg:pt-0
-
-                        xl:px-16
-                    "
-                >
-                    <AnimatePresence
-                        mode="wait"
-                    >
-                        <motion.div
-                            key="provider-content"
-                            initial={{
-                                opacity: 0,
-                                x: -35,
-                            }}
-                            animate={{
-                                opacity: 1,
-                                x: 0,
-                            }}
-                            exit={{
-                                opacity: 0,
-                                x: -20,
-                            }}
-                            transition={{
-                                duration: 0.75,
-                                ease: "easeOut",
-                            }}
-                            className="
-                                w-full
-                                max-w-[650px]
-
-                                lg:max-w-[620px]
-
-                                xl:max-w-[660px]
-                            "
-                        >
-                            {/* PROVIDER EYEBROW */}
-
-                            <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    y: 12,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.6,
-                                    delay: 0.12,
-                                }}
-                                className="
-                                    mb-4
-                                    flex
-                                    items-center
-                                    gap-3
-
-                                    sm:mb-5
-                                    sm:gap-4
-                                "
-                            >
-                                <motion.span
-                                    initial={{
-                                        width: 0,
-                                    }}
-                                    animate={{
-                                        width: 48,
-                                    }}
-                                    transition={{
-                                        duration: 0.7,
-                                        delay: 0.2,
-                                    }}
-                                    className="
-                                        h-px
-                                        bg-[#d79a27]
-                                    "
-                                />
-
-                                <p
-                                    className="
-                                        text-[10px]
-                                        font-bold
-                                        uppercase
-                                        tracking-[0.24em]
-                                        text-[#9d6816]
-
-                                        sm:text-[11px]
-                                        sm:tracking-[0.28em]
-
-                                        lg:text-[12px]
-                                    "
-                                >
-                                    {t.hero.provider.eyebrow}
-                                </p>
-                            </motion.div>
-
-                            {/* QUOTE */}
-
-                            <motion.blockquote
-                                initial={{
-                                    opacity: 0,
-                                    y: 18,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.7,
-                                    delay: 0.22,
-                                }}
-                                className="
-                                    relative
-                                    font-serif
-                                    text-[21px]
-                                    font-medium
-                                    leading-[1.3]
-                                    tracking-[-0.02em]
-                                    text-[#082957]
-
-                                    sm:text-[25px]
-
-                                    lg:text-[28px]
-                                    lg:leading-[1.32]
-
-                                    xl:text-[30px]
-                                "
-                            >
-                                <span
-                                    aria-hidden="true"
-                                    className="
-                                        absolute
-                                        -left-1
-                                        -top-7
-                                        font-serif
-                                        text-[64px]
-                                        leading-none
-                                        text-[#d79a27]/20
-
-                                        sm:-left-3
-                                        sm:-top-9
-                                        sm:text-[80px]
-
-                                        lg:-left-5
-                                        lg:text-[92px]
-                                    "
-                                >
-                                    “
-                                </span>
-
-                                {t.hero.provider.quote}
-                            </motion.blockquote>
-
-                            {/* PROVIDER DETAILS */}
-
-                            <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    y: 14,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.6,
-                                    delay: 0.4,
-                                }}
-                                className="
-                                    mt-5
-                                    border-l-2
-                                    border-[#d79a27]
-                                    pl-4
-
-                                    sm:mt-6
-                                    sm:pl-5
-                                "
-                            >
-                                <p
-                                    className="
-                                        font-serif
-                                        text-[22px]
-                                        font-semibold
-                                        leading-tight
-                                        text-[#082957]
-
-                                        sm:text-[25px]
-
-                                        lg:text-[27px]
-                                    "
-                                >
-                                    {t.hero.provider.name}
-                                </p>
-
-                                <p
-                                    className="
-                                        mt-1
-                                        text-[13px]
-                                        font-semibold
-                                        leading-5
-                                        text-[#075187]
-
-                                        sm:text-[14px]
-                                    "
-                                >
-                                    {t.hero.provider.role}
-                                </p>
-
-                                <div
-                                    className="
-                                        mt-2
-                                        flex
-                                        flex-col
-                                        gap-0.5
-                                        text-[11px]
-                                        leading-5
-                                        text-[#536a82]
-
-                                        sm:text-[12px]
-
-                                        lg:text-[13px]
-                                    "
-                                >
-                                    <span>
-                                        {t.hero.provider.education1}
-                                    </span>
-
-                                    <span>
-                                        {t.hero.provider.education2}
-                                    </span>
-                                </div>
-                            </motion.div>
-
-                            {/* CTA */}
-
-                            <motion.div
-                                initial={{
-                                    opacity: 0,
-                                    y: 12,
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                }}
-                                transition={{
-                                    duration: 0.6,
-                                    delay: 0.52,
-                                }}
-                                className="
-                                    mt-5
-
-                                    sm:mt-6
-                                "
+                                initial={{ opacity: 0, y: 18 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.65, delay: 0.34 }}
+                                className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
                             >
                                 <Link
-                                    href="/Provider"
-                                    className="
-                                        group
-                                        inline-flex
-                                        min-h-[50px]
-                                        items-center
-                                        justify-center
-                                        gap-3
-                                        rounded-full
-                                        bg-[#075187]
-                                        px-6
-                                        py-3.5
-                                        text-[14px]
-                                        font-semibold
-                                        text-white
-                                        shadow-[0_12px_30px_rgba(7,81,135,0.22)]
-                                        transition-all
-                                        duration-300
-
-                                        hover:-translate-y-0.5
-                                        hover:bg-[#063f6b]
-                                        hover:shadow-[0_16px_35px_rgba(7,81,135,0.30)]
-
-                                        sm:px-7
-                                        sm:text-[15px]
-                                    "
+                                    href={current.primaryHref}
+                                    className="group inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full bg-[#ff7426] px-7 py-4 text-[14px] font-semibold text-white shadow-[0_16px_36px_rgba(255,116,38,0.28)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#eb641b]"
                                 >
-                                    {t.hero.provider.button}
+                                    {current.primaryText}
+                                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                                </Link>
 
-                                    <ArrowRight
-                                        className="
-                                            h-4
-                                            w-4
-                                            transition-transform
-                                            duration-300
-                                            group-hover:translate-x-1
-                                        "
-                                    />
+                                <Link
+                                    href={current.secondaryHref}
+                                    className="group inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full border border-white/90 bg-white/55 px-7 py-4 text-[14px] font-semibold text-[#24292c] shadow-[0_10px_30px_rgba(45,34,25,0.06)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#ff7426]/40 hover:bg-white/85"
+                                >
+                                    {current.secondaryText}
+                                    <ArrowRight className="h-4 w-4 text-[#ff7426] transition-transform group-hover:translate-x-1" />
                                 </Link>
                             </motion.div>
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-            )}
 
-            {/* =================================================
-                DESKTOP PREVIOUS
-            ================================================= */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.65, delay: 0.44 }}
+                                className="mt-7 flex max-w-[650px] flex-wrap gap-2.5"
+                            >
+                                {features.map((feature) => {
+                                    const Icon = feature.icon;
+                                    return (
+                                        <div
+                                            key={feature.label}
+                                            className="flex items-center gap-2 rounded-full border border-white/80 bg-white/55 px-3.5 py-2.5 text-[12px] font-medium text-[#3d4245] shadow-[0_8px_24px_rgba(48,35,25,0.05)] backdrop-blur-xl sm:text-[13px]"
+                                        >
+                                            <Icon className="h-[17px] w-[17px] text-[#ff7426]" strokeWidth={1.8} />
+                                            {feature.label}
+                                        </div>
+                                    );
+                                })}
+                            </motion.div>
+                        </div>
+
+                        {/* Mobile image for every slide */}
+                        <div className="mt-7 lg:hidden">
+                            {isProviderSlide ? (
+                                <div className="relative mx-auto max-w-[420px]">
+                                    <ProviderDecor />
+                                    <motion.img
+                                        key={`mobile-provider-${current.src}`}
+                                        initial={{ opacity: 0, y: 24 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.8 }}
+                                        src={current.src}
+                                        alt="Joseph Spitalieri"
+                                        className="relative z-10 mx-auto h-[340px] w-full object-contain object-bottom drop-shadow-[0_25px_28px_rgba(68,45,28,0.14)] sm:h-[410px]"
+                                    />
+
+                                    <div className="relative z-20 -mt-3 rounded-[26px] border border-white/70 bg-white/45 px-5 py-5 text-center shadow-[0_20px_55px_rgba(82,52,31,0.09)] backdrop-blur-xl">
+                                        <div className="mb-2 text-[34px] leading-none text-[#ff7426]">“</div>
+                                        <blockquote className="text-[14px] font-medium italic leading-[1.65] text-[#4d4a48]">
+                                            {current.quote}
+                                        </blockquote>
+                                        <p className="mt-3 text-[14px] font-bold text-[#252525]">{current.provider}</p>
+                                        <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.18em] text-[#e76520]">
+                                            {current.credentials}
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="relative h-[280px] overflow-hidden rounded-[28px] border border-white/70 bg-white/35 shadow-[0_20px_55px_rgba(48,35,25,0.10)] backdrop-blur-xl sm:h-[340px]">
+                                    <img
+                                        src={current.src}
+                                        alt=""
+                                        className="h-full w-full object-cover"
+                                        style={{ objectPosition: current.position }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#fff7f1]/20 to-transparent" />
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+
+                {/* Desktop Joe composition */}
+                <AnimatePresence>
+                    {isProviderSlide && (
+                        <motion.div
+                            key="desktop-provider"
+                            initial={{ opacity: 0, x: 70 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 45 }}
+                            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                            className="pointer-events-none absolute bottom-[66px] right-[1.5%] z-10 hidden w-[44%] max-w-[640px] flex-col items-center lg:flex xl:right-[3%]"
+                        >
+                            <div className="relative flex h-[480px] w-full items-end justify-center xl:h-[540px] 2xl:h-[580px]">
+                                <img
+                                    src={current.src}
+                                    alt="Joseph Spitalieri"
+                                    className="
+    relative
+    z-10
+    h-full
+    w-full
+    object-contain
+    object-bottom
+    drop-shadow-[0_30px_38px_rgba(68,45,28,0.14)]
+  "
+                                    style={{
+                                        WebkitMaskImage:
+                                            "linear-gradient(to bottom, black 0%, black 40%, rgba(0,0,0,0.95) 52%, rgba(0,0,0,0.75) 65%, rgba(0,0,0,0.5) 77%, rgba(0,0,0,0.25) 89%, transparent 100%)",
+                                        maskImage:
+                                            "linear-gradient(to bottom, black 0%, black 40%, rgba(0,0,0,0.95) 52%, rgba(0,0,0,0.75) 65%, rgba(0,0,0,0.5) 77%, rgba(0,0,0,0.25) 89%, transparent 100%)",
+                                    }}
+                                />
+                                <div className="pointer-events-none absolute bottom-0 left-[8%] z-20 h-[10%] w-[84%] bg-gradient-to-t from-[#fff0e4] via-[#fff0e4]/65 to-transparent" />                            </div>
+
+                            <div className="relative z-20 -mt-2 w-full max-w-[550px] px-5 text-center">
+                                <div className="mx-auto mb-3 flex items-center justify-center gap-3">
+                                    <span className="h-px w-12 bg-[#ff7426]/55" />
+                                    <span className="font-serif text-[42px] leading-none text-[#ff7426]">“</span>
+                                    <span className="h-px w-12 bg-[#ff7426]/55" />
+                                </div>
+                                <blockquote className="text-[15px] font-medium italic leading-[1.65] text-[#4d4a48] xl:text-[16px]">
+                                    {current.quote}
+                                </blockquote>
+                                <p className="mt-3 text-[15px] font-bold text-[#252525]">{current.provider}</p>
+                                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.20em] text-[#e76520]">
+                                    {current.credentials}
+                                </p>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
             <button
                 type="button"
                 onClick={previousSlide}
-                aria-label={t.hero.previousSlide}
-                className={`
-                    absolute
-                    z-30
-                    hidden
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-[#073b70]
-                    text-white
-                    shadow-lg
-                    transition-all
-                    duration-300
-                    hover:scale-110
-                    hover:bg-[#052d56]
-                    lg:flex
-
-                    ${isProviderSlide
-                        ? "bottom-[115px] left-8 top-auto"
-                        : "left-4 top-1/2 -translate-y-1/2"
-                    }
-                `}
+                aria-label="Previous slide"
+                className="absolute left-4 top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-white/75 text-[#282828] shadow-[0_12px_35px_rgba(0,0,0,0.10)] backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:bg-[#ff7426] hover:text-white lg:flex"
             >
                 <ChevronLeft className="h-6 w-6" />
             </button>
 
-            {/* =================================================
-                DESKTOP NEXT
-            ================================================= */}
-
             <button
                 type="button"
                 onClick={nextSlide}
-                aria-label={t.hero.nextSlide}
-                className={`
-                    absolute
-                    z-30
-                    hidden
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-[#073b70]
-                    text-white
-                    shadow-lg
-                    transition-all
-                    duration-300
-                    hover:scale-110
-                    hover:bg-[#052d56]
-                    lg:flex
-
-                    ${isProviderSlide
-                        ? "bottom-[115px] right-8 top-auto"
-                        : "right-5 top-1/2 -translate-y-1/2"
-                    }
-                `}
+                aria-label="Next slide"
+                className="absolute right-4 top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-white/75 text-[#282828] shadow-[0_12px_35px_rgba(0,0,0,0.10)] backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:bg-[#ff7426] hover:text-white lg:flex"
             >
                 <ChevronRight className="h-6 w-6" />
             </button>
 
-            {/* =================================================
-                DESKTOP DOTS
-            ================================================= */}
-
-            <div
-                className="
-                    absolute
-                    bottom-[90px]
-                    left-1/2
-                    z-30
-                    hidden
-                    -translate-x-1/2
-                    items-center
-                    gap-3
-                    lg:flex
-                "
-            >
+            <div className="absolute bottom-7 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/70 bg-white/60 px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl">
                 {slides.map((slide, index) => (
                     <button
                         key={slide.src}
                         type="button"
-                        onClick={() =>
-                            goToSlide(index)
-                        }
-                        aria-label={`Go to slide ${index + 1
+                        onClick={() => goToSlide(index)}
+                        aria-label={`Go to slide ${index + 1}`}
+                        className={`rounded-full transition-all duration-300 ${currentSlide === index
+                            ? "h-2.5 w-8 bg-[#ff7426]"
+                            : "h-2.5 w-2.5 bg-[#555]/25 hover:bg-[#ff7426]/60"
                             }`}
-                        className={`
-                            rounded-full
-                            transition-all
-                            duration-300
-
-                            ${currentSlide ===
-                                index
-                                ? "h-3 w-8 bg-[#075187]"
-                                : isProviderSlide
-                                    ? "h-3 w-3 bg-[#082957]/25 hover:bg-[#082957]/50"
-                                    : "h-3 w-3 bg-white/80 hover:bg-white"
-                            }
-                        `}
                     />
                 ))}
             </div>
 
-            {/* =================================================
-                MOBILE DOTS
-            ================================================= */}
-
-            <div
-                className="
-                    absolute
-                    bottom-[72px]
-                    left-1/2
-                    z-30
-                    flex
-                    -translate-x-1/2
-                    items-center
-                    gap-2
-                    lg:hidden
-                "
-            >
-                {slides.map((slide, index) => (
-                    <button
-                        key={`mobile-${slide.src}`}
-                        type="button"
-                        onClick={() =>
-                            goToSlide(index)
-                        }
-                        aria-label={`Go to slide ${index + 1
-                            }`}
-                        className={`
-                            rounded-full
-                            transition-all
-                            duration-300
-
-                            ${currentSlide ===
-                                index
-                                ? "h-2.5 w-7 bg-[#075187]"
-                                : isProviderSlide
-                                    ? "h-2.5 w-2.5 bg-[#082957]/25"
-                                    : "h-2.5 w-2.5 bg-white/80"
-                            }
-                        `}
-                    />
-                ))}
-            </div>
-
-            {/* =================================================
-                BOTTOM WAVES
-            ================================================= */}
-
-            <div
-                className="
-                    pointer-events-none
-                    absolute
-                    bottom-[-80px]
-                    left-[-5%]
-                    z-20
-                    h-[145px]
-                    w-[110%]
-                    rotate-[2deg]
-                    rounded-[50%_50%_0_0]
-                    bg-[#0b4c7a]/70
-                "
-            />
-
-            <div
-                className="
-                    pointer-events-none
-                    absolute
-                    bottom-[-105px]
-                    left-[-5%]
-                    z-20
-                    h-[145px]
-                    w-[110%]
-                    -rotate-[2deg]
-                    rounded-[50%_50%_0_0]
-                    bg-[#286a98]/45
-                "
-            />
-
-            {/* BOOK APPOINTMENT MODAL */}
-
+            <div className="pointer-events-none absolute bottom-0 left-0 z-[5] h-16 w-full bg-gradient-to-t from-white/35 to-transparent" />
         </section>
     );
 }
