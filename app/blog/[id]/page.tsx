@@ -16,7 +16,7 @@ interface Post {
 }
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.SITE_URL ||
   "http://localhost:3000";
 
 /* =========================================================
@@ -30,7 +30,7 @@ async function getPost(
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : "https://srnpp.com";
+        : "https://transcending-yzat.vercel.app/";
 
     const response = await fetch(
       `${baseUrl}/api/get-posts?slug=${encodeURIComponent(
