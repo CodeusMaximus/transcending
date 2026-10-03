@@ -396,7 +396,7 @@ export default function Navbar() {
 
 
 
-                        <NavLink href="/Provider">
+                        <NavLink href="/#about">
 
                             About Us
 
@@ -1241,7 +1241,7 @@ export default function Navbar() {
 
                                 <MobileLink
 
-                                    href="/Provider"
+                                    href="/#about"
 
                                     onClick={() =>
 
