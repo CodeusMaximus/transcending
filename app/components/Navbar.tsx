@@ -92,7 +92,7 @@ const EMAIL = "info@transcendingpsychiatry.sprucecare.com";
 
  */
 
-const PORTAL_URL = "/portal";
+const PORTAL_URL = "https://transcendingpsych.intakeq.com/portal";
 
 
 
@@ -866,63 +866,35 @@ export default function Navbar() {
 
 
                         <Link
-
                             href={PORTAL_URL}
-
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="
-
-                group
-
-                ml-1
-
-                flex
-
-                h-11
-
-                shrink-0
-
-                items-center
-
-                gap-2
-
-                rounded-full
-
-                border
-
-                border-[#ded6d0]
-
-                bg-white/75
-
-                px-4
-
-                text-[13px]
-
-                font-semibold
-
-                text-[#252525]
-
-                transition-all
-
-                duration-300
-
-                hover:-translate-y-0.5
-
-                hover:border-[#ff7426]
-
-                hover:bg-[#fff1e8]
-
-                hover:text-[#e85f18]
-
-              "
-
+        group
+        ml-1
+        flex
+        h-11
+        shrink-0
+        items-center
+        gap-2
+        rounded-full
+        border
+        border-[#ded6d0]
+        bg-white/75
+        px-4
+        text-[13px]
+        font-semibold
+        text-[#252525]
+        transition-all
+        duration-300
+        hover:-translate-y-0.5
+        hover:border-[#ff7426]
+        hover:bg-[#fff1e8]
+        hover:text-[#e85f18]
+    "
                         >
-
                             <LogIn className="h-[16px] w-[16px]" />
-
-
-
                             Portal Login
-
                         </Link>
 
 
@@ -1626,66 +1598,39 @@ export default function Navbar() {
 
 
 
+                            {/* =================================================
+    MOBILE PORTAL LOGIN
+================================================= */}
+
                             <Link
-
                                 href={PORTAL_URL}
-
-                                onClick={() =>
-
-                                    setMobileOpen(false)
-
-                                }
-
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => setMobileOpen(false)}
                                 className="
-
-                  mt-6
-
-                  flex
-
-                  w-full
-
-                  items-center
-
-                  justify-center
-
-                  gap-2
-
-                  rounded-full
-
-                  border
-
-                  border-[#ded6d0]
-
-                  bg-white
-
-                  px-6
-
-                  py-4
-
-                  font-semibold
-
-                  text-[#252525]
-
-                  transition-all
-
-                  duration-300
-
-                  hover:border-[#ff7426]
-
-                  hover:bg-[#fff1e8]
-
-                  hover:text-[#e85f18]
-
-                "
-
+        mt-6
+        flex
+        w-full
+        items-center
+        justify-center
+        gap-2
+        rounded-full
+        border
+        border-[#ded6d0]
+        bg-white
+        px-6
+        py-4
+        font-semibold
+        text-[#252525]
+        transition-all
+        duration-300
+        hover:border-[#ff7426]
+        hover:bg-[#fff1e8]
+        hover:text-[#e85f18]
+    "
                             >
-
                                 <LogIn className="h-5 w-5" />
-
-
-
                                 Portal Login
-
                             </Link>
 
 
