@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LanguageProvider } from "./components/LanguageContext";
+import SiteChrome from "./components/SiteChrome";
 
 import "./globals.css";
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/footer";
+
 import BookingProvider from "./components/BookingProvider";
 
 const geistSans = Geist({
@@ -99,11 +99,11 @@ export default function RootLayout({
         <body>
           <LanguageProvider>
             <BookingProvider>
-              <Navbar />
 
-              <main>{children}</main>
 
-              <Footer />
+              <SiteChrome>{children}</SiteChrome>
+
+
             </BookingProvider>
           </LanguageProvider>
         </body>

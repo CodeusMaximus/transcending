@@ -89,8 +89,6 @@ const EMAIL = "info@transcendingpsychiatry.sprucecare.com";
 
 
 
-const ADMIN_EMAIL =
-    "transcendingpsychiatry@gmail.com";
 
 
 
@@ -107,11 +105,9 @@ const PORTAL_URL = "https://transcendingpsych.intakeq.com/portal";
 
 
 export default function Navbar() {
-    const { isLoaded, isSignedIn, user } = useUser();
+    const { isLoaded, isSignedIn, } = useUser();
 
-    const isClientAdmin =
-        user?.primaryEmailAddress?.emailAddress?.toLowerCase() ===
-        ADMIN_EMAIL.toLowerCase();
+
 
     const [servicesOpen, setServicesOpen] = useState(false);
     const [newJerseyOpen, setNewJerseyOpen] = useState(false);
@@ -913,7 +909,7 @@ export default function Navbar() {
                         </Link>
                         {/* ADMIN LOGIN / DASHBOARD */}
 
-                        {isLoaded && !isSignedIn && (
+                        {isLoaded && isSignedIn && (
                             <SignInButton mode="modal">
                                 <button
                                     type="button"
@@ -946,7 +942,7 @@ export default function Navbar() {
                             </SignInButton>
                         )}
 
-                        {isLoaded && isSignedIn && isClientAdmin && (
+                        {isLoaded && isSignedIn && (
                             <>
                                 <Link
                                     href="/Dashboard"
@@ -1747,7 +1743,7 @@ export default function Navbar() {
                                 </SignInButton>
                             )}
 
-                            {isLoaded && isSignedIn && isClientAdmin && (
+                            {isLoaded && isSignedIn && (
                                 <div className="mt-3 flex items-center gap-3">
                                     <Link
                                         href="/Dashboard"
