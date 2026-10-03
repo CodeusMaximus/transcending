@@ -134,33 +134,42 @@ export default function Navbar() {
 
 
     useEffect(() => {
-        let lastY = window.scrollY;
+        let lastY = Math.max(0, window.scrollY);
 
         const handleScroll = () => {
-            const currentY = window.scrollY;
+            // Prevent mobile overscroll/bounce from giving us bad values
+            const currentY = Math.max(0, window.scrollY);
 
-            // Always show navbar near top of page
-            if (currentY < 80) {
+            // IMPORTANT:
+            // At the top, navbar MUST always be visible
+            if (currentY <= 100) {
                 setNavVisible(true);
                 lastY = currentY;
                 return;
             }
 
-            // Always keep navbar visible while mobile menu is open
+            // Never hide navbar while mobile menu is open
             if (mobileOpen) {
                 setNavVisible(true);
                 lastY = currentY;
                 return;
             }
 
-            // Scrolling UP → immediately show navbar
-            if (currentY < lastY) {
-                setNavVisible(true);
+            const difference = currentY - lastY;
+
+            // Ignore tiny mobile scroll jitter
+            if (Math.abs(difference) < 3) {
+                return;
             }
 
-            // Scrolling DOWN → hide navbar
-            if (currentY > lastY) {
+            if (difference < 0) {
+                // Scrolling UP
+                setNavVisible(true);
+            } else {
+                // Scrolling DOWN
                 setNavVisible(false);
+
+                // Close desktop dropdowns
                 setServicesOpen(false);
                 setNewJerseyOpen(false);
                 setNewYorkOpen(false);
@@ -178,8 +187,6 @@ export default function Navbar() {
         };
     }, [mobileOpen]);
 
-
-
     return (
 
         <>
@@ -193,49 +200,28 @@ export default function Navbar() {
 
 
             <motion.header
-
                 initial={false}
-
                 animate={{
-
                     y: navVisible ? 0 : -140,
-
                     opacity: navVisible ? 1 : 0,
-
                 }}
-
                 transition={{
-
                     duration: 0.35,
-
                     ease: [0.22, 1, 0.36, 1],
-
                 }}
-
                 className="
-
-          fixed
-
-          left-0
-
-          top-0
-
-          z-50
-
-          w-full
-
-          px-4
-
-          pt-4
-
-          sm:px-6
-
-          lg:px-8
-
-          lg:pt-6
-
-        "
-
+        fixed
+        left-0
+        top-0
+        z-50
+        w-full
+        px-4
+        pt-4
+        will-change-transform
+        sm:px-6
+        lg:px-8
+        lg:pt-6
+    "
             >
 
                 <motion.nav
