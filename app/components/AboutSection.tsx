@@ -1168,7 +1168,7 @@ export default function AboutSection() {
 
                                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                                     <Link
-                                        href="/Provider"
+                                        href="/AboutSection"
                                         className="group inline-flex min-h-[50px] items-center justify-center gap-3 rounded-full border border-white/15 bg-white px-6 py-3.5 text-[14px] font-semibold text-[#252525] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#fff8f3]"
                                     >
                                         More About Joseph
