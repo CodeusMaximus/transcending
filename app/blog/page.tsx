@@ -1,6 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import BlogSearch from "../components/BlogSearch";
+import {
+    ArrowRight,
+    BookOpen,
+    Clock3,
+    Sparkles,
+} from "lucide-react";
 
 interface Post {
     id: string;
@@ -14,30 +20,17 @@ interface Post {
 
 const SITE_URL =
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "http://localhost:3000";
+    "https://transcending-yzat.vercel.app";
 
 /* =========================================================
    IMAGE URL
 ========================================================= */
 
-const normalizeImageUrl = (
-    url: string
-): string => {
-    /*
-     * No uploaded image yet.
-     * Use a MediaDari local fallback.
-     *
-     * Change this path if your actual
-     * MediaDari logo has a different name.
-     */
+const normalizeImageUrl = (url: string): string => {
     if (!url) {
-        return "/images/mediadari-logo.png";
+        return "/images/blog-placeholder.jpg";
     }
 
-    /*
-     * Vercel Blob URLs are already
-     * absolute URLs.
-     */
     if (
         url.startsWith("http://") ||
         url.startsWith("https://")
@@ -53,7 +46,27 @@ const normalizeImageUrl = (
 };
 
 /* =========================================================
-   GET PUBLISHED BLOG POSTS
+   DATE
+========================================================= */
+
+function formatDate(date: string) {
+    if (!date) return "";
+
+    const parsed = new Date(date);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return "";
+    }
+
+    return parsed.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+}
+
+/* =========================================================
+   GET PUBLISHED POSTS
 ========================================================= */
 
 async function getPosts(): Promise<Post[]> {
@@ -67,7 +80,7 @@ async function getPosts(): Promise<Post[]> {
 
         if (!response.ok) {
             console.error(
-                "Failed to fetch MediaDari posts:",
+                "Failed to fetch Transcending Psychiatry posts:",
                 response.status
             );
 
@@ -81,16 +94,13 @@ async function getPosts(): Promise<Post[]> {
             !Array.isArray(data.posts)
         ) {
             console.error(
-                "Invalid MediaDari posts response:",
+                "Invalid Transcending Psychiatry posts response:",
                 data
             );
 
             return [];
         }
 
-        /*
-         * Newest articles first.
-         */
         return [...data.posts].sort(
             (a: Post, b: Post) =>
                 new Date(b.date).getTime() -
@@ -98,7 +108,7 @@ async function getPosts(): Promise<Post[]> {
         );
     } catch (error) {
         console.error(
-            "Error fetching MediaDari posts:",
+            "Error fetching Transcending Psychiatry posts:",
             error
         );
 
@@ -113,308 +123,352 @@ async function getPosts(): Promise<Post[]> {
 export default async function Blog() {
     const posts = await getPosts();
 
-    const featuredPost =
-        posts[0] ?? null;
-
-    const regularPosts =
-        posts.slice(1);
+    const featuredPost = posts[0] ?? null;
+    const regularPosts = posts.slice(1);
 
     return (
-        <div className="container mx-auto max-w-7xl bg-white px-4 py-8 pt-24 md:px-8">
+        <div className="min-h-screen overflow-hidden bg-[#fffaf6]">
 
-            {/* ===================================================
-          HEADER
-      =================================================== */}
+            {/* =====================================================
+                HERO
+            ===================================================== */}
 
-            <header className="mb-10 text-center">
+            <section className="relative overflow-hidden px-5 pb-16 pt-40 sm:px-8 lg:pb-24 lg:pt-48">
 
+                {/* Background atmosphere */}
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute -left-32 top-10 h-[420px] w-[420px] rounded-full bg-[#ff7426]/[0.07] blur-3xl" />
 
+                    <div className="absolute -right-40 top-24 h-[500px] w-[500px] rounded-full bg-[#ffb98f]/[0.13] blur-3xl" />
 
+                    <div className="absolute left-1/2 top-0 h-px w-[80%] -translate-x-1/2 bg-gradient-to-r from-transparent via-[#ff7426]/20 to-transparent" />
+                </div>
 
+                <div className="relative mx-auto max-w-[1400px]">
 
-                <p className="mx-auto mb-7 max-w-3xl text-lg leading-8 text-gray-600 sm:text-xl">
+                    <div className="mx-auto max-w-4xl text-center">
 
-                </p>
+                        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#ffd8c1] bg-white/80 px-4 py-2 shadow-sm backdrop-blur-xl">
+                            <Sparkles className="h-4 w-4 text-[#ff7426]" />
 
-                {/* Search remains client-side */}
+                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#d95c19]">
+                                Insights & Resources
+                            </span>
+                        </div>
 
-                <BlogSearch posts={posts} />
+                        <h1 className="text-[46px] font-semibold leading-[0.98] tracking-[-0.045em] text-[#25211e] sm:text-6xl lg:text-[82px]">
+                            Thoughts for a
+                            <span className="block text-[#ff7426]">
+                                healthier mind.
+                            </span>
+                        </h1>
 
-            </header>
+                        <p className="mx-auto mt-7 max-w-2xl text-[16px] leading-8 text-[#716862] sm:text-lg">
+                            Thoughtful guidance on mental health,
+                            emotional wellness, treatment, and the
+                            everyday journey toward feeling more like
+                            yourself.
+                        </p>
 
-            {/* ===================================================
-          BLOG CONTENT
-      =================================================== */}
+                        {/* SEARCH */}
+                        <div className="mx-auto mt-9 max-w-2xl">
+                            <BlogSearch posts={posts} />
+                        </div>
 
-            <main>
+                    </div>
+                </div>
+            </section>
+
+            {/* =====================================================
+                CONTENT
+            ===================================================== */}
+
+            <main className="relative mx-auto max-w-[1400px] px-5 pb-28 sm:px-8 lg:px-10">
 
                 {posts.length === 0 ? (
 
                     /* =================================================
-                       NO POSTS
+                       EMPTY STATE
                     ================================================= */
 
-                    <div className="py-20 text-center">
+                    <section className="mx-auto max-w-3xl py-16">
+                        <div className="relative overflow-hidden rounded-[36px] border border-[#eee2da] bg-white px-7 py-16 text-center shadow-[0_25px_80px_rgba(65,45,30,0.08)] sm:px-12">
 
-                        <h2 className="text-2xl font-bold text-black">
-                            No articles yet
-                        </h2>
+                            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#ff7426]/10 blur-3xl" />
 
-                        <p className="mt-3 text-gray-500">
-                            Check back soon for new
-                            MediaDari insights and resources.
-                        </p>
+                            <div className="relative">
+                                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#fff0e6] text-[#ff7426]">
+                                    <BookOpen className="h-7 w-7" />
+                                </div>
 
-                    </div>
+                                <h2 className="mt-7 text-3xl font-semibold tracking-tight text-[#25211e]">
+                                    New insights are on the way.
+                                </h2>
+
+                                <p className="mx-auto mt-4 max-w-xl leading-7 text-[#77706b]">
+                                    We're preparing thoughtful mental
+                                    health resources and articles from
+                                    Transcending Psychiatry. Check back
+                                    soon.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
 
                 ) : (
-
                     <>
 
-                        {/* ===============================================
-                FEATURED ARTICLE
-            =============================================== */}
+                        {/* =================================================
+                            FEATURED ARTICLE
+                        ================================================= */}
 
                         {featuredPost && (
+                            <section className="mb-24">
 
-                            <section
-                                className="
-                  mb-14
-                  overflow-hidden
-                  rounded-[28px]
-                  border
-                  border-gray-200
-                  bg-white
-                  shadow-xl
-                  transition
-                  duration-300
-                  hover:-translate-y-1
-                  hover:shadow-2xl
-                "
-                            >
+                                <div className="mb-7 flex items-end justify-between">
+                                    <div>
+                                        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[#e86620]">
+                                            Featured Story
+                                        </p>
+
+                                        <h2 className="text-2xl font-semibold tracking-tight text-[#28231f] sm:text-3xl">
+                                            From the journal
+                                        </h2>
+                                    </div>
+
+                                    <div className="hidden h-px flex-1 bg-[#e8ddd6] sm:ml-10 sm:block" />
+                                </div>
 
                                 <Link
                                     href={`/blog/${featuredPost.slug ||
                                         featuredPost.id
                                         }`}
+                                    className="group block"
                                 >
+                                    <article className="relative grid overflow-hidden rounded-[34px] border border-[#eadfd8] bg-white shadow-[0_28px_90px_rgba(57,39,28,0.10)] lg:grid-cols-[1.15fr_0.85fr]">
 
-                                    {/* Featured Image */}
+                                        {/* IMAGE */}
 
-                                    <div className="relative h-[300px] w-full sm:h-[400px] lg:h-[480px]">
+                                        <div className="relative min-h-[360px] overflow-hidden sm:min-h-[470px] lg:min-h-[620px]">
 
-                                        <Image
-                                            src={normalizeImageUrl(
-                                                featuredPost.image
-                                            )}
-                                            alt={featuredPost.title}
-                                            fill
-                                            className="object-cover"
-                                            priority
-                                        />
-
-                                        {/* subtle dark gradient */}
-
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-
-                                    </div>
-
-                                    {/* Featured Content */}
-
-                                    <div className="p-6 sm:p-8 lg:p-10">
-
-                                        <div className="mb-4 flex flex-wrap justify-between gap-3 text-sm text-gray-500">
-
-                                            <span>
-                                                {new Date(
-                                                    featuredPost.date
-                                                ).toLocaleDateString(
-                                                    "en-US",
-                                                    {
-                                                        year: "numeric",
-                                                        month: "long",
-                                                        day: "numeric",
-                                                    }
+                                            <Image
+                                                src={normalizeImageUrl(
+                                                    featuredPost.image
                                                 )}
-                                            </span>
+                                                alt={featuredPost.title}
+                                                fill
+                                                priority
+                                                sizes="(max-width: 1024px) 100vw, 58vw"
+                                                className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+                                            />
 
-                                            <span>
-                                                {
-                                                    featuredPost.readTime
-                                                }{" "}
-                                                read
-                                            </span>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-black/[0.04]" />
 
+                                            <div className="absolute left-6 top-6 rounded-full border border-white/40 bg-white/85 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#e75f18] shadow-lg backdrop-blur-xl">
+                                                Featured
+                                            </div>
                                         </div>
 
-                                        <h2 className="mb-4 text-3xl font-bold leading-tight text-black sm:text-4xl lg:text-5xl">
-                                            {featuredPost.title}
-                                        </h2>
+                                        {/* CONTENT */}
 
-                                        <p className="mb-7 max-w-4xl text-lg leading-8 text-gray-600">
-                                            {featuredPost.excerpt}
-                                        </p>
+                                        <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14 xl:p-16">
 
-                                        <div
-                                            className="
-                        inline-flex
-                        rounded-full
-                        bg-gradient-to-r
-                        from-[#FAB2FF]
-                        to-[#1904E5]
-                        px-7
-                        py-3
-                        font-bold
-                        text-white
-                        transition
-                        hover:opacity-90
-                      "
-                                        >
-                                            Read Article →
+                                            <div className="absolute right-[-80px] top-[-80px] h-[240px] w-[240px] rounded-full bg-[#ff7426]/[0.07] blur-3xl" />
+
+                                            <div className="relative">
+
+                                                <div className="mb-6 flex flex-wrap items-center gap-4 text-[12px] font-medium text-[#8a817b]">
+
+                                                    <span>
+                                                        {formatDate(
+                                                            featuredPost.date
+                                                        )}
+                                                    </span>
+
+                                                    <span className="h-1 w-1 rounded-full bg-[#ff7426]" />
+
+                                                    <span className="flex items-center gap-1.5">
+                                                        <Clock3 className="h-3.5 w-3.5" />
+                                                        {featuredPost.readTime ||
+                                                            "5 min"}{" "}
+                                                        read
+                                                    </span>
+                                                </div>
+
+                                                <h2 className="text-3xl font-semibold leading-[1.08] tracking-[-0.035em] text-[#25211e] transition-colors group-hover:text-[#e85f18] sm:text-4xl xl:text-[52px]">
+                                                    {featuredPost.title}
+                                                </h2>
+
+                                                <p className="mt-6 line-clamp-4 text-[16px] leading-8 text-[#746c66]">
+                                                    {featuredPost.excerpt}
+                                                </p>
+
+                                                <div className="mt-9 inline-flex items-center gap-3 rounded-full bg-[#ff7426] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(255,116,38,0.25)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:bg-[#e85f18]">
+                                                    Read the article
+
+                                                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                                </div>
+
+                                            </div>
                                         </div>
 
-                                    </div>
-
+                                    </article>
                                 </Link>
-
                             </section>
                         )}
 
-                        {/* ===============================================
-                ARTICLE GRID
-            =============================================== */}
+                        {/* =================================================
+                            ARTICLE GRID
+                        ================================================= */}
 
                         {regularPosts.length > 0 && (
-
                             <section>
 
-                                <div className="mb-7 flex items-end justify-between">
+                                <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 
                                     <div>
-
-                                        <p className="mb-1 text-sm font-bold uppercase tracking-[0.15em] text-[#1904E5]">
-                                            Latest
+                                        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[#e86620]">
+                                            Explore More
                                         </p>
 
-                                        <h2 className="text-3xl font-bold text-black">
-                                            More Insights
+                                        <h2 className="text-3xl font-semibold tracking-[-0.025em] text-[#25211e] sm:text-4xl">
+                                            Latest insights
                                         </h2>
-
                                     </div>
+
+                                    <p className="max-w-md text-sm leading-6 text-[#837a74]">
+                                        Practical perspectives on
+                                        emotional wellness, psychiatric
+                                        care, and healthier living.
+                                    </p>
 
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                                <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
 
-                                    {regularPosts.map(
-                                        (post) => (
+                                    {regularPosts.map((post) => (
+                                        <Link
+                                            href={`/blog/${post.slug ||
+                                                post.id
+                                                }`}
+                                            key={post.id}
+                                            className="group"
+                                        >
+                                            <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-[#eadfd8] bg-white shadow-[0_14px_45px_rgba(56,39,29,0.06)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_70px_rgba(56,39,29,0.12)]">
 
-                                            <Link
-                                                href={`/blog/${post.slug ||
-                                                    post.id
-                                                    }`}
-                                                key={post.id}
-                                                className="group"
-                                            >
+                                                {/* IMAGE */}
 
-                                                <article
-                                                    className="
-                            flex
-                            h-full
-                            flex-col
-                            overflow-hidden
-                            rounded-[24px]
-                            border
-                            border-gray-200
-                            bg-white
-                            shadow-md
-                            transition
-                            duration-300
-                            group-hover:-translate-y-1
-                            group-hover:shadow-xl
-                          "
-                                                >
+                                                <div className="relative h-[260px] overflow-hidden bg-[#f3ede9]">
 
-                                                    {/* Article Image */}
+                                                    <Image
+                                                        src={normalizeImageUrl(
+                                                            post.image
+                                                        )}
+                                                        alt={post.title}
+                                                        fill
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                                    />
 
-                                                    <div className="relative h-56 w-full overflow-hidden bg-gray-100">
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-70" />
 
-                                                        <Image
-                                                            src={normalizeImageUrl(
-                                                                post.image
-                                                            )}
-                                                            alt={post.title}
-                                                            fill
-                                                            className="
-                                object-cover
-                                transition
-                                duration-500
-                                group-hover:scale-105
-                              "
-                                                        />
-
+                                                    <div className="absolute bottom-5 left-5 rounded-full bg-white/90 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#e75f18] shadow-md backdrop-blur-xl">
+                                                        Wellness
                                                     </div>
 
-                                                    {/* Article Content */}
+                                                </div>
 
-                                                    <div className="flex flex-grow flex-col p-6">
+                                                {/* CONTENT */}
 
-                                                        <div className="mb-3 flex justify-between gap-3 text-sm text-gray-500">
+                                                <div className="flex flex-1 flex-col p-7">
 
-                                                            <span>
-                                                                {new Date(
-                                                                    post.date
-                                                                ).toLocaleDateString(
-                                                                    "en-US",
-                                                                    {
-                                                                        year: "numeric",
-                                                                        month: "short",
-                                                                        day: "numeric",
-                                                                    }
-                                                                )}
-                                                            </span>
+                                                    <div className="mb-4 flex items-center gap-3 text-[11px] font-medium text-[#938a84]">
 
-                                                            <span>
-                                                                {
-                                                                    post.readTime
-                                                                }{" "}
-                                                                read
-                                                            </span>
+                                                        <span>
+                                                            {formatDate(
+                                                                post.date
+                                                            )}
+                                                        </span>
 
-                                                        </div>
+                                                        <span className="h-1 w-1 rounded-full bg-[#ff7426]" />
 
-                                                        <h3 className="mb-3 text-xl font-bold leading-snug text-black transition group-hover:text-[#1904E5]">
-                                                            {post.title}
-                                                        </h3>
-
-                                                        <p className="mb-5 flex-grow leading-7 text-gray-600">
-                                                            {post.excerpt}
-                                                        </p>
-
-                                                        <span className="font-bold text-[#1904E5]">
-                                                            Read Article →
+                                                        <span>
+                                                            {post.readTime ||
+                                                                "5 min"}{" "}
+                                                            read
                                                         </span>
 
                                                     </div>
 
-                                                </article>
+                                                    <h3 className="text-[23px] font-semibold leading-[1.18] tracking-[-0.025em] text-[#28231f] transition-colors duration-300 group-hover:text-[#e85f18]">
+                                                        {post.title}
+                                                    </h3>
 
-                                            </Link>
+                                                    <p className="mt-4 line-clamp-3 flex-1 text-[14px] leading-7 text-[#776f69]">
+                                                        {post.excerpt}
+                                                    </p>
 
-                                        )
-                                    )}
+                                                    <div className="mt-7 flex items-center gap-2 text-[13px] font-bold text-[#e85f18]">
+                                                        Read article
+
+                                                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                                                    </div>
+
+                                                </div>
+
+                                            </article>
+                                        </Link>
+                                    ))}
 
                                 </div>
 
                             </section>
                         )}
 
-                    </>
+                        {/* =================================================
+                            BOTTOM CTA
+                        ================================================= */}
 
+                        <section className="relative mt-24 overflow-hidden rounded-[36px] bg-[#28211d] px-7 py-14 text-white sm:px-12 lg:px-16 lg:py-16">
+
+                            <div className="absolute -right-24 -top-32 h-[420px] w-[420px] rounded-full bg-[#ff7426]/25 blur-[90px]" />
+
+                            <div className="absolute -bottom-48 left-1/4 h-[360px] w-[360px] rounded-full bg-[#ff9b58]/10 blur-[80px]" />
+
+                            <div className="relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+
+                                <div className="max-w-2xl">
+                                    <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.22em] text-[#ff9b62]">
+                                        Transcending Psychiatry
+                                    </p>
+
+                                    <h2 className="text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl lg:text-5xl">
+                                        You don't have to navigate
+                                        mental health alone.
+                                    </h2>
+
+                                    <p className="mt-5 max-w-xl leading-7 text-white/65">
+                                        Personalized psychiatric care
+                                        designed around your individual
+                                        needs, goals, and journey.
+                                    </p>
+                                </div>
+
+                                <Link
+                                    href="/#contact"
+                                    className="inline-flex shrink-0 items-center justify-center gap-3 self-start rounded-full bg-[#ff7426] px-7 py-4 text-sm font-semibold text-white shadow-[0_14px_35px_rgba(255,116,38,0.25)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#f1641e] lg:self-auto"
+                                >
+                                    Get Started
+                                    <ArrowRight className="h-4 w-4" />
+                                </Link>
+
+                            </div>
+                        </section>
+
+                    </>
                 )}
 
             </main>
-
         </div>
     );
 }
