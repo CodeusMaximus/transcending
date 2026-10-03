@@ -134,85 +134,48 @@ export default function Navbar() {
 
 
     useEffect(() => {
+        let lastY = window.scrollY;
 
         const handleScroll = () => {
+            const currentY = window.scrollY;
 
-            const currentScrollY = window.scrollY;
-
-
-
-            if (currentScrollY < 80) {
-
+            // Always show navbar near top of page
+            if (currentY < 80) {
                 setNavVisible(true);
-
-                lastScrollY.current = currentScrollY;
-
+                lastY = currentY;
                 return;
-
             }
 
-
-
+            // Always keep navbar visible while mobile menu is open
             if (mobileOpen) {
-
                 setNavVisible(true);
-
-                lastScrollY.current = currentScrollY;
-
+                lastY = currentY;
                 return;
-
             }
 
-
-
-            const difference =
-
-                currentScrollY - lastScrollY.current;
-
-
-
-            if (Math.abs(difference) < 8) return;
-
-
-
-            if (difference > 0) {
-
-                setNavVisible(false);
-
-                setServicesOpen(false);
-
-            } else {
-
+            // Scrolling UP → immediately show navbar
+            if (currentY < lastY) {
                 setNavVisible(true);
-
             }
 
+            // Scrolling DOWN → hide navbar
+            if (currentY > lastY) {
+                setNavVisible(false);
+                setServicesOpen(false);
+                setNewJerseyOpen(false);
+                setNewYorkOpen(false);
+            }
 
-
-            lastScrollY.current = currentScrollY;
-
+            lastY = currentY;
         };
 
-
-
         window.addEventListener("scroll", handleScroll, {
-
             passive: true,
-
         });
 
-
-
-        return () =>
-
-            window.removeEventListener(
-
-                "scroll",
-
-                handleScroll
-
-            );
-
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, [mobileOpen]);
 
 
