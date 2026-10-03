@@ -1,680 +1,1073 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import Image from "next/image"; // ✅ For optimized image loading
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useClerk, useUser } from "@clerk/nextjs";
 import CreatePost from "../components/createpost";
 
 import {
   BarChart3,
-  Users,
   FileText,
   Settings,
-  Bell,
-  Calendar,
   LogOut,
   PlusCircle,
-  Filter,
-  ChevronDown,
-  Search
+  Search,
+  Pencil,
+  Trash2,
+  Eye,
+  EyeOff,
+  Menu,
+  X,
+  ExternalLink,
+  LayoutDashboard,
 } from "lucide-react";
 
-type ClerkUser = {
-  fullName?: string;
-  firstName?: string;
-  primaryEmailAddress?: {
-    emailAddress: string;
-  };
-  imageUrl?: string;
-};
-
-type Clerk = {
-  user: ClerkUser | null;
-  signOut: () => Promise<void>;
-  addListener: (callback: (event: { user: ClerkUser | null }) => void) => () => void;
-};
-
-declare global {
-  interface Window {
-    Clerk?: Clerk;
-  }
-}
 interface Post {
   id: string;
-
   title: string;
-
-  status:
-  | "draft"
-  | "published"
-  | "scheduled";
-
+  status: "draft" | "published" | "scheduled";
   createdAt: string;
-
-  publishedAt?:
-  | string
-  | null;
-
+  publishedAt?: string | null;
   views?: number;
-
   author: string;
 }
 
-function useClerkUser() {
-  const [userState, setUserState] = useState<{
-    isLoaded: boolean;
-    isSignedIn: boolean;
-    user: ClerkUser | null;
-  }>({
-    isLoaded: false,
-    isSignedIn: false,
-    user: null
-  });
-
-  useEffect(() => {
-    const checkClerk = () => {
-      if (window.Clerk) {
-        const clerk = window.Clerk;
-
-        setUserState({
-          isLoaded: true,
-          isSignedIn: !!clerk.user,
-          user: clerk.user
-        });
-
-        const unsubscribe = clerk.addListener((event: { user: ClerkUser | null }) => {
-          setUserState({
-            isLoaded: true,
-            isSignedIn: !!event.user,
-            user: event.user
-          });
-        });
-
-        return unsubscribe;
-      } else {
-        setTimeout(checkClerk, 100);
-      }
-    };
-
-    checkClerk();
-  }, []);
-
-  return userState;
-}
-
-
+type Tab = "overview" | "posts" | "analytics" | "settings";
 
 const Dashboard = () => {
-  const { isLoaded, isSignedIn, user } = useClerkUser();
-  const [activeTab, setActiveTab] = useState("overview");
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [loading, setLoading] = useState(true);
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  /*
+   * -------------------------------------------------------
+   * FETCH POSTS
+   * -------------------------------------------------------
+   */
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch("/api/get-posts?admin=true", {
+        cache: "no-store",
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setPosts(data.posts || []);
+      } else {
+        console.error("Failed to fetch posts:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Fetch posts when component loads
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch('/api/get-posts?admin=true');
-        const data = await response.json();
-
-        if (data.success) {
-          setPosts(data.posts);
-        } else {
-          console.error('Failed to fetch posts');
-        }
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Only fetch posts if user is loaded and signed in
     if (isLoaded && isSignedIn) {
       fetchPosts();
     }
+
+    if (isLoaded && !isSignedIn) {
+      setLoading(false);
+    }
   }, [isLoaded, isSignedIn]);
 
-  // Existing sign-in and loading checks remain the same
-  if (!isLoaded || loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="w-16 h-16 border-4 border-gray-200 border-t-[#FAB2FF] rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  /*
+   * -------------------------------------------------------
+   * SIGN OUT
+   * -------------------------------------------------------
+   */
 
-  // If the user is not signed in, redirect to sign-in
-  if (!isSignedIn) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl font-bold mb-2">Please Sign In</h1>
-          <p className="text-gray-600 mb-6">You need to be signed in to access the dashboard</p>
-          <button
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                window.location.href = '/sign-in';
-              }
-            }}
-            className="px-8 py-3 bg-gradient-to-r from-[#FAB2FF] to-[#1904E5] text-white rounded-full font-bold hover:opacity-90 transition"
-          >
-            Sign In
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
-
-  const handleSignOut = () => {
-    if (typeof window !== 'undefined' && window.Clerk) {
-      window.Clerk.signOut().then(() => {
-        window.location.href = '/';
-      });
-    }
-
+  const handleSignOut = async () => {
+    await signOut({
+      redirectUrl: "/",
+    });
   };
-  // Function to publish a post
+
+  /*
+   * -------------------------------------------------------
+   * PUBLISH
+   * -------------------------------------------------------
+   */
 
   const handlePublishPost = async (postId: string) => {
     try {
-      const response = await fetch(`/api/dashpost?postId=${postId}&action=publish`, {
-        method: 'PUT'
-      });
+      const response = await fetch(
+        `/api/dashpost?postId=${postId}&action=publish`,
+        {
+          method: "PUT",
+        }
+      );
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Update the local state to reflect the change
-        setPosts(posts.map(post =>
-          post.id === postId
-            ? { ...post, status: 'published', publishedAt: new Date().toISOString() }
-            : post
-        ));
-      } else {
-        console.error('Failed to publish post:', data.error);
-        alert(data.error || 'Failed to publish post');
+      if (!response.ok) {
+        alert(data.error || "Failed to publish post");
+        return;
       }
+
+      setPosts((currentPosts) =>
+        currentPosts.map((post) =>
+          post.id === postId
+            ? {
+              ...post,
+              status: "published",
+              publishedAt: new Date().toISOString(),
+            }
+            : post
+        )
+      );
     } catch (error) {
-      console.error('Error publishing post:', error);
-      alert('An error occurred while publishing the post');
+      console.error("Error publishing post:", error);
+      alert("An error occurred while publishing the post");
     }
   };
 
-  // Function to unpublish a post
+  /*
+   * -------------------------------------------------------
+   * UNPUBLISH
+   * -------------------------------------------------------
+   */
+
   const handleUnpublishPost = async (postId: string) => {
     try {
-      const response = await fetch(`/api/dashpost?postId=${postId}&action=unpublish`, {
-        method: 'PUT'
-      });
+      const response = await fetch(
+        `/api/dashpost?postId=${postId}&action=unpublish`,
+        {
+          method: "PUT",
+        }
+      );
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Update the local state to reflect the change
-        setPosts(posts.map(post =>
-          post.id === postId
-            ? { ...post, status: 'draft', publishedAt: undefined }
-            : post
-        ));
-      } else {
-        console.error('Failed to unpublish post:', data.error);
-        alert(data.error || 'Failed to unpublish post');
+      if (!response.ok) {
+        alert(data.error || "Failed to unpublish post");
+        return;
       }
+
+      setPosts((currentPosts) =>
+        currentPosts.map((post) =>
+          post.id === postId
+            ? {
+              ...post,
+              status: "draft",
+              publishedAt: null,
+            }
+            : post
+        )
+      );
     } catch (error) {
-      console.error('Error unpublishing post:', error);
-      alert('An error occurred while unpublishing the post');
+      console.error("Error unpublishing post:", error);
+      alert("An error occurred while unpublishing the post");
     }
   };
 
-  // Function to delete a post
+  /*
+   * -------------------------------------------------------
+   * DELETE
+   * -------------------------------------------------------
+   */
+
   const handleDeletePost = async (postId: string) => {
-    // Confirm deletion
-    const confirmDelete = window.confirm('Are you sure you want to delete this post?');
-    if (!confirmDelete) return;
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+
+    if (!confirmed) return;
 
     try {
-      const response = await fetch(`/api/dashpost?postId=${postId}`, {
-        method: 'DELETE'
-      });
+      const response = await fetch(
+        `/api/dashpost?postId=${postId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Remove the post from local state
-        setPosts(posts.filter(post => post.id !== postId));
-      } else {
-        console.error('Failed to delete post:', data.error);
-        alert(data.error || 'Failed to delete post');
+      if (!response.ok) {
+        alert(data.error || "Failed to delete post");
+        return;
       }
+
+      setPosts((currentPosts) =>
+        currentPosts.filter((post) => post.id !== postId)
+      );
     } catch (error) {
-      console.error('Error deleting post:', error);
-      alert('An error occurred while deleting the post');
+      console.error("Error deleting post:", error);
+      alert("An error occurred while deleting the post");
     }
-  }; return (
+  };
 
-    <div className="min-h-screen bg-gray-50 pt-[90px]">
-      {/* Sidebar */}
-      <motion.aside
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-64 bg-white shadow-lg fixed h-full overflow-y-auto"
-      >
-        <div className="p-6">
-          <div className="text-2xl font-bold uppercase mb-8">
-            <span className="text-black">MEDIA</span>
-            <span className="text-gray-400">DARI</span>
-          </div>
+  /*
+   * -------------------------------------------------------
+   * DERIVED DATA
+   * -------------------------------------------------------
+   */
 
-          <nav className="space-y-1">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`flex items-center px-4 py-3 rounded-lg w-full text-left ${activeTab === "overview"
-                ? "bg-gradient-to-r from-[#FAB2FF]/20 to-[#1904E5]/20 text-[#1904E5] font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <BarChart3 className="h-5 w-5 mr-3" />
-              Overview
-            </button>
+  const publishedPosts = posts.filter(
+    (post) => post.status === "published"
+  );
 
-            <button
-              onClick={() => setActiveTab("posts")}
-              className={`flex items-center px-4 py-3 rounded-lg w-full text-left ${activeTab === "posts"
-                ? "bg-gradient-to-r from-[#FAB2FF]/20 to-[#1904E5]/20 text-[#1904E5] font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <FileText className="h-5 w-5 mr-3" />
-              Posts
-            </button>
-            <button
-              onClick={() => setActiveTab("clientintake")}
-              className={`flex items-center px-4 py-3 rounded-lg w-full text-left ${activeTab === "clientintake"
-                ? "bg-gradient-to-r from-[#FAB2FF]/20 to-[#1904E5]/20 text-[#1904E5] font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <FileText className="h-5 w-5 mr-3" />
-              Client Intake
-            </button>
+  const draftPosts = posts.filter(
+    (post) => post.status === "draft"
+  );
 
-            <button
-              onClick={() => setActiveTab("analytics")}
-              className={`flex items-center px-4 py-3 rounded-lg w-full text-left ${activeTab === "analytics"
-                ? "bg-gradient-to-r from-[#FAB2FF]/20 to-[#1904E5]/20 text-[#1904E5] font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <Users className="h-5 w-5 mr-3" />
-              Analytics
-            </button>
+  const totalViews = posts.reduce(
+    (total, post) => total + (post.views || 0),
+    0
+  );
 
-            <button
-              onClick={() => setActiveTab("calendar")}
-              className={`flex items-center px-4 py-3 rounded-lg w-full text-left ${activeTab === "calendar"
-                ? "bg-gradient-to-r from-[#FAB2FF]/20 to-[#1904E5]/20 text-[#1904E5] font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <Calendar className="h-5 w-5 mr-3" />
-              Calendar
-            </button>
+  const filteredPosts = useMemo(() => {
+    const search = searchTerm.trim().toLowerCase();
 
-            <button
-              onClick={() => setActiveTab("settings")}
-              className={`flex items-center px-4 py-3 rounded-lg w-full text-left ${activeTab === "settings"
-                ? "bg-gradient-to-r from-[#FAB2FF]/20 to-[#1904E5]/20 text-[#1904E5] font-semibold"
-                : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <Settings className="h-5 w-5 mr-3" />
-              Settings
-            </button>
-          </nav>
+    if (!search) return posts;
+
+    return posts.filter((post) =>
+      post.title.toLowerCase().includes(search)
+    );
+  }, [posts, searchTerm]);
+
+  /*
+   * -------------------------------------------------------
+   * LOADING
+   * -------------------------------------------------------
+   */
+
+  if (!isLoaded || loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#faf9f7]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-11 w-11 animate-spin rounded-full border-4 border-[#eee7e1] border-t-[#ff7426]" />
+
+          <p className="text-sm font-medium text-[#777]">
+            Loading dashboard...
+          </p>
         </div>
+      </div>
+    );
+  }
 
-        <div className="absolute bottom-0 w-full border-t border-gray-200 p-4">
-          <div className="flex items-center">
-            <Image
-              src={user?.imageUrl || 'https://via.placeholder.com/40'}
-              alt="Profile"
-              width={40}
-              height={40}
-              className="rounded-full mr-3"
-            />
-            <div>
-              <p className="font-medium text-sm">{user?.fullName || user?.firstName || "User"}</p>
-              <p className="text-xs text-gray-500">{user?.primaryEmailAddress?.emailAddress || "user@example.com"}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="flex items-center justify-center w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </button>
-        </div>
-      </motion.aside>
+  /*
+   * proxy.ts should normally prevent this state,
+   * but this gives us a safe fallback.
+   */
 
-      {/* Main Content */}
-      <div className="ml-64 flex-1 p-8">
-        {/* Top Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex justify-between items-center mb-8"
-        >
-          <h1 className="text-2xl font-bold">
-            {activeTab === "overview" && "Dashboard Overview"}
-            {activeTab === "posts" && "Manage Posts"}
-            {activeTab === "analytics" && "Analytics"}
-            {activeTab === "calendar" && "Content Calendar"}
-            {activeTab === "settings" && "Account Settings"}
+  if (!isSignedIn) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#faf9f7] px-6">
+        <div className="max-w-md text-center">
+          <h1 className="mb-3 text-3xl font-semibold text-[#242424]">
+            Authentication required
           </h1>
 
-          <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 relative">
-              <Bell className="h-5 w-5 text-gray-600" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            <button
-              onClick={() => setIsCreatingPost(true)}
-              className="px-4 py-2 bg-gradient-to-r from-[#FAB2FF] to-[#1904E5] text-white rounded-full flex items-center hover:opacity-90 transition"
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              New Post
-            </button>
-          </div>
-        </motion.div>
+          <p className="text-[#777]">
+            Please sign in through the website administrator login.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-        {/* CreatePost Overlay */}
-        {isCreatingPost && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+  /*
+   * -------------------------------------------------------
+   * NAVIGATION
+   * -------------------------------------------------------
+   */
+
+  const navigation = [
+    {
+      id: "overview" as Tab,
+      label: "Overview",
+      icon: LayoutDashboard,
+    },
+    {
+      id: "posts" as Tab,
+      label: "Blog Posts",
+      icon: FileText,
+    },
+    {
+      id: "analytics" as Tab,
+      label: "Analytics",
+      icon: BarChart3,
+    },
+    {
+      id: "settings" as Tab,
+      label: "Settings",
+      icon: Settings,
+    },
+  ];
+
+  const pageTitle = {
+    overview: "Dashboard Overview",
+    posts: "Blog Posts",
+    analytics: "Analytics",
+    settings: "Settings",
+  }[activeTab];
+
+  /*
+   * -------------------------------------------------------
+   * SIDEBAR
+   * -------------------------------------------------------
+   */
+
+  const SidebarContent = () => (
+    <>
+      <div className="border-b border-[#eee9e5] px-6 py-7">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#ff7426] text-lg font-bold text-white shadow-sm">
+            T
+          </div>
+
+          <div>
+            <p className="text-[15px] font-bold leading-tight text-[#242424]">
+              Transcending
+            </p>
+
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#9a8f87]">
+              Psychiatry
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 px-4 py-6">
+        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#aaa09a]">
+          Website
+        </p>
+
+        <div className="space-y-1">
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            const active = activeTab === item.id;
+
+            return (
               <button
-                onClick={() => setIsCreatingPost(false)}
-                className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md z-10 hover:bg-gray-100 text-2xl w-10 h-10 flex items-center justify-center"
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`
+                                    flex
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3
+                                    py-3
+                                    text-left
+                                    text-sm
+                                    font-semibold
+                                    transition-all
+                                    ${active
+                    ? "bg-[#fff0e7] text-[#e85f18]"
+                    : "text-[#6f6965] hover:bg-[#f7f4f1] hover:text-[#242424]"
+                  }
+                                `}
               >
-                &times;
+                <Icon
+                  className={`h-[18px] w-[18px] ${active
+                    ? "text-[#ff7426]"
+                    : "text-[#99918b]"
+                    }`}
+                />
+
+                {item.label}
               </button>
-              <CreatePost onPostCreated={() => {
-                setIsCreatingPost(false);
-                // Refresh posts after creation
-                fetch('/api/get-posts?admin=true')
-                  .then(response => response.json())
-                  .then(data => {
-                    if (data.success) {
-                      setPosts(data.posts);
-                    }
-                  })
-                  .catch(console.error);
-              }} />
+            );
+          })}
+        </div>
+      </nav>
+
+      <div className="border-t border-[#eee9e5] p-4">
+        <div className="mb-4 flex items-center gap-3 rounded-xl bg-[#faf8f6] p-3">
+          {user.imageUrl ? (
+            <Image
+              src={user.imageUrl}
+              alt="Profile"
+              width={42}
+              height={42}
+              className="rounded-full"
+            />
+          ) : (
+            <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-[#ff7426] font-semibold text-white">
+              {user.firstName?.charAt(0) || "A"}
+            </div>
+          )}
+
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-[#2d2b29]">
+              {user.fullName ||
+                user.firstName ||
+                "Administrator"}
+            </p>
+
+            <p className="truncate text-[11px] text-[#928b86]">
+              {user.primaryEmailAddress?.emailAddress}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleSignOut}
+          className="
+                        flex
+                        w-full
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-[#e8e1dc]
+                        bg-white
+                        px-4
+                        py-3
+                        text-sm
+                        font-semibold
+                        text-[#625d59]
+                        transition
+                        hover:border-[#ff7426]
+                        hover:bg-[#fff6f0]
+                        hover:text-[#e85f18]
+                    "
+        >
+          <LogOut className="h-4 w-4" />
+          Sign Out
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#faf9f7] text-[#242424]">
+      {/* =====================================================
+                DESKTOP SIDEBAR
+            ===================================================== */}
+
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[270px] flex-col border-r border-[#eee9e5] bg-white lg:flex">
+        <SidebarContent />
+      </aside>
+
+      {/* =====================================================
+                MOBILE HEADER
+            ===================================================== */}
+
+      <div className="sticky top-0 z-30 flex h-[72px] items-center justify-between border-b border-[#eee9e5] bg-white/95 px-5 backdrop-blur lg:hidden">
+        <div>
+          <p className="font-bold text-[#242424]">
+            Transcending
+          </p>
+
+          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#9a8f87]">
+            Psychiatry
+          </p>
+        </div>
+
+        <button
+          onClick={() =>
+            setMobileMenuOpen((current) => !current)
+          }
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-[#eee6e0] bg-white"
+        >
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </button>
+      </div>
+
+      {/* =====================================================
+                MOBILE SIDEBAR
+            ===================================================== */}
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+            />
+
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{
+                type: "spring",
+                stiffness: 280,
+                damping: 30,
+              }}
+              className="fixed inset-y-0 left-0 z-50 flex w-[285px] flex-col bg-white shadow-2xl lg:hidden"
+            >
+              <SidebarContent />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* =====================================================
+                MAIN CONTENT
+            ===================================================== */}
+
+      <main className="lg:ml-[270px]">
+        <div className="mx-auto max-w-[1500px] px-5 py-7 md:px-8 lg:px-10 lg:py-10">
+          {/* HEADER */}
+
+          <div className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+            <div>
+              <p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-[#ff7426]">
+                Website Administration
+              </p>
+
+              <h1 className="text-2xl font-semibold tracking-tight text-[#262422] md:text-3xl">
+                {pageTitle}
+              </h1>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="
+                                    flex
+                                    items-center
+                                    gap-2
+                                    rounded-full
+                                    border
+                                    border-[#e7dfda]
+                                    bg-white
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    text-[#625d59]
+                                    shadow-sm
+                                    transition
+                                    hover:border-[#ff7426]
+                                    hover:text-[#e85f18]
+                                "
+              >
+                View Website
+                <ExternalLink className="h-4 w-4" />
+              </a>
+
+              <button
+                onClick={() => setIsCreatingPost(true)}
+                className="
+                                    flex
+                                    items-center
+                                    gap-2
+                                    rounded-full
+                                    bg-[#ff7426]
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    text-white
+                                    shadow-sm
+                                    transition
+                                    hover:-translate-y-0.5
+                                    hover:bg-[#e85f18]
+                                    hover:shadow-md
+                                "
+              >
+                <PlusCircle className="h-4 w-4" />
+                New Post
+              </button>
             </div>
           </div>
-        )}
 
-        {/* Dashboard Content */}
-        {!isCreatingPost && activeTab === "overview" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-500 text-sm font-medium">Total Posts</h3>
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <FileText className="h-5 w-5 text-blue-600" />
+          {/* =================================================
+                        CREATE POST MODAL
+                    ================================================= */}
+
+          <AnimatePresence>
+            {isCreatingPost && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+              >
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    scale: 0.97,
+                    y: 15,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.97,
+                  }}
+                  className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[24px] bg-white shadow-2xl"
+                >
+                  <button
+                    onClick={() =>
+                      setIsCreatingPost(false)
+                    }
+                    className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-[#e9e2dd] bg-white shadow-sm transition hover:bg-[#fff1e8]"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+
+                  <CreatePost
+                    onPostCreated={() => {
+                      setIsCreatingPost(false);
+                      fetchPosts();
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* =================================================
+                        OVERVIEW
+                    ================================================= */}
+
+          {activeTab === "overview" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {/* STATS */}
+
+              <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <StatCard
+                  title="Total Posts"
+                  value={posts.length}
+                  icon={<FileText className="h-5 w-5" />}
+                />
+
+                <StatCard
+                  title="Published"
+                  value={publishedPosts.length}
+                  icon={<Eye className="h-5 w-5" />}
+                />
+
+                <StatCard
+                  title="Drafts"
+                  value={draftPosts.length}
+                  icon={<Pencil className="h-5 w-5" />}
+                />
+
+                <StatCard
+                  title="Total Views"
+                  value={totalViews.toLocaleString()}
+                  icon={<BarChart3 className="h-5 w-5" />}
+                />
+              </div>
+
+              {/* RECENT POSTS */}
+
+              <div className="overflow-hidden rounded-[22px] border border-[#eee8e4] bg-white shadow-sm">
+                <div className="flex items-center justify-between border-b border-[#f0ebe7] px-6 py-5">
+                  <div>
+                    <h2 className="font-semibold text-[#292725]">
+                      Recent Posts
+                    </h2>
+
+                    <p className="mt-1 text-xs text-[#99918b]">
+                      Recently created blog content
+                    </p>
                   </div>
+
+                  <button
+                    onClick={() =>
+                      setActiveTab("posts")
+                    }
+                    className="text-sm font-semibold text-[#e85f18] hover:underline"
+                  >
+                    View All
+                  </button>
                 </div>
-                <p className="text-3xl font-bold">{posts.length}</p>
-                <p className="text-sm text-green-600 mt-2 flex items-center">
-                  <span>+{posts.length}% </span>
-                  <span className="text-gray-500 ml-1">from last month</span>
+
+                <PostsTable
+                  posts={posts.slice(0, 5)}
+                  onPublish={handlePublishPost}
+                  onUnpublish={handleUnpublishPost}
+                  onDelete={handleDeletePost}
+                />
+              </div>
+            </motion.div>
+          )}
+
+          {/* =================================================
+                        POSTS
+                    ================================================= */}
+
+          {activeTab === "posts" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="overflow-hidden rounded-[22px] border border-[#eee8e4] bg-white shadow-sm"
+            >
+              <div className="flex flex-col justify-between gap-4 border-b border-[#f0ebe7] p-6 md:flex-row md:items-center">
+                <div>
+                  <h2 className="font-semibold text-[#292725]">
+                    Blog Posts
+                  </h2>
+
+                  <p className="mt-1 text-xs text-[#99918b]">
+                    Create, edit, publish and manage website content.
+                  </p>
+                </div>
+
+                <div className="relative w-full md:w-[300px]">
+                  <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#aaa19b]" />
+
+                  <input
+                    value={searchTerm}
+                    onChange={(event) =>
+                      setSearchTerm(
+                        event.target.value
+                      )
+                    }
+                    placeholder="Search posts..."
+                    className="
+                                            w-full
+                                            rounded-full
+                                            border
+                                            border-[#e8e1dc]
+                                            bg-[#fcfbfa]
+                                            py-3
+                                            pl-11
+                                            pr-4
+                                            text-sm
+                                            outline-none
+                                            transition
+                                            focus:border-[#ff7426]
+                                            focus:bg-white
+                                            focus:ring-2
+                                            focus:ring-[#ff7426]/10
+                                        "
+                  />
+                </div>
+              </div>
+
+              <PostsTable
+                posts={filteredPosts}
+                onPublish={handlePublishPost}
+                onUnpublish={handleUnpublishPost}
+                onDelete={handleDeletePost}
+              />
+            </motion.div>
+          )}
+
+          {/* =================================================
+                        ANALYTICS
+                    ================================================= */}
+
+          {activeTab === "analytics" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-[22px] border border-[#eee8e4] bg-white p-8 shadow-sm"
+            >
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff0e7] text-[#ff7426]">
+                <BarChart3 className="h-6 w-6" />
+              </div>
+
+              <h2 className="text-xl font-semibold">
+                Website Analytics
+              </h2>
+
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[#817a75]">
+                Analytics can be connected here later without
+                storing patient or clinical information in this
+                dashboard.
+              </p>
+            </motion.div>
+          )}
+
+          {/* =================================================
+                        SETTINGS
+                    ================================================= */}
+
+          {activeTab === "settings" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-[22px] border border-[#eee8e4] bg-white p-8 shadow-sm"
+            >
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff0e7] text-[#ff7426]">
+                <Settings className="h-6 w-6" />
+              </div>
+
+              <h2 className="text-xl font-semibold">
+                Account Settings
+              </h2>
+
+              <div className="mt-7 max-w-xl rounded-2xl border border-[#eee7e2] bg-[#faf8f6] p-5">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#9a918b]">
+                  Signed in as
+                </p>
+
+                <p className="mt-2 font-semibold text-[#2d2a28]">
+                  {user.fullName ||
+                    user.firstName ||
+                    "Administrator"}
+                </p>
+
+                <p className="mt-1 text-sm text-[#77706b]">
+                  {
+                    user.primaryEmailAddress
+                      ?.emailAddress
+                  }
                 </p>
               </div>
-
-              {/* Other stats cards remain the same */}
-            </div>
-
-            {/* Recent Posts Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium">Recent Posts</h3>
-                  <button className="text-sm text-[#1904E5] hover:underline">View All</button>
-                </div>
-              </div>
-
-              <table className="w-full table-auto">
-                <thead className="bg-gray-50 text-left">
-                  <tr>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {posts.slice(0, 4).map((post) => (
-                    <tr key={post.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">{post.title}</div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {new Date(post.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {post.views?.toLocaleString() || '0'}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex space-x-2">
-                          <button className="text-blue-600 hover:text-blue-800">Edit</button>
-                          <button className="text-red-600 hover:text-red-800">Delete</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        )}
-
-        {activeTab === "posts" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* Table content remains similar to overview, but showing all posts */}
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <h3 className="font-medium">All Posts</h3>
-                  <div className="flex items-center space-x-2">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search posts..."
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FAB2FF] focus:border-transparent"
-                      />
-                      <Search className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                    </div>
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg flex items-center hover:bg-gray-50">
-                      <Filter className="h-4 w-4 mr-2" />
-                      Filter
-                      <ChevronDown className="h-4 w-4 ml-2" />
-                    </button>
-                    <button
-                      onClick={() => setIsCreatingPost(true)}
-                      className="px-4 py-2 bg-gradient-to-r from-[#FAB2FF] to-[#1904E5] text-white rounded-lg flex items-center hover:opacity-90 transition"
-                    >
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      New Post
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <table className="w-full table-auto">
-                <thead className="bg-gray-50 text-left">
-                  <tr>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
-                    <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {posts.map((post) => (
-                    <tr key={post.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">{post.title}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${post.status === 'published' ? "bg-green-100 text-green-800" :
-                          post.status === 'draft' ? "bg-yellow-100 text-yellow-800" :
-                            "bg-blue-100 text-blue-800"
-                          }`}>
-                          {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {new Date(post.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {post.views?.toLocaleString() || '0'}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex space-x-2">
-                          {/* Edit button */}
-                          <button
-                            onClick={() => {
-                              window.location.href = `/Dashboard/edit/${post.id}`;
-                            }}
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            Edit
-                          </button>
-
-                          {/* Publish/Unpublish button */}
-                          {post.status === 'draft' ? (
-                            <button
-                              onClick={() => handlePublishPost(post.id)}
-                              className="text-green-600 hover:text-green-800"
-                            >
-                              Publish
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleUnpublishPost(post.id)}
-                              className="text-yellow-600 hover:text-yellow-800"
-                            >
-                              Unpublish
-                            </button>
-                          )}
-
-                          {/* Delete button */}
-                          <button
-                            onClick={() => handleDeletePost(post.id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
-                <div className="text-sm text-gray-500">
-                  Showing <span className="font-medium">1</span> to <span className="font-medium">{posts.length}</span> of <span className="font-medium">{posts.length}</span> results
-                </div>
-                <div className="flex space-x-2">
-                  <button className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50">Previous</button>
-                  <button className="px-3 py-1 bg-gradient-to-r from-[#FAB2FF] to-[#1904E5] text-white rounded-md text-sm">1</button>
-                  <button className="px-3 py-1 border border-gray-300 rounded-md text-sm hover:bg-gray-50">Next</button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-        {activeTab === "clientintake" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-          >
-            <h3 className="font-medium mb-4">Client Intake Form</h3>
-
-          </motion.div>
-        )}
-
-
-        {/* Remaining tabs remain the same */}
-        {activeTab === "analytics" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-          >
-            <h3 className="font-medium mb-4">Analytics</h3>
-            <p className="text-gray-500">Detailed analytics content will be displayed here.</p>
-          </motion.div>
-        )}
-
-        {activeTab === "calendar" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-          >
-            <h3 className="font-medium mb-4">Content Calendar</h3>
-            <p className="text-gray-500">Calendar and scheduling tools will be displayed here.</p>
-          </motion.div>
-        )}
-
-        {activeTab === "settings" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-          >
-            <h3 className="font-medium mb-4">Account Settings</h3>
-            <p className="text-gray-500">User account and profile settings will be displayed here.</p>
-          </motion.div>
-        )}
-      </div>
+            </motion.div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
+
+/*
+ * ==========================================================
+ * STAT CARD
+ * ==========================================================
+ */
+
+function StatCard({
+  title,
+  value,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-[20px] border border-[#eee8e4] bg-white p-6 shadow-sm">
+      <div className="mb-5 flex items-center justify-between">
+        <p className="text-sm font-medium text-[#817a75]">
+          {title}
+        </p>
+
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff0e7] text-[#ff7426]">
+          {icon}
+        </div>
+      </div>
+
+      <p className="text-3xl font-semibold tracking-tight text-[#272523]">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+/*
+ * ==========================================================
+ * POSTS TABLE
+ * ==========================================================
+ */
+
+function PostsTable({
+  posts,
+  onPublish,
+  onUnpublish,
+  onDelete,
+}: {
+  posts: Post[];
+  onPublish: (id: string) => void;
+  onUnpublish: (id: string) => void;
+  onDelete: (id: string) => void;
+}) {
+  if (posts.length === 0) {
+    return (
+      <div className="flex min-h-[250px] flex-col items-center justify-center px-6 text-center">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff0e7] text-[#ff7426]">
+          <FileText className="h-5 w-5" />
+        </div>
+
+        <h3 className="font-semibold text-[#332f2c]">
+          No posts found
+        </h3>
+
+        <p className="mt-1 text-sm text-[#918984]">
+          Your blog posts will appear here.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[760px]">
+        <thead>
+          <tr className="border-b border-[#f0ebe7] bg-[#fcfbfa] text-left">
+            <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-[0.1em] text-[#99918b]">
+              Title
+            </th>
+
+            <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-[0.1em] text-[#99918b]">
+              Status
+            </th>
+
+            <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-[0.1em] text-[#99918b]">
+              Created
+            </th>
+
+            <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-[0.1em] text-[#99918b]">
+              Views
+            </th>
+
+            <th className="px-6 py-4 text-right text-[11px] font-bold uppercase tracking-[0.1em] text-[#99918b]">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody className="divide-y divide-[#f1ece8]">
+          {posts.map((post) => (
+            <tr
+              key={post.id}
+              className="transition hover:bg-[#fdfbf9]"
+            >
+              <td className="px-6 py-5">
+                <p className="max-w-[350px] truncate text-sm font-semibold text-[#302d2b]">
+                  {post.title}
+                </p>
+
+                <p className="mt-1 text-xs text-[#a09892]">
+                  {post.author || "Transcending Psychiatry"}
+                </p>
+              </td>
+
+              <td className="px-6 py-5">
+                <StatusBadge status={post.status} />
+              </td>
+
+              <td className="px-6 py-5 text-sm text-[#77706b]">
+                {new Date(
+                  post.createdAt
+                ).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </td>
+
+              <td className="px-6 py-5 text-sm text-[#77706b]">
+                {(post.views || 0).toLocaleString()}
+              </td>
+
+              <td className="px-6 py-5">
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      window.location.href =
+                        `/Dashboard/edit/${post.id}`;
+                    }}
+                    title="Edit post"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e9e2dd] text-[#77706b] transition hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18]"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+
+                  {post.status === "published" ? (
+                    <button
+                      onClick={() =>
+                        onUnpublish(post.id)
+                      }
+                      title="Unpublish post"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e9e2dd] text-[#77706b] transition hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18]"
+                    >
+                      <EyeOff className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        onPublish(post.id)
+                      }
+                      title="Publish post"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e9e2dd] text-[#77706b] transition hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18]"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() =>
+                      onDelete(post.id)
+                    }
+                    title="Delete post"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e9e2dd] text-[#a65b50] transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/*
+ * ==========================================================
+ * STATUS BADGE
+ * ==========================================================
+ */
+
+function StatusBadge({
+  status,
+}: {
+  status: Post["status"];
+}) {
+  const styles = {
+    published:
+      "bg-emerald-50 text-emerald-700 border-emerald-100",
+    draft:
+      "bg-amber-50 text-amber-700 border-amber-100",
+    scheduled:
+      "bg-blue-50 text-blue-700 border-blue-100",
+  };
+
+  return (
+    <span
+      className={`
+                inline-flex
+                rounded-full
+                border
+                px-3
+                py-1
+                text-[11px]
+                font-bold
+                capitalize
+                ${styles[status]}
+            `}
+    >
+      {status}
+    </span>
+  );
+}
 
 export default Dashboard;

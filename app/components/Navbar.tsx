@@ -9,6 +9,11 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 import BookAppointmentButton from "./BookAppointmentButton";
+import {
+    SignInButton,
+    UserButton,
+    useUser,
+} from "@clerk/nextjs";
 
 import {
 
@@ -84,6 +89,11 @@ const EMAIL = "info@transcendingpsychiatry.sprucecare.com";
 
 
 
+const ADMIN_EMAIL =
+    "transcendingpsychiatry@gmail.com";
+
+
+
 /*
 
  \* Replace /portal with Joseph's actual patient portal URL
@@ -97,6 +107,11 @@ const PORTAL_URL = "https://transcendingpsych.intakeq.com/portal";
 
 
 export default function Navbar() {
+    const { isLoaded, isSignedIn, user } = useUser();
+
+    const isClientAdmin =
+        user?.primaryEmailAddress?.emailAddress?.toLowerCase() ===
+        ADMIN_EMAIL.toLowerCase();
 
     const [servicesOpen, setServicesOpen] = useState(false);
     const [newJerseyOpen, setNewJerseyOpen] = useState(false);
@@ -896,6 +911,69 @@ export default function Navbar() {
                             <LogIn className="h-[16px] w-[16px]" />
                             Portal Login
                         </Link>
+                        {/* ADMIN LOGIN / DASHBOARD */}
+
+                        {isLoaded && !isSignedIn && (
+                            <SignInButton mode="modal">
+                                <button
+                                    type="button"
+                                    className="
+                ml-1
+                flex
+                h-11
+                shrink-0
+                items-center
+                gap-2
+                rounded-full
+                border
+                border-[#ded6d0]
+                bg-white/75
+                px-4
+                text-[13px]
+                font-semibold
+                text-[#252525]
+                transition-all
+                duration-300
+                hover:-translate-y-0.5
+                hover:border-[#ff7426]
+                hover:bg-[#fff1e8]
+                hover:text-[#e85f18]
+            "
+                                >
+                                    <LogIn className="h-[16px] w-[16px]" />
+                                    Admin Login
+                                </button>
+                            </SignInButton>
+                        )}
+
+                        {isLoaded && isSignedIn && isClientAdmin && (
+                            <>
+                                <Link
+                                    href="/Dashboard"
+                                    className="
+                ml-1
+                flex
+                h-11
+                shrink-0
+                items-center
+                rounded-full
+                bg-[#ff7426]
+                px-4
+                text-[13px]
+                font-semibold
+                text-white
+                transition-all
+                duration-300
+                hover:-translate-y-0.5
+                hover:bg-[#e85f18]
+            "
+                                >
+                                    Dashboard
+                                </Link>
+
+                                <UserButton />
+                            </>
+                        )}
 
 
 
@@ -1632,6 +1710,73 @@ export default function Navbar() {
                                 <LogIn className="h-5 w-5" />
                                 Portal Login
                             </Link>
+                            {/* =================================================
+    MOBILE ADMIN LOGIN / DASHBOARD
+================================================= */}
+
+                            {isLoaded && !isSignedIn && (
+                                <SignInButton mode="modal">
+                                    <button
+                                        type="button"
+                                        onClick={() => setMobileOpen(false)}
+                                        className="
+                mt-3
+                flex
+                w-full
+                items-center
+                justify-center
+                gap-2
+                rounded-full
+                border
+                border-[#ded6d0]
+                bg-white
+                px-6
+                py-4
+                font-semibold
+                text-[#252525]
+                transition-all
+                duration-300
+                hover:border-[#ff7426]
+                hover:bg-[#fff1e8]
+                hover:text-[#e85f18]
+            "
+                                    >
+                                        <LogIn className="h-5 w-5" />
+                                        Admin Login
+                                    </button>
+                                </SignInButton>
+                            )}
+
+                            {isLoaded && isSignedIn && isClientAdmin && (
+                                <div className="mt-3 flex items-center gap-3">
+                                    <Link
+                                        href="/Dashboard"
+                                        onClick={() => setMobileOpen(false)}
+                                        className="
+                flex
+                min-h-[56px]
+                flex-1
+                items-center
+                justify-center
+                rounded-full
+                bg-[#ff7426]
+                px-6
+                py-4
+                font-semibold
+                text-white
+                transition-all
+                duration-300
+                hover:bg-[#e85f18]
+            "
+                                    >
+                                        Dashboard
+                                    </Link>
+
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                                        <UserButton />
+                                    </div>
+                                </div>
+                            )}
 
 
 

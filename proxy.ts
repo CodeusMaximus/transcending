@@ -1,7 +1,15 @@
 import {
     clerkMiddleware,
     createRouteMatcher,
+    clerkClient,
 } from "@clerk/nextjs/server";
+
+import { NextResponse } from "next/server";
+
+const ADMIN_EMAILS = [
+    "transcendingpsychiatry@gmail.com",
+    "dfsturge@gmail.com",
+];
 
 const isProtectedRoute = createRouteMatcher([
     "/Dashboard(.*)",
@@ -9,9 +17,42 @@ const isProtectedRoute = createRouteMatcher([
 
 export default clerkMiddleware(
     async (auth, req) => {
-        if (isProtectedRoute(req)) {
-            await auth.protect();
+        // Leave all non-dashboard routes alone
+        if (!isProtectedRoute(req)) {
+            return;
         }
+
+        // Get current Clerk authentication
+        const { userId } = await auth();
+
+        // Not signed in → require Clerk authentication
+        if (!userId) {
+            await auth.protect();
+            return;
+        }
+
+        // Get the signed-in Clerk user
+        const client = await clerkClient();
+
+        const user = await client.users.getUser(userId);
+
+        // Allow either authorized email address
+        const isAuthorized = user.emailAddresses.some(
+            (email) =>
+                ADMIN_EMAILS.includes(
+                    email.emailAddress.toLowerCase()
+                )
+        );
+
+        // Signed in, but not authorized
+        if (!isAuthorized) {
+            return NextResponse.redirect(
+                new URL("/", req.url)
+            );
+        }
+
+        // Authorized → continue to Dashboard
+        return;
     }
 );
 
