@@ -32,7 +32,7 @@ const services = [
         title: "Psychiatric Medication Management",
         description:
             "Thoughtful medication care built around you. We assess your needs, discuss options clearly, and monitor treatment over time to support your mental health goals.",
-        href: "/services/medication-management",
+        href: "/medication-management",
         icon: Pill,
         label: "Ongoing psychiatric care",
     },
@@ -41,7 +41,7 @@ const services = [
         title: "Comprehensive Psychiatric Evaluations",
         description:
             "A thorough evaluation of your mental, emotional, and physical health—looking beyond symptoms to understand the whole person and guide an individualized treatment plan.",
-        href: "/services/psychiatric-evaluation",
+        href: "/psychiatric-evaluation",
         icon: ClipboardCheck,
         label: "Personalized assessment",
     },
@@ -50,7 +50,7 @@ const services = [
         title: "Conditions Treated",
         description:
             "Personalized psychiatric care for anxiety disorders, depression, bipolar disorder, schizophrenia, schizoaffective disorder, OCD, PTSD, and personality disorders. Serving adolescents and adults ages 12 and older.",
-        href: "/services/conditions-treated",
+        href: "/conditions-treated",
         icon: Brain,
         label: "Mental health conditions",
     },
