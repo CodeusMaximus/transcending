@@ -24,7 +24,7 @@ import {
 
 const phone = "7328083932";
 const photo =
-    "https://photos.psychologytoday.com/d30b80fe-5ee0-4bea-9fc7-5178ab0254d6/2/320x400.png";
+    "joseph-spitalieri-transparent.png";
 
 const insurance = [
     "1199SEIU",
@@ -184,9 +184,8 @@ export default function ProviderPage() {
                         <div className="relative aspect-[4/5] overflow-hidden rounded-[220px_220px_30px_30px] bg-[#e8e0d7] shadow-[0_30px_75px_rgba(67,49,35,0.15)]">
                             <Image
                                 src={photo}
-                                alt="Joseph Spitalieri, psychiatric nurse practitioner"
+                                alt="Joseph Spitalieri, MSN, PMHNP, APN"
                                 fill
-                                unoptimized
                                 priority
                                 sizes="(max-width: 1024px) 90vw, 510px"
                                 className="object-cover object-top"
