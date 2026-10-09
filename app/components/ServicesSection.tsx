@@ -182,15 +182,42 @@ export default function ServicesSection() {
                                         </p>
                                     </div>
 
-                                    <div className="relative z-10 mt-auto flex items-center justify-between pt-9">
-                                        <span className="text-[14px] font-semibold text-[#34302d] transition-colors group-hover:text-[#e6601c]">
-                                            Explore service
-                                        </span>
 
-                                        <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#ff7426]/15 bg-[#fff7f1] text-[#ff7426] transition-all duration-300 group-hover:bg-[#ff7426] group-hover:text-white">
-                                            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                                    <div className="relative z-10 mt-auto pt-9">
+                                        <span
+                                            className="
+      relative inline-flex items-center justify-center
+      gap-3 overflow-hidden rounded-full
+      bg-[#ff7426] px-7 py-3.5
+      text-[14px] font-semibold text-white
+      shadow-[0_8px_25px_rgba(255,116,38,0.25)]
+      transition-all duration-300 ease-out
+      group-hover:-translate-y-1
+      group-hover:scale-[1.04]
+      group-hover:bg-[#e9631d]
+      group-hover:shadow-[0_14px_35px_rgba(255,116,38,0.4)]
+    "
+                                        >
+                                            {/* Animated shine */}
+                                            <span
+                                                className="
+        pointer-events-none absolute inset-y-0 -left-full
+        w-1/2 skew-x-[-25deg]
+        bg-gradient-to-r from-transparent via-white/30 to-transparent
+        transition-all duration-700
+        group-hover:left-[150%]
+      "
+                                            />
+
+                                            <span className="relative z-10">Learn More</span>
+
+                                            <ArrowRight
+                                                size={17}
+                                                className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5"
+                                            />
                                         </span>
                                     </div>
+
                                 </Link>
                             </motion.div>
                         );
