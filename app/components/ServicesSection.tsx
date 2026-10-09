@@ -45,6 +45,15 @@ const services = [
         icon: ClipboardCheck,
         label: "Personalized assessment",
     },
+    {
+        number: "03",
+        title: "Conditions Treated",
+        description:
+            "Personalized psychiatric care for anxiety disorders, depression, bipolar disorder, schizophrenia, schizoaffective disorder, OCD, PTSD, and personality disorders. Serving adolescents and adults ages 12 and older.",
+        href: "/services/conditions-treated",
+        icon: Brain,
+        label: "Mental health conditions",
+    },
 ];
 
 const fadeUp = {
@@ -113,7 +122,7 @@ export default function ServicesSection() {
                 </div>
 
                 {/* PRIMARY SERVICES */}
-                <div className="mt-14 grid gap-5 lg:mt-20 lg:grid-cols-2 lg:gap-6">
+                <div className="mt-14 grid gap-5 md:grid-cols-2 lg:mt-20 lg:grid-cols-3 lg:gap-6">
                     {services.map((service, index) => {
                         const Icon = service.icon;
 
@@ -133,7 +142,7 @@ export default function ServicesSection() {
                             >
                                 <Link
                                     href={service.href}
-                                    className="group relative flex h-full min-h-[390px] flex-col overflow-hidden rounded-[34px] border border-[#3a2d25]/[0.08] bg-white/75 p-7 shadow-[0_18px_55px_rgba(87,56,34,0.07)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-[#ff7426]/25 hover:shadow-[0_30px_75px_rgba(87,56,34,0.12)] sm:p-9 lg:p-10"
+                                    className="group relative flex h-full min-h-[430px] flex-col flex-col overflow-hidden rounded-[34px] border border-[#3a2d25]/[0.08] bg-white/75 p-7 shadow-[0_18px_55px_rgba(87,56,34,0.07)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-[#ff7426]/25 hover:shadow-[0_30px_75px_rgba(87,56,34,0.12)] sm:p-9 lg:p-10"
                                 >
                                     {/* card glow */}
                                     <div className="pointer-events-none absolute -right-24 -top-24 h-[260px] w-[260px] rounded-full bg-[#ff7426]/0 blur-3xl transition-all duration-500 group-hover:bg-[#ff7426]/[0.07]" />
