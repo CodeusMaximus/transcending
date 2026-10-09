@@ -23,8 +23,7 @@ import {
 } from "lucide-react";
 
 const phone = "7328083932";
-const photo =
-    "joseph-spitalieri-transparent.png";
+const photo = "/images/joseph-spitalieri-transparent.png";
 
 const insurance = [
     "1199SEIU",
