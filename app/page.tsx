@@ -14,7 +14,9 @@ export default function Home() {
     <main className="min-h-screen">
 
       <HeroSection />
-      <ServicesSection />
+      <section id="services" className="scroll-mt-32">
+        <ServicesSection />
+      </section>
       <InsuranceSection />
       <AboutSection />
 

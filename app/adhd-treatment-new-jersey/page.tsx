@@ -34,12 +34,36 @@ const data: PageData = {
   ],
   "faqs": [
     {
-      "question": "Who can seek an ADHD evaluation?",
-      "answer": "The practice serves adolescents and adults ages 12 and older. Please contact the office to confirm eligibility and available services."
+      "question": "How can I tell whether I or my child may have ADHD?",
+      "answer": "Challenges with attention, organization, time management, follow-through, or emotional regulation can be reasons to seek an evaluation, especially when they interfere with daily life. ADHD can look different at different ages."
     },
     {
-      "question": "What happens at the first visit?",
-      "answer": "Your clinician discusses symptoms, medical and mental health history, and goals before recommending next steps."
+      "question": "Can someone be diagnosed with ADHD as an adult?",
+      "answer": "Yes. Some adults were not identified in childhood and only recognize longstanding patterns later in life, sometimes after struggling with work, relationships, or other responsibilities."
+    },
+    {
+      "question": "Is medication the only ADHD treatment option?",
+      "answer": "No. Depending on individual needs, care may include medication, therapy, executive-function strategies, mindfulness skills, and support for families."
+    },
+    {
+      "question": "Can ADHD first develop in adulthood?",
+      "answer": "ADHD symptoms generally begin during childhood, although a person may not receive a diagnosis until adulthood. Increased responsibilities can make previously overlooked difficulties more noticeable."
+    },
+    {
+      "question": "What happens during an initial ADHD appointment?",
+      "answer": "A clinician reviews symptoms, history, and how daily functioning is affected. They may recommend additional assessment and discuss suitable treatment options."
+    },
+    {
+      "question": "Will everyone diagnosed with ADHD need medication?",
+      "answer": "Not necessarily. Medication is one possible treatment; behavioral approaches, skills development, and lifestyle supports may also be considered."
+    },
+    {
+      "question": "How long does ADHD treatment take?",
+      "answer": "The timeline varies. Some people notice changes relatively early, while others benefit from longer-term follow-up and adjustments."
+    },
+    {
+      "question": "Does insurance cover ADHD treatment in New Jersey?",
+      "answer": "Coverage depends on your insurer, plan, clinician, and service. Contact the practice and your insurance company to confirm benefits before booking."
     }
   ]
 };

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NYCTreatmentPage, { type PageContent } from "../nyc-treatment-shared";
+import NYCTreatmentPage, { type PageContent } from "../components/nyc-treatment-shared";
 
 export const metadata: Metadata = { title: "Depression Treatment in NYC | Transcending Psychiatry", description: "Depression can affect sleep, energy, relationships, concentration, and the ability to enjoy things that once mattered. A thoughtful assessment can help ide" };
 
@@ -42,16 +42,16 @@ const content: PageContent = {
   ],
   "faqs": [
     {
-      "question": "Can depression improve with therapy alone?",
-      "answer": "For some people, psychotherapy may be an appropriate option. Treatment choices depend on the individual and the severity and course of symptoms."
+      "question": "Can depression be treated while living in busy New York City?",
+      "answer": "Yes. Treatment can be adapted to your circumstances, schedule, and needs. A clinician can help develop a practical plan."
     },
     {
-      "question": "Will I need medication?",
-      "answer": "Not necessarily. Your clinician can review options with you and explain potential benefits, risks, and alternatives."
+      "question": "Is medication always necessary for depression?",
+      "answer": "No. Psychotherapy and other supports may be appropriate for some people, while medication can be useful for others. The best approach depends on a clinical assessment."
     },
     {
-      "question": "Can I receive care online?",
-      "answer": "Telehealth may be available when clinically appropriate; confirm availability with the practice."
+      "question": "Can people make progress with depression while managing NYC stress?",
+      "answer": "Many people benefit from evidence-based care and practical coping skills. Progress varies, and treatment can be adjusted as circumstances change."
     }
   ]
 };

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NYCTreatmentPage, { type PageContent } from "../nyc-treatment-shared";
+import NYCTreatmentPage, { type PageContent } from "../components/nyc-treatment-shared";
 
 export const metadata: Metadata = { title: "Individual Therapy in New York City | Transcending Psychiatry", description: "When anxiety, low mood, stress, or a difficult transition starts to affect everyday life, individual therapy can create space to understand what is happeni" };
 

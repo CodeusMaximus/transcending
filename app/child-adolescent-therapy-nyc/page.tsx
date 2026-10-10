@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NYCTreatmentPage, { type PageContent } from "../nyc-treatment-shared";
+import NYCTreatmentPage, { type PageContent } from "../components/nyc-treatment-shared";
 
 export const metadata: Metadata = { title: "Child & Adolescent Therapy in New York City | Transcending Psychiatry", description: "Child and adolescent mental health care begins with listening. We explore the concerns affecting home, school, friendships, and family life, then work coll" };
 
@@ -46,20 +46,40 @@ const content: PageContent = {
   ],
   "faqs": [
     {
-      "question": "How do I explain therapy to my teen?",
-      "answer": "Describe it as a private, supportive place to discuss challenges and learn useful skills, rather than a punishment."
+      "question": "How do you describe therapy to a child?",
+      "answer": "Explain it in friendly terms: a supportive place to explore feelings, play or draw, and learn practical skills that can be used at home and school."
+    },
+    {
+      "question": "How often will my child attend sessions?",
+      "answer": "Weekly visits may be a starting point. Frequency can change as needs, progress, and family schedules evolve."
+    },
+    {
+      "question": "Can you work with my child's school?",
+      "answer": "The original page describes school coordination with appropriate consent, focused on practical strategies that educators can use."
+    },
+    {
+      "question": "What if my teenager is reluctant to attend?",
+      "answer": "The approach emphasizes choice, privacy, and goals that matter to the teen, while maintaining appropriate safety practices."
+    },
+    {
+      "question": "When might we notice improvement?",
+      "answer": "Some families notice small changes within the first several weeks, but progress varies and should not be guaranteed."
+    },
+    {
+      "question": "Do parents receive guidance during treatment?",
+      "answer": "Yes. The original page describes parent coaching with routines, language, and strategies to practice between sessions."
     },
     {
       "question": "What if my child does not want to talk?",
-      "answer": "A provider can begin by building rapport and adjusting the pace to the child’s comfort."
+      "answer": "Sessions can begin with age-appropriate activities such as drawing, play, or movement. Building trust comes before expecting disclosure."
     },
     {
-      "question": "Can parents participate?",
-      "answer": "Caregiver participation may be recommended depending on age, goals, consent, and clinical needs."
+      "question": "Can both parents or other caregivers join?",
+      "answer": "Caregiver involvement may be possible and can help align routines and communication. Ask the clinician about consent and participation."
     },
     {
-      "question": "Do you coordinate with schools?",
-      "answer": "Coordination may be possible with the appropriate written permissions."
+      "question": "Do you support neurodivergent children?",
+      "answer": "The original page describes adapting strategies to different sensory, attention, and learning needs, including ADHD and autism-related presentations. Confirm current services and age eligibility."
     }
   ]
 };

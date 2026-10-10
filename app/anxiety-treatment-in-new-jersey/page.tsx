@@ -35,16 +35,20 @@ const data: PageData = {
   ],
   "faqs": [
     {
-      "question": "How do I know if I should seek treatment?",
-      "answer": "If worry, fear, or physical anxiety symptoms interfere with sleep, work, school, relationships, or daily life, a professional assessment may help."
+      "question": "How do I know whether anxiety therapy is right for me?",
+      "answer": "When worry or anxiety interferes with sleep, concentration, relationships, or everyday activities, talking with a clinician can be a helpful next step."
     },
     {
-      "question": "Is virtual care available?",
-      "answer": "Telehealth may be available to eligible New Jersey patients. Confirm appointment options with the practice."
+      "question": "Can I attend anxiety therapy virtually?",
+      "answer": "The practice describes secure telehealth options for New Jersey patients. Ask the office about current availability and eligibility."
     },
     {
-      "question": "Do you accept insurance?",
-      "answer": "Insurance acceptance and coverage depend on the plan and service. Ask the office to verify your benefits."
+      "question": "Do you accept health insurance?",
+      "answer": "The practice works with insurance plans, but acceptance and coverage vary. Contact the office for a benefits check."
+    },
+    {
+      "question": "How quickly can I get an appointment?",
+      "answer": "The original page mentions openings within a week, but scheduling changes. Contact the office for current appointment availability."
     }
   ]
 };

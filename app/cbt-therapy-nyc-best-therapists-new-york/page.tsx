@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NYCTreatmentPage, { type PageContent } from "../nyc-treatment-shared";
+import NYCTreatmentPage, { type PageContent } from "../components/nyc-treatment-shared";
 
 export const metadata: Metadata = { title: "Cognitive Behavioral Therapy (CBT) in NYC | Transcending Psychiatry", description: "Cognitive behavioral therapy is an evidence-based approach that helps people notice unhelpful thought and behavior patterns, test alternative responses, an" };
 
