@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import Link from "next/link";
 
 import BookAppointmentButton from "./BookAppointmentButton";
@@ -30,67 +28,22 @@ import {
 
     FaInstagram,
 
-    FaLinkedinIn,
+    FaTiktok,
+    FaXTwitter,
 
     FaYoutube,
 
 } from "react-icons/fa6";
 
-
-
-/*
-
- * Replace "#" with Joseph's real social media URLs
-
- * when you have them.
-
- */
-
+// Add Joe's verified TikTok and X URLs when available.
+// Missing URLs display as non-clickable icons.
 const socials = [
-
-    {
-
-        name: "Facebook",
-
-        href: "#",
-
-        icon: FaFacebookF,
-
-    },
-
-    {
-
-        name: "Instagram",
-
-        href: "#",
-
-        icon: FaInstagram,
-
-    },
-
-    {
-
-        name: "LinkedIn",
-
-        href: "#",
-
-        icon: FaLinkedinIn,
-
-    },
-
-    {
-
-        name: "YouTube",
-
-        href: "#",
-
-        icon: FaYoutube,
-
-    },
-
+    { name: "Facebook", href: "https://www.facebook.com/transcendingpsychiatry/", icon: FaFacebookF },
+    { name: "Instagram", href: "https://www.instagram.com/transcendingpsychiatry/", icon: FaInstagram },
+    { name: "TikTok", href: "https://www.tiktok.com/@transcendingpsychiatry", icon: FaTiktok },
+    { name: "X", href: "https://x.com/transcendingNJ", icon: FaXTwitter },
+    { name: "YouTube", href: "https://www.youtube.com/@transcendingpsychiatry", icon: FaYoutube },
 ];
-
-
 
 const navigation = [
 
@@ -107,8 +60,6 @@ const navigation = [
     ["Contact", "/#contact"],
 
 ];
-
-
 
 const services = [
 
@@ -134,15 +85,11 @@ const services = [
 
 ];
 
-
-
 /* =========================================================
 
    TRANSCENDING LOGO
 
 \========================================================= */
-
-
 
 function TranscendingLogo() {
 
@@ -190,8 +137,6 @@ function TranscendingLogo() {
 
                 />
 
-
-
                 <circle
 
                     cx="57"
@@ -207,8 +152,6 @@ function TranscendingLogo() {
                     strokeWidth="2.4"
 
                 />
-
-
 
                 <circle
 
@@ -227,8 +170,6 @@ function TranscendingLogo() {
                 />
 
             </svg>
-
-
 
             {/* LOGO TEXT */}
 
@@ -255,8 +196,6 @@ function TranscendingLogo() {
                     TRANSCENDING
 
                 </div>
-
-
 
                 <div
 
@@ -290,15 +229,11 @@ function TranscendingLogo() {
 
 }
 
-
-
 /* =========================================================
 
    FOOTER
 
 \========================================================= */
-
-
 
 export default function Footer() {
 
@@ -325,8 +260,6 @@ export default function Footer() {
           BACKGROUND RINGS
 
       ====================================================== */}
-
-
 
             <div
 
@@ -374,8 +307,6 @@ export default function Footer() {
 
                     />
 
-
-
                     <div
 
                         className="
@@ -399,8 +330,6 @@ export default function Footer() {
             "
 
                     />
-
-
 
                     <div
 
@@ -430,11 +359,7 @@ export default function Footer() {
 
             </div>
 
-
-
             {/* ORANGE GLOW */}
-
-
 
             <div
 
@@ -461,8 +386,6 @@ export default function Footer() {
         "
 
             />
-
-
 
             <div
 
@@ -499,8 +422,6 @@ export default function Footer() {
             TOP CTA
 
         ====================================================== */}
-
-
 
                 <div
 
@@ -554,8 +475,6 @@ export default function Footer() {
 
                         </p>
 
-
-
                         <h2
 
                             className="
@@ -590,13 +509,12 @@ export default function Footer() {
 
                     </div>
 
-
-
                     <BookAppointmentButton label="Book Now" />
 
                 </div>
 
                 {/* GENERAL BUSINESS INQUIRIES + SECURE PATIENT INQUIRIES */}
+
                 <FooterContactForm />
 
                 {/* =====================================================
@@ -604,8 +522,6 @@ export default function Footer() {
             MAIN FOOTER
 
         ====================================================== */}
-
-
 
                 <div
 
@@ -637,8 +553,6 @@ export default function Footer() {
 
           ================================================= */}
 
-
-
                     <div>
 
                         <Link
@@ -654,8 +568,6 @@ export default function Footer() {
                             <TranscendingLogo />
 
                         </Link>
-
-
 
                         <p
 
@@ -687,8 +599,6 @@ export default function Footer() {
 
                         </p>
 
-
-
                         <p
 
                             className="
@@ -715,11 +625,7 @@ export default function Footer() {
 
                         </p>
 
-
-
                         {/* SOCIAL MEDIA */}
-
-
 
                         <div className="mt-7">
 
@@ -747,15 +653,24 @@ export default function Footer() {
 
                             </p>
 
-
-
                             <div className="flex flex-wrap gap-3">
 
                                 {socials.map((social) => {
 
                                     const Icon = social.icon;
 
-
+                                    if (!social.href) {
+                                        return (
+                                            <span
+                                                key={social.name}
+                                                aria-label={`${social.name} profile coming soon`}
+                                                title={`${social.name} profile coming soon`}
+                                                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.055] text-white/35"
+                                            >
+                                                <Icon className="h-[17px] w-[17px]" />
+                                            </span>
+                                        );
+                                    }
 
                                     return (
 
@@ -823,15 +738,11 @@ export default function Footer() {
 
                     </div>
 
-
-
                     {/* =================================================
 
               EXPLORE
 
           ================================================= */}
-
-
 
                     <div>
 
@@ -856,8 +767,6 @@ export default function Footer() {
                             Explore
 
                         </h3>
-
-
 
                         <div className="mt-6 flex flex-col gap-4">
 
@@ -895,8 +804,6 @@ export default function Footer() {
 
                                     {label}
 
-
-
                                     <ArrowUpRight
 
                                         className="
@@ -927,15 +834,11 @@ export default function Footer() {
 
                     </div>
 
-
-
                     {/* =================================================
 
               SERVICES
 
           ================================================= */}
-
-
 
                     <div>
 
@@ -960,8 +863,6 @@ export default function Footer() {
                             Services
 
                         </h3>
-
-
 
                         <div className="mt-6 flex flex-col gap-4">
 
@@ -999,15 +900,11 @@ export default function Footer() {
 
                     </div>
 
-
-
                     {/* =================================================
 
               LOCATION + CONTACT
 
           ================================================= */}
-
-
 
                     <div>
 
@@ -1033,13 +930,9 @@ export default function Footer() {
 
                         </h3>
 
-
-
                         <div className="mt-6 space-y-5">
 
                             {/* NEW JERSEY */}
-
-
 
                             <div className="flex items-start gap-3">
 
@@ -1073,8 +966,6 @@ export default function Footer() {
 
                                 </span>
 
-
-
                                 <div>
 
                                     <p
@@ -1098,8 +989,6 @@ export default function Footer() {
                                         New Jersey
 
                                     </p>
-
-
 
                                     <p
 
@@ -1129,11 +1018,7 @@ export default function Footer() {
 
                             </div>
 
-
-
                             {/* NEW YORK */}
-
-
 
                             <div className="flex items-start gap-3">
 
@@ -1167,8 +1052,6 @@ export default function Footer() {
 
                                 </span>
 
-
-
                                 <div>
 
                                     <p
@@ -1192,8 +1075,6 @@ export default function Footer() {
                                         New York
 
                                     </p>
-
-
 
                                     <p
 
@@ -1225,11 +1106,7 @@ export default function Footer() {
 
                         </div>
 
-
-
                         {/* CONTACT */}
-
-
 
                         <h3
 
@@ -1255,13 +1132,9 @@ export default function Footer() {
 
                         </h3>
 
-
-
                         <div className="mt-5 space-y-4">
 
                             {/* PHONE */}
-
-
 
                             <a
 
@@ -1323,17 +1196,11 @@ export default function Footer() {
 
                                 </span>
 
-
-
                                 (646) 580-1030
 
                             </a>
 
-
-
                             {/* FAX */}
-
-
 
                             <div
 
@@ -1383,17 +1250,11 @@ export default function Footer() {
 
                                 </span>
 
-
-
                                 Fax: (732) 605-5890
 
                             </div>
 
-
-
                             {/* EMAIL */}
-
-
 
                             <a
 
@@ -1455,8 +1316,6 @@ export default function Footer() {
 
                                 </span>
 
-
-
                                 <span className="break-all pt-1">
 
                                     info@transcendingpsychiatry.sprucecare.com
@@ -1471,15 +1330,11 @@ export default function Footer() {
 
                 </div>
 
-
-
                 {/* =====================================================
 
             LOWER FOOTER
 
         ====================================================== */}
-
-
 
                 <div
 
@@ -1515,8 +1370,6 @@ export default function Footer() {
 
                     </p>
 
-
-
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
 
                         <Link
@@ -1531,8 +1384,6 @@ export default function Footer() {
 
                         </Link>
 
-
-
                         <Link
 
                             href="/terms"
@@ -1544,8 +1395,6 @@ export default function Footer() {
                             Terms
 
                         </Link>
-
-
 
                         <Link
 
