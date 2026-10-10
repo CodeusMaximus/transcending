@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import BookAppointmentButton from "./BookAppointmentButton";
+import FooterContactForm from "./FooterContactForm";
 import {
     ArrowRight,
     ArrowUpRight,
@@ -296,6 +297,8 @@ export default function Footer() {
 
                     <BookAppointmentButton label="Book Now" />
                 </div>
+                {/* LARGE CONTACT FORM — VISIBLE ON EVERY PAGE */}
+                <FooterContactForm />
 
                 {/* =====================================================
             MAIN FOOTER
