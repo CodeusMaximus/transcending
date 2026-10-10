@@ -122,12 +122,13 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error(
             "Business inquiry processing failed:",
-            error instanceof Error ? error.name : "UnknownError"
+            error instanceof Error ? error.message : String(error)
         );
 
         return NextResponse.json(
             { error: "Unable to process inquiry" },
-            { status: 400 }
+            { status: 500 }
         );
     }
 }
+
