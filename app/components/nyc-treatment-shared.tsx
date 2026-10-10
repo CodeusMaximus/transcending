@@ -64,7 +64,7 @@ function GetInTouchButton({
 }) {
   return (
     <a
-      href={`tel:${PHONE}`}
+      href="#contact"
       className={`
         group inline-flex min-h-12 items-center justify-center
         gap-3 rounded-full bg-[#ff7426] px-7 py-4

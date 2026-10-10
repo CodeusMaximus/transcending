@@ -59,7 +59,7 @@ function CTA({
 }) {
   return (
     <a
-      href={`tel:${PHONE}`}
+      href="#contact"
       className={`group inline-flex min-h-12 items-center justify-center gap-3 rounded-full px-7 py-3 text-sm font-semibold shadow-lg transition duration-300 hover:-translate-y-1 hover:scale-[1.02] ${light
         ? "bg-white text-[#b65d26] hover:bg-[#fff4e9]"
         : "bg-[#ff7426] text-white hover:bg-[#e9631d]"
