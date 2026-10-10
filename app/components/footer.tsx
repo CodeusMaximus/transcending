@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import BookAppointmentButton from "./BookAppointmentButton";
 import {
     ArrowRight,
     ArrowUpRight,
@@ -293,40 +294,7 @@ export default function Footer() {
                         </h2>
                     </div>
 
-                    <Link
-                        href="/book"
-                        className="
-              group
-              inline-flex
-              w-fit
-              shrink-0
-              items-center
-              justify-center
-              gap-3
-              rounded-full
-              bg-[#ff7426]
-              px-7
-              py-4
-              text-[14px]
-              font-semibold
-              text-white
-              transition-all
-              duration-300
-              hover:-translate-y-0.5
-              hover:bg-[#eb641b]
-            "
-                    >
-                        Book an Appointment
-
-                        <ArrowRight
-                            className="
-                h-4
-                w-4
-                transition-transform
-                group-hover:translate-x-1
-              "
-                        />
-                    </Link>
+                    <BookAppointmentButton label="Book Now" />
                 </div>
 
                 {/* =====================================================
