@@ -1,6 +1,8 @@
 import { Body, Container, Head, Heading, Html, Preview, Section, Text } from "@react-email/components";
 
-export default function BusinessInquiryConfirmation({ firstName }: { firstName: string }) {
+type Props = { firstName: string };
+
+export default function BusinessInquiryConfirmation({ firstName }: Props) {
   return (
     <Html><Head /><Preview>We received your business inquiry</Preview>
       <Body style={{ backgroundColor: "#f5f5f5", fontFamily: "Arial, sans-serif", padding: "32px 12px" }}>
