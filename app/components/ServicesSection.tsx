@@ -14,6 +14,7 @@ import {
     Sparkles,
     Video,
 } from "lucide-react";
+import BookAppointmentButton from "./BookAppointmentButton";
 
 const conditions = [
     "Anxiety Disorders",
@@ -347,13 +348,7 @@ export default function ServicesSection() {
                         </p>
                     </div>
 
-                    <Link
-                        href="/book"
-                        className="group inline-flex min-h-[54px] w-full shrink-0 items-center justify-center gap-3 rounded-full bg-[#ff7426] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_12px_30px_rgba(255,116,38,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#eb641b] hover:shadow-[0_16px_38px_rgba(255,116,38,0.32)] sm:w-auto"
-                    >
-                        Book Appointment
-                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </Link>
+                    <BookAppointmentButton label="Book Appointment" />
                 </motion.div>
             </div>
         </section>
