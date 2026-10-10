@@ -514,8 +514,7 @@ export default function HeroSection() {
                                         label={current.secondaryText}
                                         showIcon={false}
                                         showArrow={true}
-                                        className="group inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full border border-white/90 bg-white/55 px-7 py-4 text-[14px] font-semibold text-[#24292c] shadow-[0_10px_30px_rgba(45,34,25,0.06)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#ff7426]/40 hover:bg-white/85"
-                                    />
+                                        className="group inline-flex min-h-[56px] items-center justify-center gap-3 rounded-full border-2 border-[#70452F] bg-[#70452F] px-7 py-4 text-[14px] font-bold text-white shadow-[0_12px_30px_rgba(70,35,20,0.25)] transition-all duration-300 hover:-translate-y-1 hover:border-[#57321F] hover:bg-[#57321F]" />
                                 ) : (
                                     <Link
                                         href={current.secondaryHref}
