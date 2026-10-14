@@ -824,7 +824,7 @@ export default function Navbar() {
 
                         {/* ADMIN LOGIN / DASHBOARD */}
 
-                        {isLoaded && isSignedIn && (
+                        {isLoaded && !isSignedIn && (
 
                             <SignInButton mode="modal">
 
