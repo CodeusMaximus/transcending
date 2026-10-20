@@ -13,7 +13,7 @@ const conditions = [
 
 export default function ConditionsTreatedPage() {
   return <main className="overflow-hidden bg-white">
-    <PageHero eyebrow="Transcending Psychiatry · Ages 12+" title="Conditions" highlight="Treated" description="Individualized mental health care for adolescents and adults ages 12 and older in New York and New Jersey. Explore the conditions we assess and the treatment approaches that may be considered." />
+    <PageHero image="/images/conditions-treated.png" eyebrow="Transcending Psychiatry · Ages 12+" title="Conditions" highlight="Treated" description="Individualized mental health care for adolescents and adults ages 12 and older in New York and New Jersey. Explore the conditions we assess and the treatment approaches that may be considered." />
     <Section eyebrow="Compassionate care" title="Understanding your mental health needs">
       <Reveal><p className="max-w-4xl text-lg leading-9 text-[#6d6661]">Transcending Psychiatry provides psychiatric assessment and individualized treatment planning for a range of mental health conditions, including anxiety disorders, mood disorders, psychotic disorders, OCD, PTSD, and personality disorders. Treatment recommendations depend on a careful evaluation of symptoms, medical history, goals, and clinical needs.</p></Reveal>
       <div className="mt-10 flex flex-wrap gap-3">{conditions.map(c => <a key={c.id} href={`#${c.id}`} className="rounded-full border border-[#f1dac9] bg-[#fff8f2] px-5 py-3 text-sm font-semibold text-[#b75a27] transition hover:-translate-y-0.5 hover:bg-[#ff7426] hover:text-white">{c.title} ↓</a>)}</div>

@@ -4,8 +4,13 @@ import { BulletCard, CardGrid, PageFooter, PageHero, Reveal, Section, Steps } fr
 
 export default function PsychiatricEvaluationPage() {
   return <main className="overflow-hidden bg-white">
-    <PageHero eyebrow="Transcending Psychiatry · New York & New Jersey" title="Comprehensive Psychiatric" highlight="Evaluations" description="A thoughtful, structured evaluation can help clarify what you're experiencing and guide an individualized treatment plan. Learn what the process involves and what to expect." />
-    <Section eyebrow="A clearer understanding" title="What is a comprehensive psychiatric evaluation?">
+    <PageHero
+      eyebrow="Transcending Psychiatry · New York & New Jersey"
+      title="Comprehensive Psychiatric"
+      highlight="Evaluations"
+      description="A thoughtful, structured evaluation can help clarify what you're experiencing and guide an individualized treatment plan. Learn what the process involves and what to expect."
+      image="/images/psychiatric-evaluation.png"
+    />    <Section eyebrow="A clearer understanding" title="What is a comprehensive psychiatric evaluation?">
       <Reveal><p className="max-w-4xl text-lg leading-9 text-[#6d6661]">A comprehensive psychiatric evaluation explores your emotional well-being, symptoms, medical and mental health history, daily functioning, and personal circumstances. It goes beyond a brief symptom checklist to help a qualified clinician understand possible diagnoses, identify concerns, and recommend appropriate next steps. Not every evaluation results in a diagnosis or medication prescription.</p></Reveal>
     </Section>
     <Section eyebrow="The assessment" title="What your evaluation may include" tinted>

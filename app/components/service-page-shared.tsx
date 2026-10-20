@@ -21,18 +21,95 @@ export function Reveal({ children, className = "" }: { children: ReactNode; clas
   return <motion.div className={className} variants={rise} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12 }}>{children}</motion.div>;
 }
 
-export function PageHero({ eyebrow, title, highlight, description }: { eyebrow: string; title: string; highlight: string; description: string }) {
-  return <section className="relative overflow-hidden bg-[#fff8f2] px-6 pb-20 pt-32 sm:pt-40 lg:pb-28">
-    <div aria-hidden="true" className="pointer-events-none absolute -right-44 -top-32 h-[600px] w-[600px] rounded-full border border-[#ff7426]/15" />
-    <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-[600px] w-[600px] rounded-full border border-[#ff7426]/10" />
-    <div className="relative mx-auto max-w-7xl">
-      <Reveal><Link href="/#services" className="inline-flex items-center gap-2 text-sm font-semibold text-[#c45c22] hover:underline">← Back to Services</Link></Reveal>
-      <Reveal className="mt-10"><p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d9692c]">{eyebrow}</p><h1 className="mt-5 max-w-5xl text-[42px] font-semibold leading-[1.08] tracking-[-0.045em] text-[#282624] sm:text-[62px] lg:text-[76px]">{title} <span className="text-[#ff7426]">{highlight}</span></h1></Reveal>
-      <Reveal className="mt-7"><p className="max-w-3xl text-lg leading-9 text-[#69615b]">{description}</p></Reveal>
-      <Reveal className="mt-9"><ContactButton /></Reveal>
-    </div>
-  </section>;
+
+export function PageHero({
+  eyebrow,
+  title,
+  highlight,
+  description,
+  image,
+}: {
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  description: string;
+  image?: string;
+}) {
+  return (
+    <section className="relative overflow-hidden bg-[#fff8f2] px-6 pb-20 pt-32 sm:pt-40 lg:pb-28">
+      {/* Background decorations */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-44 -top-32 h-[600px] w-[600px] rounded-full border border-[#ff7426]/15"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 -top-32 h-[600px] w-[600px] rounded-full border border-[#ff7426]/10"
+      />
+
+      <div className="relative mx-auto max-w-7xl">
+        {/* Back to Services */}
+        <Reveal>
+          <Link
+            href="/#services"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#c45c22] hover:underline"
+          >
+            ← Back to Services
+          </Link>
+        </Reveal>
+
+        {/* Hero content */}
+        <div
+          className={`mt-10 grid items-center gap-10 lg:gap-14 ${image ? "lg:grid-cols-2" : "grid-cols-1"
+            }`}
+        >
+          {/* LEFT COLUMN */}
+          <div className="min-w-0">
+            <Reveal>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d9692c]">
+                {eyebrow}
+              </p>
+
+              <h1
+                className={`mt-5 font-semibold leading-[1.08] tracking-[-0.045em] text-[#282624] ${image
+                  ? "text-[42px] sm:text-[56px] lg:text-[62px]"
+                  : "max-w-5xl text-[42px] sm:text-[62px] lg:text-[76px]"
+                  }`}
+              >
+                {title}{" "}
+                <span className="text-[#ff7426]">{highlight}</span>
+              </h1>
+            </Reveal>
+
+            <Reveal className="mt-7">
+              <p className="max-w-3xl text-lg leading-9 text-[#69615b]">
+                {description}
+              </p>
+            </Reveal>
+
+            <Reveal className="mt-9">
+              <ContactButton />
+            </Reveal>
+          </div>
+
+          {/* RIGHT COLUMN — OPTIONAL IMAGE */}
+          {image && (
+            <Reveal className="min-w-0">
+              <div className="relative overflow-hidden rounded-[30px] border border-[#f0e0d5] bg-white shadow-[0_25px_70px_rgba(87,56,34,0.13)]">
+                <img
+                  src={image}
+                  alt="Woman organizing medications using a weekly pill organizer"
+                  className="h-[280px] w-full object-cover sm:h-[380px] lg:h-[430px]"
+                />
+              </div>
+            </Reveal>
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }
+
 
 export function ContactButton({ label = "Get in Touch" }: { label?: string }) {
   return <a href="#contact" className="group inline-flex min-h-14 items-center gap-3 overflow-hidden rounded-full bg-[#ff7426] px-8 py-4 text-sm font-bold text-white shadow-[0_12px_32px_rgba(255,116,38,0.24)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#e45f18] hover:shadow-[0_18px_40px_rgba(255,116,38,0.35)]"><Phone size={17} />{label}<ArrowUpRight size={18} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></a>;

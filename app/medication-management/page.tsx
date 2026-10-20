@@ -18,12 +18,15 @@ export default function MedicationManagementPage() {
 
   return (
     <main className="overflow-hidden bg-white">
+
       <PageHero
         eyebrow="Transcending Psychiatry · New York & New Jersey"
         title="Psychiatric Medication"
         highlight="Management"
         description="Understand the benefits, process, medication options, and ongoing support involved in psychiatric medication management. Thoughtful, collaborative care tailored to your needs."
+        image="/images/medication-management.png"
       />
+
 
       <Section
         eyebrow="An individualized approach"
