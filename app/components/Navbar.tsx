@@ -310,7 +310,7 @@ export default function Navbar() {
 
             h-[82px]
 
-            max-w-[1480px]
+            max-w-[1600px]
 
             items-center
 
@@ -336,7 +336,7 @@ export default function Navbar() {
 
             lg:h-[92px]
 
-            lg:px-8
+            lg:px-5 2xl:px-7
 
           "
 
@@ -377,23 +377,17 @@ export default function Navbar() {
               DESKTOP NAVIGATION
 
           ================================================= */}
-
                     <div
-
                         className="
-
-              hidden
-
-              items-center
-
-              gap-6
-
-              xl:flex
-
-              2xl:gap-8
-
-            "
-
+        hidden
+        items-center
+        gap-3
+        xl:flex
+        2xl:gap-5
+        text-[13px]
+        2xl:text-sm
+        whitespace-nowrap
+    "
                     >
 
                         <NavLink href="/">
@@ -432,7 +426,7 @@ export default function Navbar() {
                                 <Link
                                     href="/#services"
                                     onClick={() => setServicesOpen(false)}
-                                    className="relative text-[15px] font-medium text-[#242424] transition-colors hover:text-[#f36f2a]"
+                                    className="relative whitespace-nowrap text-[12px] 2xl:text-[13px] font-medium text-[#242424] transition-colors hover:text-[#f36f2a]"
                                 >
                                     Services
                                     <span className={`absolute -bottom-2 left-0 h-[2px] bg-[#ff7426] transition-all duration-300 ${servicesOpen ? "w-full" : "w-0 group-hover:w-full"}`} />
@@ -2337,7 +2331,7 @@ function RegionDropdown({ label, href, items, open, setOpen }: {
 
             <div className="group flex items-center gap-1 py-8">
 
-                <Link href={href} className="relative text-[15px] font-medium text-[#242424] transition-colors hover:text-[#f36f2a]">
+                <Link href={href} className="relative whitespace-nowrap text-[12px] 2xl:text-[13px] font-medium text-[#242424] transition-colors hover:text-[#f36f2a]">
 
                     {label}
 
@@ -2495,7 +2489,7 @@ function NavLink({
 
         py-8
 
-        text-[15px]
+       text-[12px] 2xl:text-[13px]
 
         font-medium
 

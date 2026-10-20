@@ -5,6 +5,7 @@ import Link from "next/link";
 import BookAppointmentButton from "./BookAppointmentButton";
 
 import FooterContactForm from "./FooterContactForm";
+import FooterFeaturedBlog from "./FooterFeaturedBlog";
 
 import {
 
@@ -34,6 +35,7 @@ import {
     FaYoutube,
 
 } from "react-icons/fa6";
+import FeaturedBlogTest from "./FooterFeaturedBlog";
 
 // Add Joe's verified TikTok and X URLs when available.
 // Missing URLs display as non-clickable icons.
@@ -61,29 +63,7 @@ const navigation = [
 
 ];
 
-const services = [
 
-    [
-
-        "Medication Management",
-
-        " ",
-
-    ],
-
-    [
-
-        "Psychiatric Evaluations",
-
-        " ",
-
-    ],
-
-    ["New Jersey", "/new-jersey"],
-
-    ["New York", "/new-york"],
-
-];
 
 /* =========================================================
 
@@ -834,71 +814,7 @@ export default function Footer() {
 
                     </div>
 
-                    {/* =================================================
 
-              SERVICES
-
-          ================================================= */}
-
-                    <div>
-
-                        <h3
-
-                            className="
-
-                text-[11px]
-
-                font-bold
-
-                uppercase
-
-                tracking-[0.22em]
-
-                text-[#ff9b58]
-
-              "
-
-                        >
-
-                            Services
-
-                        </h3>
-
-                        <div className="mt-6 flex flex-col gap-4">
-
-                            {services.map(([label, href]) => (
-
-                                <Link
-
-                                    key={label}
-
-                                    href={href}
-
-                                    className="
-
-                    text-[14px]
-
-                    leading-6
-
-                    text-white/60
-
-                    transition
-
-                    hover:text-white
-
-                  "
-
-                                >
-
-                                    {label}
-
-                                </Link>
-
-                            ))}
-
-                        </div>
-
-                    </div>
 
                     {/* =================================================
 
@@ -1324,17 +1240,23 @@ export default function Footer() {
 
                             </a>
 
+
                         </div>
+
 
                     </div>
 
+                    <FeaturedBlogTest />
+
                 </div>
+
 
                 {/* =====================================================
 
             LOWER FOOTER
 
         ====================================================== */}
+
 
                 <div
 
@@ -1413,7 +1335,6 @@ export default function Footer() {
                 </div>
 
             </div>
-
         </footer>
 
     );
