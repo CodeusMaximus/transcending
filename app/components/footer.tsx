@@ -1290,7 +1290,20 @@ export default function Footer() {
 
                         Psychiatry LLC. All rights reserved.
 
-                    </p>
+                    </p>  {/* MEDIADARI DEVELOPER CREDIT */}
+                    <div className="mt-8 border-t border-white/10 pt-6 text-center">
+                        <p className="text-[11px] font-medium tracking-[0.04em] text-white/40">
+                            Designed &amp; Developed by{" "}
+                            <a
+                                href="https://mediadari.net"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-semibold text-white/65 transition-colors duration-300 hover:text-[#ff9b58]"
+                            >
+                                Mediadari LLC
+                            </a>
+                        </p>
+                    </div>
 
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
 
@@ -1335,6 +1348,7 @@ export default function Footer() {
                 </div>
 
             </div>
+
         </footer>
 
     );
