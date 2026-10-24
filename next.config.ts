@@ -1,3 +1,4 @@
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -12,6 +13,22 @@ const nextConfig: NextConfig = {
         hostname: "*.public.blob.vercel-storage.com",
       },
     ],
+  },
+
+  // Redirect old Squarespace URLs to new Next.js pages
+  async redirects() {
+    return [
+      {
+        source: "/psychiatric-medication-management",
+        destination: "/medication-management",
+        permanent: true,
+      },
+      {
+        source: "/contact",
+        destination: "/#contact",
+        permanent: true,
+      },
+    ];
   },
 };
 
