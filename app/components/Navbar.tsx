@@ -14,7 +14,7 @@ import {
 
     UserButton,
 
-    useUser,
+    useAuth,
 
 } from "@clerk/nextjs";
 
@@ -108,7 +108,7 @@ const PORTAL_URL = "https://transcendingpsych.intakeq.com/portal";
 
 export default function Navbar() {
 
-    const { isLoaded, isSignedIn, } = useUser();
+    const { isLoaded, isSignedIn } = useAuth();
 
     const [servicesOpen, setServicesOpen] = useState(false);
 
@@ -632,7 +632,8 @@ export default function Navbar() {
 
               items-center
 
-              gap-2
+              gap-1.5
+              2xl:gap-2
 
               xl:flex
 
@@ -654,7 +655,8 @@ export default function Navbar() {
 
                 group
 
-                flex
+                hidden
+                2xl:flex
 
                 h-11
 
@@ -710,7 +712,8 @@ export default function Navbar() {
 
                 group
 
-                flex
+                hidden
+                2xl:flex
 
                 h-11
 
@@ -817,123 +820,39 @@ export default function Navbar() {
                         </Link>
 
                         {/* ADMIN LOGIN / DASHBOARD */}
-
-                        {isLoaded && !isSignedIn && (
-
+                        {!isLoaded ? (
+                            <button
+                                type="button"
+                                disabled
+                                title="Admin Login — authentication loading"
+                                aria-label="Admin Login loading"
+                                className="ml-1 inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white/75 px-3 text-[13px] font-semibold text-[#252525] opacity-60 2xl:px-4"
+                            >
+                                <LogIn className="h-[16px] w-[16px]" />
+                                Admin Login
+                            </button>
+                        ) : !isSignedIn ? (
                             <SignInButton mode="modal">
-
                                 <button
-
                                     type="button"
-
-                                    className="
-
-                ml-1
-
-                flex
-
-                h-11
-
-                shrink-0
-
-                items-center
-
-                gap-2
-
-                rounded-full
-
-                border
-
-                border-[#ded6d0]
-
-                bg-white/75
-
-                px-4
-
-                text-[13px]
-
-                font-semibold
-
-                text-[#252525]
-
-                transition-all
-
-                duration-300
-
-                hover:-translate-y-0.5
-
-                hover:border-[#ff7426]
-
-                hover:bg-[#fff1e8]
-
-                hover:text-[#e85f18]
-
-            "
-
+                                    aria-label="Admin Login"
+                                    title="Admin Login"
+                                    className="ml-1 inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white/75 px-3 text-[13px] font-semibold text-[#252525] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18] 2xl:px-4"
                                 >
-
                                     <LogIn className="h-[16px] w-[16px]" />
-
                                     Admin Login
-
                                 </button>
-
                             </SignInButton>
-
-                        )}
-
-                        {isLoaded && isSignedIn && (
-
-                            <>
-
+                        ) : (
+                            <div className="ml-1 flex shrink-0 items-center gap-2">
                                 <Link
-
                                     href="/Dashboard"
-
-                                    className="
-
-                ml-1
-
-                flex
-
-                h-11
-
-                shrink-0
-
-                items-center
-
-                rounded-full
-
-                bg-[#ff7426]
-
-                px-4
-
-                text-[13px]
-
-                font-semibold
-
-                text-white
-
-                transition-all
-
-                duration-300
-
-                hover:-translate-y-0.5
-
-                hover:bg-[#e85f18]
-
-            "
-
+                                    className="inline-flex h-11 items-center rounded-full bg-[#ff7426] px-3 text-[13px] font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#e85f18] 2xl:px-4"
                                 >
-
                                     Dashboard
-
                                 </Link>
-
                                 <UserButton />
-
-                            </>
-
+                            </div>
                         )}
 
                         {/* BOOK APPOINTMENT */}
@@ -1655,68 +1574,27 @@ export default function Navbar() {
 
 ================================================= */}
 
-                            {isLoaded && !isSignedIn && (
-
+                            {!isLoaded ? (
+                                <button
+                                    type="button"
+                                    disabled
+                                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white px-6 py-4 font-semibold text-[#252525] opacity-60"
+                                    aria-label="Admin Login loading"
+                                >
+                                    <LogIn className="h-5 w-5" />
+                                    Admin Login (Loading)
+                                </button>
+                            ) : !isSignedIn && (
                                 <SignInButton mode="modal">
-
                                     <button
-
                                         type="button"
-
                                         onClick={() => setMobileOpen(false)}
-
-                                        className="
-
-                mt-3
-
-                flex
-
-                w-full
-
-                items-center
-
-                justify-center
-
-                gap-2
-
-                rounded-full
-
-                border
-
-                border-[#ded6d0]
-
-                bg-white
-
-                px-6
-
-                py-4
-
-                font-semibold
-
-                text-[#252525]
-
-                transition-all
-
-                duration-300
-
-                hover:border-[#ff7426]
-
-                hover:bg-[#fff1e8]
-
-                hover:text-[#e85f18]
-
-            "
-
+                                        className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white px-6 py-4 font-semibold text-[#252525] transition-all duration-300 hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18]"
                                     >
-
                                         <LogIn className="h-5 w-5" />
-
                                         Admin Login
-
                                     </button>
-
                                 </SignInButton>
-
                             )}
 
                             {isLoaded && isSignedIn && (
