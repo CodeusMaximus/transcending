@@ -821,16 +821,17 @@ export default function Navbar() {
 
                         {/* ADMIN LOGIN / DASHBOARD */}
                         {!isLoaded ? (
-                            <button
-                                type="button"
-                                disabled
-                                title="Admin Login — authentication loading"
-                                aria-label="Admin Login loading"
-                                className="ml-1 inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white/75 px-3 text-[13px] font-semibold text-[#252525] opacity-60 2xl:px-4"
+                            // Fallback while Clerk loads: the protected Dashboard route
+                            // must redirect signed-out visitors to Clerk sign-in.
+                            <Link
+                                href="/Dashboard"
+                                aria-label="Admin Login"
+                                title="Admin Login"
+                                className="ml-1 inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white/75 px-3 text-[13px] font-semibold text-[#252525] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18] 2xl:px-4"
                             >
                                 <LogIn className="h-[16px] w-[16px]" />
                                 Admin Login
-                            </button>
+                            </Link>
                         ) : !isSignedIn ? (
                             <SignInButton mode="modal">
                                 <button
@@ -1575,15 +1576,15 @@ export default function Navbar() {
 ================================================= */}
 
                             {!isLoaded ? (
-                                <button
-                                    type="button"
-                                    disabled
-                                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white px-6 py-4 font-semibold text-[#252525] opacity-60"
-                                    aria-label="Admin Login loading"
+                                <Link
+                                    href="/Dashboard"
+                                    onClick={() => setMobileOpen(false)}
+                                    aria-label="Admin Login"
+                                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#ded6d0] bg-white px-6 py-4 font-semibold text-[#252525] transition-all duration-300 hover:border-[#ff7426] hover:bg-[#fff1e8] hover:text-[#e85f18]"
                                 >
                                     <LogIn className="h-5 w-5" />
-                                    Admin Login (Loading)
-                                </button>
+                                    Admin Login
+                                </Link>
                             ) : !isSignedIn && (
                                 <SignInButton mode="modal">
                                     <button
