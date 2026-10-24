@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -16,26 +17,20 @@ interface Post {
 }
 
 const SITE_URL =
-  process.env.SITE_URL ||
-  "http://localhost:3000";
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://www.transcendingpsychiatry.com";
 
 /* =========================================================
-   GET ONE PUBLISHED POST
+   GET ONE PUBLISHED POST BY SLUG
 ========================================================= */
 
 async function getPost(
   slug: string
 ): Promise<Post | null> {
   try {
-    const baseUrl =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://transcending-yzat.vercel.app/";
-
     const response = await fetch(
-      `${baseUrl}/api/get-posts?slug=${encodeURIComponent(
-        slug
-      )}`,
+      `${SITE_URL}/api/get-posts`,
       {
         cache: "no-store",
       }
@@ -43,10 +38,9 @@ async function getPost(
 
     if (!response.ok) {
       console.error(
-        "Failed to fetch post:",
+        "Failed to fetch posts:",
         response.status
       );
-
       return null;
     }
 
@@ -54,75 +48,85 @@ async function getPost(
 
     if (
       !data.success ||
-      !Array.isArray(data.posts) ||
-      data.posts.length === 0
+      !Array.isArray(data.posts)
     ) {
       return null;
     }
 
-    return data.posts[0];
+    // IMPORTANT:
+    // Match the URL slug instead of selecting posts[0].
+
+    const requestedSlug = slug.trim().toLowerCase();
+
+    const post = data.posts.find(
+      (item: Post) =>
+        typeof item.slug === "string" &&
+        item.slug.trim().toLowerCase() ===
+        requestedSlug
+    );
+
+    return post ?? null;
   } catch (error) {
     console.error(
       "Error fetching post:",
       error
     );
-
     return null;
   }
 }
+
 /* =========================================================
-   METADATA
+   SEO METADATA — UNIQUE FOR EACH POST
 ========================================================= */
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-
   const post = await getPost(id);
 
   if (!post) {
     return {
-      title:
-        "Post Not Found | Solid Rock Behavioral Health",
+      title: "Post Not Found | Transcending Psychiatry",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
-  return {
-    title: `${post.title} | Solid Rock Behavioral Health`,
+  const canonicalUrl =
+    `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`;
 
+  return {
+    title: `${post.title} | Transcending Psychiatry`,
     description: post.excerpt,
+
+    alternates: {
+      canonical: canonicalUrl,
+    },
 
     openGraph: {
       title: post.title,
       description: post.excerpt,
+      url: canonicalUrl,
+      siteName: "Transcending Psychiatry",
       type: "article",
-
       images: post.image
-        ? [
-          {
-            url: post.image,
-          },
-        ]
+        ? [{ url: normalizeImageUrl(post.image) }]
         : [],
     },
   };
 }
 
 /* =========================================================
-   IMAGE URL
+   NORMALIZE IMAGE URL
 ========================================================= */
 
-function normalizeImageUrl(
-  url: string
-): string {
-  if (!url) {
-    return "/images/solid-rock-logo.png";
-  }
+function normalizeImageUrl(url: string): string {
+  if (!url) return "";
 
   if (
     url.startsWith("https://") ||
@@ -139,26 +143,17 @@ function normalizeImageUrl(
 }
 
 /* =========================================================
-   POST DETAIL PAGE
+   BLOG POST DETAIL PAGE
 ========================================================= */
 
 export default async function PostDetail({
   params,
 }: {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }) {
-  /*
-   * Folder can remain:
-   *
-   * app/Blog/[id]/page.tsx
-   *
-   * The value inside "id" is now the slug.
-   */
-
   const { id } = await params;
 
+  // Fetch the article matching this URL slug.
   const post = await getPost(id);
 
   if (!post) {
@@ -167,7 +162,8 @@ export default async function PostDetail({
 
   return (
     <div className="container mx-auto max-w-6xl bg-white px-6 py-8 pt-24 md:px-10">
-      {/* Back Button */}
+
+      {/* BACK TO BLOG */}
 
       <div className="mb-8">
         <Link
@@ -179,7 +175,8 @@ export default async function PostDetail({
       </div>
 
       <article>
-        {/* Article Header */}
+
+        {/* ARTICLE HEADER */}
 
         <header className="mx-auto mb-8 max-w-5xl">
           <h1 className="mb-5 font-serif text-4xl font-semibold leading-tight text-[#082957] sm:text-5xl lg:text-6xl">
@@ -188,9 +185,7 @@ export default async function PostDetail({
 
           <div className="flex flex-wrap justify-between gap-3 text-gray-500">
             <span>
-              {new Date(
-                post.date
-              ).toLocaleDateString(
+              {new Date(post.date).toLocaleDateString(
                 "en-US",
                 {
                   year: "numeric",
@@ -206,14 +201,12 @@ export default async function PostDetail({
           </div>
         </header>
 
-        {/* Featured Image */}
+        {/* FEATURED IMAGE */}
 
         {post.image && (
           <div className="mb-10 overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(8,41,87,0.10)]">
             <Image
-              src={normalizeImageUrl(
-                post.image
-              )}
+              src={normalizeImageUrl(post.image)}
               alt={post.title}
               width={1200}
               height={675}
@@ -223,70 +216,70 @@ export default async function PostDetail({
           </div>
         )}
 
-        {/* Article Content */}
+        {/* ARTICLE CONTENT */}
 
         <div
           className="
-                        mx-auto
-                        max-w-4xl
-                        text-[17px]
-                        leading-8
-                        text-[#3e5062]
+            mx-auto
+            max-w-4xl
+            text-[17px]
+            leading-8
+            text-[#3e5062]
 
-                        [&_h1]:mb-6
-                        [&_h1]:mt-10
-                        [&_h1]:font-serif
-                        [&_h1]:text-4xl
-                        [&_h1]:font-semibold
-                        [&_h1]:text-[#082957]
+            [&_h1]:mb-6
+            [&_h1]:mt-10
+            [&_h1]:font-serif
+            [&_h1]:text-4xl
+            [&_h1]:font-semibold
+            [&_h1]:text-[#082957]
 
-                        [&_h2]:mb-4
-                        [&_h2]:mt-10
-                        [&_h2]:font-serif
-                        [&_h2]:text-3xl
-                        [&_h2]:font-semibold
-                        [&_h2]:text-[#082957]
+            [&_h2]:mb-4
+            [&_h2]:mt-10
+            [&_h2]:font-serif
+            [&_h2]:text-3xl
+            [&_h2]:font-semibold
+            [&_h2]:text-[#082957]
 
-                        [&_h3]:mb-3
-                        [&_h3]:mt-8
-                        [&_h3]:font-serif
-                        [&_h3]:text-2xl
-                        [&_h3]:font-semibold
-                        [&_h3]:text-[#082957]
+            [&_h3]:mb-3
+            [&_h3]:mt-8
+            [&_h3]:font-serif
+            [&_h3]:text-2xl
+            [&_h3]:font-semibold
+            [&_h3]:text-[#082957]
 
-                        [&_p]:mb-6
+            [&_p]:mb-6
 
-                        [&_ul]:mb-6
-                        [&_ul]:list-disc
-                        [&_ul]:pl-7
+            [&_ul]:mb-6
+            [&_ul]:list-disc
+            [&_ul]:pl-7
 
-                        [&_ol]:mb-6
-                        [&_ol]:list-decimal
-                        [&_ol]:pl-7
+            [&_ol]:mb-6
+            [&_ol]:list-decimal
+            [&_ol]:pl-7
 
-                        [&_li]:mb-2
+            [&_li]:mb-2
 
-                        [&_strong]:font-bold
-                        [&_strong]:text-[#082957]
+            [&_strong]:font-bold
+            [&_strong]:text-[#082957]
 
-                        [&_blockquote]:my-8
-                        [&_blockquote]:border-l-4
-                        [&_blockquote]:border-[#d7a447]
-                        [&_blockquote]:bg-[#fbf8f2]
-                        [&_blockquote]:px-6
-                        [&_blockquote]:py-4
-                        [&_blockquote]:italic
+            [&_blockquote]:my-8
+            [&_blockquote]:border-l-4
+            [&_blockquote]:border-[#d7a447]
+            [&_blockquote]:bg-[#fbf8f2]
+            [&_blockquote]:px-6
+            [&_blockquote]:py-4
+            [&_blockquote]:italic
 
-                        [&_a]:font-medium
-                        [&_a]:text-[#075187]
-                        [&_a]:underline
-                    "
+            [&_a]:font-medium
+            [&_a]:text-[#075187]
+            [&_a]:underline
+          "
         >
           <ReactMarkdown>
-            {post.content ||
-              post.excerpt}
+            {post.content || post.excerpt}
           </ReactMarkdown>
         </div>
+
       </article>
     </div>
   );
